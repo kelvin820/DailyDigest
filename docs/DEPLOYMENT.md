@@ -1,32 +1,33 @@
-# 部署指南（目前未部署）
-## 先完成工程驗收
-本交付尚無成功 Next.js build 與完整 live pipeline。**不能只填金鑰就啟用 daily workflow**。先依 STATUS 的下一步完成並通過測試。
-1. Node 24、pnpm 10；pnpm install 後提交 lockfile。之後 CI 用 pnpm install --frozen-lockfile。
-2. pnpm typecheck、pnpm lint、pnpm test、pnpm build、六 PDF 檢查。
-3. 建立獨立 GitHub repo，不覆蓋 quiet-hours 或其他網站；只推程式，忽略 output / .runtime / .env。
+# 部署指南（尚未部署）
+
+## 專案與可重現檢查
+
+在獨立 GitHub repo 使用 Node 24、pnpm 11.25.0。提交 pnpm-lock.yaml、pnpm-workspace.yaml（只允許 esbuild build script），CI 使用 frozen install。先跑 README 的 typecheck、lint、test、build、PDF、test:app、test:db。不要覆蓋其他網站。
 
 ## Supabase
-1. 全新專案 SQL Editor 依序套用 supabase/migrations 三檔；先在開發專案測試。
-2. Auth 關閉開放註冊，以管理控制台邀請家長；設定密碼登入。email 流程與 SMTP 需現場確認。
-3. 在 Auth 找管理員 UUID，使用 SQL Editor 插入 site_members(user_id,role) values ('實際 UUID','admin')。
-4. 其他受邀帳號插入 reader。不能由使用者自己寫 role。
-5. buckets issue-files/evidence/images 全部 private；不開 public。
-6. 以 anonymous / reader / admin 實際測試 raw evidence、jobs、settings、draft、published、PDF signed URL 與 approve；不可僅看 SQL。
+
+在全新開發專案，依檔名排序套用 supabase/migrations/ 的 14 檔。前 3 檔保留原交付，其餘新增修訂、額度、intake、試讀與 auto。尚未對任何雲端 DB 執行。
+
+關閉開放自行註冊，邀請家長、設定密碼與 email／SMTP；在 SQL Editor 以實際 Auth UUID 建立 site_members(admin/reader)，不以兒童 email 建帳。全部 bucket（issue-files/evidence/images）維持 private。只有 worker 取得 service-role；讀者與編輯室以 session + RLS／窄範圍 RPC 存取。
+
+實測 anonymous、reader、inactive reader、admin：草稿、內部來源、jobs/settings、published payload、私有 PDF signed URL、修訂、核准、來源證據。腳本的本機 PostgreSQL stubs 不能取代這一層。
 
 ## Vercel
-Import 此新 repo，framework Next.js，Node 24。環境：
-- NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-- APP_URL = 新專案實際 URL，APP_TIMEZONE=Asia/Taipei
-- DEMO_MODE=false。Preview 若只做 DEMO，使用隔離設定 true，不連 production DB。
-- 如使用 dispatch API：GITHUB_REPOSITORY、GITHUB_DEFAULT_BRANCH、GITHUB_DISPATCH_TOKEN（該 repo Actions write 最小權限）。
-Reader 網站不需要 LLM_API_KEY。Service role 不放 NEXT_PUBLIC。
 
-## GitHub Actions production environment
-僅在完整 live E2E 成功後配置：
-- LLM_API_KEY secret；實際 provider URL/model 與價格 variables
-- Supabase service role（待 durable worker 整合）
-- PUBLISH_MODE=review；DAILY_BUDGET_USD 初始 2，由使用者確認。
-排程台北 06:17 / 07:17，以 UTC 22:17 / 23:17。GitHub 不保證準點，可手動補跑。
-現有 DD_PIPELINE_ACCEPTED guard 與 preflight 均阻止執行；在真實整合驗收完成前保留。不要用改成 return 0 來假造驗收。
-第一期人工檢查八則、三版、來源、圖片、PDF；只有 RPC gate pass 才發布。
+匯入新 repo，Next.js，Node 24。先在隔離 preview 做 DEMO；正式私人站設定 DEMO_MODE=false、APP_URL=實際 HTTPS URL、NEXT_PUBLIC_SUPABASE_URL、NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY。網站不需要 LLM_API_KEY 或 Supabase service-role。
 
+需要編輯室派送時，另設 GITHUB_REPOSITORY、GITHUB_DEFAULT_BRANCH、只限該 repo 的 GITHUB_DISPATCH_TOKEN；live 驗收後設 DD_PIPELINE_ACCEPTED=true。未設定則顯示禁用，沒有假成功。
+
+先驗收登入、最近一期／日期過期提示、三版、歷史、PDF private redirect、admin 權限；記錄 preview 與 production URL 到 STATUS。現在沒有部署 URL。
+
+## 第一份 live 與排程
+
+GitHub production environment 的 Secrets：LLM_API_KEY（NVIDIA）、SUPABASE_SERVICE_ROLE_KEY。Variables：APP_URL、NEXT_PUBLIC_SUPABASE_URL、writer/reviewer 型號、預算與可確認的 token 單價。初始 PUBLISH_MODE=review。
+
+先用人工 APPROVED_FACTS_FILE 或核准完整來源政策後的 worker 完成一期 live E2E。核對來源、日期、三版、圖片類型、六份 PDF、實際 usage，再由管理者核准。人工入口預設 DRAFT_ONLY=true。
+
+自動來源另外需要：status=enabled、discovery_enabled/fetch_enabled=true、rewrite_policy=allowed、reviewed_at、robots_reviewed_at、robots_allowed=true，以及 evidence_policy=permanent_excerpt。啟用前人工確認條款與可永久保留必要摘錄的範圍；全文僅在記憶體處理。模型不能自己授權。
+
+真正通過後才把 GitHub variable DD_PIPELINE_ACCEPTED 設 true。daily-digest.yml 綁定 default branch、production environment、最小讀 repo 權限；台北 06:17 主跑／07:17 補跑。時間可能延遲，並非準點 SLA。手動輸入只放 env，再經 schema 驗證，不拼 shell。
+
+auto：三個不同日期的 live 期刊經家庭試讀，在各期管理頁記錄觀察；設定頁才能切 auto。再將 runner PUBLISH_MODE=auto，並允許 DRAFT_ONLY=false。敏感稿件仍留在 needs_review；不能繞過 hard gates。

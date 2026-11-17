@@ -1,13 +1,14 @@
-import {readFile,mkdir,writeFile} from "node:fs/promises";import {resolve} from "node:path";import {z} from "zod";import {taipeiDate,validDate} from "../lib/content/metrics";import {factSchema} from "../lib/schemas/editorial";import {CompatibleProvider} from "../lib/providers/text";import {Budget} from "../lib/pipeline/state.mjs";import {produceEditions} from "../lib/pipeline/editorial";import {renderIssues} from "./render";
-const date=process.env.ISSUE_DATE||taipeiDate();if(!validDate(date))throw Error("INVALID_DATE");const live=process.env.LIVE_GENERATION_ENABLED==="true";await mkdir(".runtime",{recursive:true});
-if(!live){await import("./offline.mjs");await writeFile(".runtime/job-status.json",JSON.stringify({issueDate:date,status:"demo_only",published:false,live:false}));console.log("DEMO only; no source fetching, model billing or publication.");process.exit(0)}
-const required=["LLM_PROVIDER","LLM_BASE_URL","LLM_API_KEY","WRITER_MODEL","REVIEWER_MODEL","APPROVED_FACTS_FILE"];const missing=required.filter(k=>!process.env[k]);if(missing.length)throw Error("MISSING_SETTINGS:"+missing.join(","));if(process.env.LLM_PROVIDER!=="openai-compatible")throw Error("PROVIDER_CONTRACT_NOT_CONFIGURED");
-if(process.env.PUBLISH_MODE!=="review")throw Error("AUTO_NOT_ACCEPTED: complete three trial issues first");
-const facts=z.array(factSchema).length(8).parse(JSON.parse(await readFile(process.env.APPROVED_FACTS_FILE!,"utf8")));if(facts.some(f=>f.is_demo))throw Error("DEMO_EVIDENCE_REJECTED");
-const revision=Number(process.env.ISSUE_REVISION||"1");if(!Number.isInteger(revision)||revision<1)throw Error("INVALID_REVISION");
-const folder=resolve(".runtime",date+"-r"+revision);await mkdir(folder,{recursive:true});
-const store={async get(key:string){try{return JSON.parse(await readFile(resolve(folder,encodeURIComponent(key)+".json"),"utf8"))}catch{return null}},async set(key:string,value:unknown){await writeFile(resolve(folder,encodeURIComponent(key)+".json"),JSON.stringify(value))}};
-const budget=new Budget({usd:Number(process.env.DAILY_BUDGET_USD||2),inputRate:process.env.LLM_INPUT_USD_PER_MILLION?Number(process.env.LLM_INPUT_USD_PER_MILLION):undefined,outputRate:process.env.LLM_OUTPUT_USD_PER_MILLION?Number(process.env.LLM_OUTPUT_USD_PER_MILLION):undefined,maxCalls:Number(process.env.MAX_MODEL_CALLS||100)});
-const provider=new CompatibleProvider(process.env.LLM_BASE_URL!,process.env.LLM_API_KEY!,budget);
-try{const content=await produceEditions({facts,issueDate:date,revision,provider,store,writerModel:process.env.WRITER_MODEL!,reviewerModel:process.env.REVIEWER_MODEL!});await writeFile(resolve(folder,"draft.json"),JSON.stringify(content,null,2));const files=await renderIssues(content.editions,resolve(folder,"pdf"));await writeFile(resolve(folder,"status.json"),JSON.stringify({status:"needs_review",published:false,reason:"Live storage, DB lease and PDF text verification must pass before publishing",files}));console.log("Draft generated. NOT published. See local status and integration checklist.")}finally{await writeFile(resolve(folder,"usage.json"),JSON.stringify({calls:budget.calls,tokens:budget.tokens,ledger:budget.ledger},null,2))}
+import { mkdir, writeFile } from 'node:fs/promises';
+import { taipeiDate, validDate } from '../lib/content/metrics';
 
+if (process.env.LIVE_GENERATION_ENABLED !== 'true') {
+  const date = process.env.ISSUE_DATE || taipeiDate();
+  if (!validDate(date)) throw Error('INVALID_DATE');
+  await import('./offline.mjs');
+  await mkdir('.runtime', { recursive: true });
+  await writeFile('.runtime/job-status.json', JSON.stringify({ requestedIssueDate: date,
+    fixtureIssueDate: '2026-11-17', status: 'demo_only', published: false, live: false }));
+  console.log('DEMO only; fixture date stays 2026-11-17. No model calls or publication.');
+} else {
+  await import('./run-worker');
+}

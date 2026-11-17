@@ -24,4 +24,5 @@ Return only the requested JSON schema:
 headline, body_paragraphs, vocabulary, used_claim_ids,
 omitted_optional_claim_ids, editorial_flags.
 Do not invent source URLs, image URLs, reading scores or licensing information.
-If the facts cannot support a suitable article, return a structured failure.
+If the facts cannot support a suitable article, return a structured failure:
+{"failure":{"code":"insufficient_evidence|cannot_meet_level","reason":"brief concrete reason"}}.

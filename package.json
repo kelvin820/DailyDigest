@@ -1,1 +1,53 @@
-{"name":"dayday-daily-digest","version":"0.1.0","private":true,"type":"module","engines":{"node":">=24 <25"},"scripts":{"dev":"next dev --hostname 127.0.0.1","build":"next build","start":"next start --hostname 127.0.0.1","typecheck":"tsc --noEmit","test":"node --test tests/*.test.mjs","pdf":"tsx scripts/render.tsx","pipeline":"tsx scripts/pipeline.ts","lint":"eslint .","demo":"node scripts/offline.mjs","demo:serve":"node scripts/serve-offline.mjs","demo:qa":"node scripts/qa-offline.cjs"},"dependencies":{"next":"^16.0.0","react":"^19.2.0","react-dom":"^19.2.0","zod":"^4.1.0","@supabase/ssr":"^0.8.0","@supabase/supabase-js":"^2.80.0","lucide-react":"^0.468.0","server-only":"0.0.1"},"devDependencies":{"typescript":"^5.9.0","@types/node":"^24.0.0","@types/react":"^19.2.0","@types/react-dom":"^19.2.0","tsx":"^4.20.0","playwright":"^1.56.0","pdf-lib":"^1.17.1","eslint":"^9.39.0","eslint-config-next":"^16.0.0"}}
+{
+  "name": "dayday-daily-digest",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1",
+    "build": "next build",
+    "start": "next start --hostname 127.0.0.1",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "node --import tsx --test tests/*.test.mjs tests/*.test.ts",
+    "pdf": "tsx scripts/render.tsx",
+    "pipeline": "node --env-file-if-exists=.env.local --import tsx scripts/pipeline.ts",
+    "lint": "eslint .",
+    "demo": "node scripts/offline.mjs",
+    "demo:serve": "node scripts/serve-offline.mjs",
+    "demo:qa": "node scripts/qa-offline.cjs",
+    "test:db": "node scripts/test-db.mjs",
+    "test:app": "node scripts/qa-app.mjs",
+    "stage:approved": "node --env-file-if-exists=.env.local --import tsx scripts/stage-approved.ts",
+    "audit:sources": "node scripts/audit-sources.mjs"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.8.0",
+    "@supabase/supabase-js": "^2.80.0",
+    "cheerio": "^1.2.0",
+    "fast-xml-parser": "^5.12.1",
+    "https-proxy-agent": "^9.1.0",
+    "lucide-react": "^0.468.0",
+    "next": "^16.0.0",
+    "proxy-from-env": "^2.1.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "robots-parser": "^3.0.1",
+    "server-only": "0.0.1",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "eslint": "^10.15.0",
+    "eslint-config-next": "^16.0.0",
+    "pdf-lib": "^1.17.1",
+    "playwright": "^1.56.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
+}

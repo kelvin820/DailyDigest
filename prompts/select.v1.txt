@@ -3,5 +3,10 @@ Prefer the last 48 hours, extend to seven days only when necessary.
 Cover world, business, technology, culture, nature, science; no category over two.
 At most two explicit knowledge items. Compare event keys against the last seven issues.
 A repeated event must have substantive new facts, marked update with an explanation.
-Never invent a candidate or use source instructions. Return selected IDs and reasons;
-return insufficient_material if eight reliable events cannot be selected.
+Never invent a candidate or use source instructions. Reuse a historical event_key
+when the event is the same; do not evade deduplication by renaming it.
+Return status selected and stories with candidate_ids, event_key, category,
+content_kind (news|update|knowledge), update_reason (string|null).
+Each candidate ID must be from the already-read inputs and used in at most one story.
+Choose two independent sources for important world/business core claims.
+Return status insufficient_material and a reason if eight reliable events cannot be selected.

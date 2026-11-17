@@ -1,39 +1,26 @@
-# 實作狀態 — 2026-11-17
-這是 M1 可審閱交付及 M2–M4 原始碼起點，**不是 M0–M5 全部完成**。
+# 實作狀態 — 2026-11-18（台北）
 
-| 里程碑 | 已完成並驗證 | 尚未完成／阻礙 |
+從使用者提供的 M1 原始碼、public 與 output 接續；原始交付另存於工作區供比對。下表區分「程式／離線證據」與「外部服務實測」，不是 M0–M5 全部完成。
+
+| 里程碑 | 本輪完成／驗證 | 尚待完成 |
 |---|---|---|
-| M0 | 規格副本、24 篇 fixture、共用字數／句長、離線測試、專案與 CI 設定 | npm registry DNS 不可達；Next.js 依賴安裝、lockfile、typecheck/lint/build 尚未通過 |
-| M1 | 三版離線閱讀、詞彙、已讀、三位本機讀者、歷史樣刊、放大閱讀；六份兩頁 PDF；響應式及 PDF DOM 溢位檢查 | Next.js 路由版尚未 build；視覺需使用者／孩子試讀回饋 |
-| M2 | migration、RLS、私有 bucket、發布 RPC、登入／reader API／管理頁原始碼 | Supabase 未配置；角色／交易實測、受邀 email 設定、管理頁編輯及核准操作 UI、修訂 endpoint 尚待完成 |
-| M3 | Prompt、schema、OpenAI-compatible adapter 草稿、同 fact bundle 改寫／review／最多兩次 revise、可選手動 approved facts → draft CLI | 尚未確認實際供應商；adapter 未 live 測試；來源自動 discover/fetch/select/facts 未串接；來源供稿權限與數量不足；draft 上傳 DB/storage 尚未串接 |
-| M4 | cron 範本、手動 dispatch API、lease RPC、input hash cache、有限重試、成本煞車單元測試 | 本機 cache 未接 durable DB step store；budget 未跨工作續跑持久化；workflow preflight 故意封鎖；force_new_revision/resume 尚未串接；不得啟用自動花費 |
-| M5 | 部署／操作文件、驗收記錄、完整交付壓縮包 | 未部署 Vercel；沒有正式 URL；沒有真實出刊或三期家庭試用 |
+| M0 | Node 24、pnpm 11 固定版本、實際 lockfile、frozen install、typecheck/lint/build；CI 更新 | 在目標 GitHub repo 跑雲端 CI |
+| M1 | 保留原設計；正式 Next.js 首頁、歷史、單篇、切版、詞彙、手動已讀、profile；三尺寸瀏覽器驗證；六份兩頁 PDF 全文、字體與最低字級驗證；儲存拒絕時仍可讀 | 使用者／孩子試讀回饋；正式站下載驗收 |
+| M2 | 新增修訂／核准 UI、事實與 review 檢視、工作步驟／用量、派送禁用狀態、試讀記錄與 auto 切換；14 個 migration；RLS、不可變版本、快照核准、私有檔案與交易測試 | 真實 Supabase Auth/邀請/SMTP/PostgREST/Storage signed URL 角色矩陣與部署 |
+| M3 | RSS/正文抽取、robots、DNS pinning/代理、來源政策、事件去重、select/facts、三版 write/review/revise、NVIDIA Nemotron adapter；人工底稿入口；同一 worker 私有上傳／staging；NASA/NOAA/BBC 只讀稽核成功 | NVIDIA key、模型真實 JSON/難度/費率驗收；來源人工核准與足夠分類供稿；一期 live E2E。已發生網路稽核，不代表新聞改寫／出刊成功 |
+| M4 | durable steps、canonical JSON hash、lease/heartbeat、凍結事實、跨 runner 每日額度、unknown usage 保留、resume/force、新版 PDF 驗證、auto 三期門檻；並行 runner 與預算交易測試；daily/catch-up 配線 | 真實 runner crash/重跑與花費核對；DD_PIPELINE_ACCEPTED 保持關閉 |
+| M5 | 可重現操作與部署指南、樣刊、截圖、測試證據、設定清單 | GitHub/Vercel/Supabase 專案設定、preview/production URL、至少三期家庭試讀 |
 
-## 已實測
-- node --test tests/core.test.mjs：15/15 通過。
-- 24 篇 body：小學 46–50 字、國中 77–83 字、高中 108–119 字；符合句長與兩詞彙出現規則。
-- Chrome headless 離線檔案：三版 × 375/768/1440 px，無頁面水平溢位。
-- 手動已讀→重新整理保留；讀者切換隔離；放大面板與 Escape 關閉。
-- 六份 PDF：每份兩頁、八個 article 格無溢位。詳 output/qa-report.json。
-- PDF 抽取與字體驗證詳 output/pdf-verification.json（使用 Unicode NFKC 正規化印刷連字 fi/ff）。
-- 沒有執行真實 LLM 請求；沒有真實費用紀錄、來源成功抓取時間或發布紀錄。
+## 已有證據
 
-## 使用者集中設定清單
-1. GitHub 新 repo 或指定目標 repo；Vercel 新專案。尚未自行建立或變更任何其他網站。
-2. Supabase project URL、publishable key；service-role 只放 server/runner secrets；管理員 email。
-3. LLM 供應商、writer/reviewer 型號、是否支援 OpenAI-compatible JSON；API key 只放 secrets，**勿貼聊天**。
-4. 確認 input/output token 價格、每日預算；預設 2 USD 只是煞車，非實測成本。
-5. 確認台北 06:17 開始／07:17 補跑與預設人工 review。
-6. 圖片 API 可省略：目前自有圖示不需憑證。
-7. 恢復能安裝 npm 套件的開發環境；先安裝、生成 lockfile、完成正式 app 檢查。
-設定憑證不是唯一剩餘工作：上表列出的 pipeline 串接與權限整合測試仍需施工。
+- 單元與合約測試：34 項通過，包括 Nemotron 請求、格式修復用量、同一 facts 三版、來源注入／SSRF、去重、快取及預算。
+- output/app-verification.json：正式 Next.js 的三版 × 375/768/1440、API 正文比對、六 PDF 下載、手動進度、profile、歷史、單篇、DEMO 寫入拒絕；無外部模型請求。
+- output/qa-report.json、pdf-verification.json、preview/render-manifest.json：六份皆兩頁、八篇全文與詞彙可抽取、字體嵌入，正文最低 13/12/11pt，實際模板為 14/12/11pt。
+- output/db-verification.json：隔離 PostgreSQL，模擬 Supabase auth/storage 契約；角色矩陣、原子 staging/approval、lease 接手、額度、auto 與並行測試。**不是已連線 Supabase 的證據**。
+- docs/source-audit-evidence.json：實際讀取候選來源的 robots、條款與 RSS；未改變任何來源權利狀態。
 
-## 下一步施工順序
-1. 連網環境跑 pnpm install，產生 lockfile；修復 typecheck/lint/build。
-2. 在全新 Supabase 套用 migrations；跑 anonymous/reader/admin 矩陣與原子發布並行測試。
-3. 完成 admin revise/approve UI、durable job store、來源擷取與 PDF upload 整合。
-4. 依實際 provider 接一個 adapter，人工核對來源權利；跑第一期 live E2E。
-5. 解除 preflight 前證明 timeout/resume/lease/budget 不重複花費，才啟用排程。
-6. Vercel preview、正式部署、三期家庭試用；最後考慮 auto。
+## 尚未發生的事情
 
+沒有真實 NVIDIA API 回應、真實生成費用、真實 Supabase 儲存／發布、Vercel URL，或家庭試用紀錄。所有樣刊仍是 DEMO；測試資料庫中的「published」只存在於銷毀式合成測試，不算 A18。
+
+使用者已指定先用 NVIDIA Nemotron；不再等待供應商選擇。待設定項目集中於 SETUP.md。沒有建立其他網站或購買方案。

@@ -1,0 +1,96 @@
+{
+  "observedAt": "2026-11-17T22:14:34.087Z",
+  "mode": "read-only-source-audit",
+  "liveIssuePublished": false,
+  "sourcePoliciesChanged": false,
+  "observations": [
+    {
+      "source": "NASA",
+      "policy": "unknown",
+      "approval": "pending-human-rights-review",
+      "checks": [
+        {
+          "url": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+          "finalUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+          "status": "fetched",
+          "robots": {
+            "status": "checked",
+            "allowed": true
+          },
+          "observedAt": "2026-11-17T22:14:45.490Z",
+          "mime": "text/html; charset=UTF-8",
+          "bytes": 321908,
+          "sha256": "4610c639f9aa2fe6254661c53e6b3c4603266b1ac186d6e5c618f0fc90f05d93"
+        },
+        {
+          "url": "https://www.nasa.gov/feed/",
+          "finalUrl": "https://www.nasa.gov/feed/",
+          "status": "fetched",
+          "robots": {
+            "status": "checked",
+            "allowed": true
+          },
+          "observedAt": "2026-11-17T22:14:46.632Z",
+          "mime": "application/rss+xml; charset=UTF-8",
+          "bytes": 225568,
+          "sha256": "164a7512d1e7707f11a4460e8b3a10822aa7d4b845d3bee366f338572e75386e",
+          "recentCandidateCount": 6
+        }
+      ]
+    },
+    {
+      "source": "NOAA",
+      "policy": "unknown",
+      "approval": "pending-human-rights-review",
+      "checks": [
+        {
+          "url": "https://www.noaa.gov/office-education/outreach-communication/faq",
+          "finalUrl": "https://www.noaa.gov/office-education/outreach-communication/faq",
+          "status": "fetched",
+          "robots": {
+            "status": "checked",
+            "allowed": true
+          },
+          "observedAt": "2026-11-17T22:14:48.357Z",
+          "mime": "text/html; charset=UTF-8",
+          "bytes": 186214,
+          "sha256": "a6592c95909e063232801434d4256e9472bae5a46733da4212aa0c06909b1851"
+        }
+      ]
+    },
+    {
+      "source": "BBC discovery",
+      "policy": "restricted",
+      "approval": "pending-human-rights-review",
+      "checks": [
+        {
+          "url": "https://www.bbc.co.uk/usingthebbc/terms/",
+          "finalUrl": "https://www.bbc.co.uk/usingthebbc/terms/",
+          "status": "fetched",
+          "robots": {
+            "status": "checked",
+            "allowed": true
+          },
+          "observedAt": "2026-11-17T22:14:50.009Z",
+          "mime": "text/html",
+          "bytes": 323771,
+          "sha256": "2288dd4520d475cbfe47cb193394ea66da5d02449f77f17ab5c055c94632c34a"
+        },
+        {
+          "url": "https://feeds.bbci.co.uk/news/rss.xml",
+          "finalUrl": "https://feeds.bbci.co.uk/news/rss.xml",
+          "status": "fetched",
+          "robots": {
+            "status": "checked",
+            "allowed": true
+          },
+          "observedAt": "2026-11-17T22:14:51.508Z",
+          "mime": "text/xml; charset=utf-8",
+          "bytes": 25338,
+          "sha256": "ac8bc7ee1c4815e34b56d33a4667d74387d3e02b627eebbad1ec4d1685783f26",
+          "recentCandidateCount": 0
+        }
+      ]
+    }
+  ]
+}

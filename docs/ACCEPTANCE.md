@@ -1,28 +1,22 @@
-# 驗收證據
-2026-11-17。所有內容為 DEMO，不得當成 A18 live 通過。
+# 驗收證據 — 2026-11-18
 
-| 項目 | 結果 |
+| 項目 | 本輪證據與限制 |
 |---|---|
-| A01 同八則三版 | 離線通過 |
-| A02 Prompt / 無詞庫 | 程式與版本化 Prompt 已備；模型校準未測 |
-| A03 長度 | 24/24 通過 |
-| A04 詞彙 | 24/24 各兩詞且正文出現 |
-| A05 真實事實 | 未測；只有虛構 fixture |
-| A06 視覺 | 八則原創分類圖示；非事件照片 |
-| A07 六份兩頁 PDF | 通過頁數、DOM 邊界、全文抽取與字體檢查 |
-| A08 Web/PDF 一致 | 同 payload / shared renderer；全文比對通過 |
-| A09 即讀 | 離線讀取無模型呼叫；production 未測 |
-| A10 歷史 | 單一 DEMO 期刊可用；DB 歷史未測 |
-| A11 失敗 | cached step failure/retry 單元通過；全管線故障恢復未測 |
-| A12 冪等 | pure cache 單元通過；DB lease/atomic publication 未測 |
-| A13 權限 | SQL 與 server checks 已寫；真實角色矩陣未測 |
-| A14 裝置 | Chrome 375/768/1440 無水平溢位；面板 Escape 測試通過 |
-| A15 進度 | 手動標記、reload、local profile 分離通過；live account 切換未測 |
-| A16 時區 | UTC 22:17 對應下一台北日通過 |
-| A17 成本 | 預留額度拒絕／call cap 單元通過；真實費率、跨 runner 記帳未測 |
-| A18 Live | 未通過、未執行 |
+| A01 三版同八則 | fixture 與 intake/editorial 合約通過；live 待測 |
+| A02 Prompt / 無 Cambridge | 版本化 A1/A2/B1 Prompt；沒有詞庫依賴；Nemotron mock 通過，live 難度校準未測 |
+| A03/A04 長度／詞彙 | 24 篇通過，完整詞匹配與重複詞彙拒絕；writer 不合格最多兩次 revise |
+| A05 證據／不確定性 | claim allowlist、verbatim evidence、來源衝突／review 合約有測試；真實新聞事實驗收未完成 |
+| A06 圖片 | 八則原創圖示及 credit，沒有偽稱現場照；真實照片未驗收 |
+| A07/A08 PDF／同步 | 六份 DEMO，每份兩頁；8 篇 headline/body/詞彙可抽取，嵌入字體，body 最低字級，DOM 邊界；共享 payload，無 PDF 另改文字 |
+| A09 即讀 | Next.js build 的 DEMO 瀏覽／API／下載無外部模型請求；live 日誌待驗 |
+| A10 歷史 | DEMO 與路由驗證；DB published immutability／current revision 本機測試；雲端待驗 |
+| A11/A12 恢復／冪等 | durable cache、JSONB 排序、過期 lease、跨 runner 用量、未知帳務、六個並行 runner 只有一個取得 lease、兩個並行 reservation 只有一個過額度 |
+| A13 權限 | 本機 PostgreSQL 真正執行 RLS／RPC，anonymous/reader/inactive/admin 矩陣；Supabase Auth/PostgREST/Storage 端到端仍未測 |
+| A14/A15 裝置／已讀 | 正式 Next.js 375/768/1440；手動已讀、reload、profile、版別、重置；storage 拒絕有暫存與提示。跨真實帳戶待測 |
+| A16 時區 | UTC→Taipei 跨日單元通過；固定 fixture 日期不冒充今天 |
+| A17 成本 | reserve/settle/unknown usage 與並行日上限通過；實際 NVIDIA 費率與帳單未測 |
+| A18 Live | 未通過，沒有真實出刊；RSS 網路稽核、mock、測試 DB 的合成 publication 都不算 |
 
-PDF 字體包含 Chromium 將 variable font 轉為內嵌 Type3 CharProcs 的情況；保有 ToUnicode，正文可擷取。抽取比較使用 NFKC 將 fi/ff 連字還原。這不是把整頁截成圖片。
-詳細機器證據：output/qa-report.json、output/pdf-verification.json。
-視覺證據：output/screenshots。人工查看實際 PDF raster（Poppler）及手機截圖，沒有正文裁切。
+證據：output/app-verification.json、db-verification.json、qa-report.json、pdf-verification.json、source-audit.json，以及 app-screenshots/、screenshots/。單元與 provider 合約共 34 項。
 
+尚無學習成效證明，CEFR 是初始寫作目標。PDF 使用 NFKC 正規化 fi/ff 連字，Type3 字體須有 CharProcs 與 ToUnicode；不是整頁圖片。所有合成測試均與 production 隔離。

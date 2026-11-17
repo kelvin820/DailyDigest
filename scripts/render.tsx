@@ -1,4 +1,64 @@
-import {mkdir,readFile,writeFile} from "node:fs/promises";import {resolve} from "node:path";import {pathToFileURL} from "node:url";import {chromium} from "playwright";import {PDFDocument} from "pdf-lib";import {editionKeys} from "../config/editions";import {demoIssue} from "../fixtures/issue";import {renderPrint} from "../lib/render.mjs";import {editionSchema,type EditionView} from "../lib/schemas/edition";import {hash} from "../lib/pipeline/state.mjs";
-export async function renderIssues(issues:EditionView[],outDir:string){await mkdir(outDir,{recursive:true});const css=await readFile("app/globals.css","utf8");const browser=await chromium.launch({headless:true,executablePath:process.env.DD_CHROME||undefined});const results=[];try{const page=await browser.newPage();for(const issue of issues){editionSchema.parse(issue);for(const mode of ["color","ink"] as const){const name="DD_"+issue.issueDate+"_"+issue.edition+"_r"+issue.revision+"_"+mode;const html=resolve(outDir,name+".html");const fonts=pathToFileURL(resolve("public/fonts")).href+"/";await writeFile(html,'<!doctype html><meta charset="utf-8"><style>'+css.replaceAll("/fonts/",fonts)+'</style>'+renderPrint(issue,mode));await page.goto(pathToFileURL(html).href);await page.evaluate(()=>document.fonts.ready);await page.emulateMedia({media:"print"});const overflow=await page.locator(".print-article").evaluateAll(elements=>elements.some(e=>e.scrollHeight>e.clientHeight+1));if(overflow)throw Error("PDF_OVERFLOW:"+issue.edition);const pdf=await page.pdf({path:resolve(outDir,name+".pdf"),format:"A4",printBackground:true,preferCSSPageSize:true});const doc=await PDFDocument.load(pdf);if(doc.getPageCount()!==2)throw Error("PDF_PAGE_COUNT");results.push({edition:issue.edition,mode,pages:2,noOverflow:true,textVerified:false,fontsEmbedded:false,revision:issue.revision,issueDate:issue.issueDate,templateVersion:issue.templateVersion,contentHash:hash(issue),path:resolve(outDir,name+".pdf")})}}}finally{await browser.close()}await writeFile(resolve(outDir,"render-manifest.json"),JSON.stringify(results,null,2));return results}
-if(process.argv[1]?.endsWith("render.tsx")){await renderIssues(editionKeys.map(demoIssue),"output/preview");console.log("Rendered DEMO PDFs. Run verify-pdfs.py before acceptance.")}
+import { mkdir, readFile, writeFile, copyFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { promisify } from 'node:util';
+import { execFile } from 'node:child_process';
+import { chromium } from 'playwright';
+import { PDFDocument } from 'pdf-lib';
+import { editionKeys, editions } from '../config/editions';
+import { demoIssue } from '../fixtures/issue';
+import { renderPrint } from '../lib/render.mjs';
+import { editionSchema, type EditionView } from '../lib/schemas/edition';
+import { hash } from '../lib/pipeline/state.mjs';
+import { localServer } from '../lib/pdf/local-server.mjs';
+import { checkPrintLayout } from '../lib/pdf/print-checks.mjs';
+
+export async function renderIssues(issues: EditionView[], outDir: string) {
+  if (issues.length !== 3 || new Set(issues.map(p => p.edition)).size !== 3) throw Error('THREE_EDITIONS_REQUIRED');
+  issues.forEach(p => editionSchema.parse(p));
+  await mkdir(resolve(outDir, 'fonts'), { recursive: true });
+  for (const font of ['NotoSans-Regular.ttf', 'Newsreader.ttf', 'NotoSansTC.ttf']) {
+    await copyFile(resolve('public/fonts', font), resolve(outDir, 'fonts', font));
+  }
+  for (const license of ['OFL.txt', 'Newsreader.ttf.license.txt', 'NotoSansTC.ttf.license.txt']) {
+    await copyFile(resolve('public/fonts', license), resolve(outDir, 'fonts', license));
+  }
+  const css = (await readFile('app/globals.css', 'utf8')).replaceAll('/fonts/', 'fonts/');
+  const server = await localServer(outDir);
+  const browser = await chromium.launch({ headless: true, executablePath: process.env.DD_CHROME || undefined });
+  const results = [];
+  try {
+    const page = await browser.newPage();
+    // Print render cannot fetch arbitrary source pages, remote fonts, or model APIs.
+    await page.route('**/*', route => new URL(route.request().url()).origin === server.origin ?
+      route.continue() : route.abort());
+    for (const issue of issues) {
+      const payloadPath = resolve(outDir, issue.edition + '.json');
+      await writeFile(payloadPath, JSON.stringify(issue, null, 2));
+      for (const mode of ['color', 'ink'] as const) {
+        const name = `DD_${issue.issueDate}_${issue.edition}_r${issue.revision}_${mode}`;
+        await writeFile(resolve(outDir, name + '.html'), '<!doctype html><html lang="zh-Hant"><meta charset="utf-8">' +
+          '<style>' + css + '</style><body>' + renderPrint(issue, mode) + '</body></html>');
+        await page.goto(`${server.origin}/${name}.html`);
+        const layout = await checkPrintLayout(page, editions[issue.edition].minPrintSize);
+        const path = resolve(outDir, name + '.pdf');
+        const pdf = await page.pdf({ path, format: 'A4', printBackground: true, preferCSSPageSize: true });
+        if ((await PDFDocument.load(pdf)).getPageCount() !== 2) throw Error('PDF_PAGE_COUNT');
+        results.push({ edition: issue.edition, mode, pages: 2, noOverflow: true,
+          textVerified: false, fontsEmbedded: false, revision: issue.revision,
+          issueDate: issue.issueDate, templateVersion: issue.templateVersion, contentHash: hash(issue),
+          minimumBodyPt: editions[issue.edition].minPrintSize, layout, path, payloadPath });
+      }
+    }
+  } finally { await browser.close(); await server.close(); }
+  const manifestPath = resolve(outDir, 'render-manifest.json');
+  await writeFile(manifestPath, JSON.stringify(results, null, 2));
+  // Python verifies actual PDF text and fonts before any publication flag is true.
+  await promisify(execFile)(process.env.DD_PYTHON || 'python', ['scripts/verify-pdfs.py', '--manifest', manifestPath],
+    { timeout: 60_000 });
+  return results.map(file => ({ ...file, textVerified: true, fontsEmbedded: true }));
+}
+if (process.argv[1]?.endsWith('render.tsx')) {
+  await renderIssues(editionKeys.map(demoIssue), 'output/preview');
+  console.log('Verified six DEMO PDFs: two pages, full text, embedded fonts, body sizes and layout.');
+}
 

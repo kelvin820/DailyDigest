@@ -6,3 +6,9 @@ and must_keep. Preserve uncertainty and distinguish publishing and event dates.
 If important political/business claims have fewer than two independent sources,
 mark sensitivity high and require human review. Do not invent quotes or dates.
 Return only the requested JSON schema. If evidence conflicts, record the conflict.
+Return claims, event_date (nullable), uncertainties, sensitivity, evidence_quotes.
+Each evidence_quotes item has source_id and a verbatim quote (30-1000 characters)
+copied from that input source. Each claim's evidence_ref is an input source_id.
+Include a supporting quote for each used source. Do not invent or paraphrase quotes.
+Do not output URLs, source publication dates, licensing or image metadata;
+the application joins those from approved source records.

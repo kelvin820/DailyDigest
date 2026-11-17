@@ -8,6 +8,6 @@ await writeFile(new URL(edition+".html",out),shell(html,script))}
 await writeFile(new URL("index.html",out),'<meta http-equiv="refresh" content="0;url=elementary.html">');
 await writeFile(new URL("issues.html",out),shell('<main class="panel"><a href="elementary.html">← 返回報紙</a><h1>The archive</h1><p>只有一份 DEMO 樣刊；沒有真實發布紀錄。</p>'+Object.entries(themes).map(([e,c])=>'<p><a href="'+e+'.html">2026-11-17 · '+c.label+' · DEMO R1</a></p>').join("")+'</main>'));
 await writeFile(new URL("admin.html",out),shell('<main class="panel"><a href="elementary.html">← 返回報紙</a><h1>編輯室 / DEMO</h1><p class="status">未接通 Supabase、LLM 與 GitHub。以下為離線驗證成果，不代表已發布。</p><table><tr><th>階段</th><th>狀態</th></tr><tr><td>八則 × 三版樣刊</td><td>可預覽</td></tr><tr><td>來源、事實與 LLM 審稿</td><td>尚未執行</td></tr><tr><td>真人校準、三期試用</td><td>尚未執行</td></tr></table><p>須設定：Supabase URL／金鑰、邀請管理員、LLM 供應商／模型／金鑰、GitHub repo、Vercel 專案及預算。</p><button disabled>真實出刊未啟用</button></main>'));
-await mkdir(new URL("fonts/",out),{recursive:true});for(const f of ["NotoSansTC.ttf","Newsreader.ttf","NotoSans-Regular.ttf"])try{await copyFile(new URL("../public/fonts/"+f,import.meta.url),new URL("fonts/"+f,out))}catch{}
+await mkdir(new URL("fonts/",out),{recursive:true});for(const f of ["NotoSansTC.ttf","Newsreader.ttf","NotoSans-Regular.ttf","OFL.txt","Newsreader.ttf.license.txt","NotoSansTC.ttf.license.txt"]){await copyFile(new URL("../public/fonts/"+f,import.meta.url),new URL("fonts/"+f,out))}
 console.log("Offline DEMO built: output/preview");
 
