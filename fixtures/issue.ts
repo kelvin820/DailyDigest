@@ -1,0 +1,1 @@
+import stories from './stories.json';import {makeDemo} from '../lib/content/core.mjs';import {editionSchema} from '../lib/schemas/edition';import type {Edition} from '../config/editions';export const DEMO_DATE='2026-11-17';export const demoIssue=(edition:Edition)=>editionSchema.parse(makeDemo(stories,edition));

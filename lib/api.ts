@@ -1,0 +1,3 @@
+import {NextResponse} from "next/server";export const json=(data:unknown,status=200)=>NextResponse.json(data,{status,headers:{"Cache-Control":"private, no-store"}});export function apiError(e:unknown){const message=e instanceof Error?e.message:"Unknown";const status=message==="UNAUTHORIZED"?401:message==="FORBIDDEN"?403:message.includes("NOT_CONFIGURED")?503:400;return json({error:status===400?"REQUEST_FAILED":message},status)}
+export function checkOrigin(req:Request){const expected=new URL(process.env.APP_URL||"http://localhost:3000").origin;if(req.headers.get("origin")!==expected)throw Error("FORBIDDEN")}
+

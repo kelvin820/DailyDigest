@@ -1,0 +1,1 @@
+import {renderPrint} from '../../lib/render.mjs';import type {EditionView} from '../../lib/schemas/edition';export function PrintEdition({issue,mode}:{issue:EditionView;mode:'color'|'ink'}){return <div dangerouslySetInnerHTML={{__html:renderPrint(issue,mode)}}/>}

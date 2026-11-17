@@ -1,0 +1,55 @@
+name: Daily Digest
+on:
+  schedule:
+    - cron: '17 22 * * *'
+    - cron: '17 23 * * *'
+  workflow_dispatch:
+    inputs:
+      issue_date:
+        description: 'YYYY-MM-DD Taipei; empty means today'
+        type: string
+      resume:
+        type: boolean
+        default: true
+      draft_only:
+        type: boolean
+        default: true
+      force_new_revision:
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: dayday-production
+  cancel-in-progress: false
+jobs:
+  digest:
+    # Intentionally disabled until real E2E, DB lease integration and credentials pass.
+    if: vars.DD_PIPELINE_ACCEPTED == 'true' && github.ref_name == github.event.repository.default_branch
+    environment: production
+    timeout-minutes: 45
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Preflight
+        run: node scripts/preflight.mjs
+      - run: pnpm pipeline
+        env:
+          ISSUE_DATE: ${{ inputs.issue_date }}
+          LIVE_GENERATION_ENABLED: 'true'
+          PUBLISH_MODE: review
+          LLM_PROVIDER: ${{ vars.LLM_PROVIDER }}
+          LLM_BASE_URL: ${{ vars.LLM_BASE_URL }}
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          WRITER_MODEL: ${{ vars.WRITER_MODEL }}
+          REVIEWER_MODEL: ${{ vars.REVIEWER_MODEL }}
+          DAILY_BUDGET_USD: ${{ vars.DAILY_BUDGET_USD }}
+

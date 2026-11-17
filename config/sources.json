@@ -1,0 +1,60 @@
+[
+  {
+    "name": "NASA",
+    "domain": "www.nasa.gov",
+    "feed_urls": [
+      "https://www.nasa.gov/feed/"
+    ],
+    "categories": [
+      "science",
+      "technology"
+    ],
+    "language": "en",
+    "discovery_enabled": false,
+    "fetch_enabled": false,
+    "rewrite_policy": "unknown",
+    "image_policy": "individual_review",
+    "terms_url": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+    "reviewed_at": null,
+    "status": "pending",
+    "rate_limit": 1
+  },
+  {
+    "name": "NOAA",
+    "domain": "www.noaa.gov",
+    "feed_urls": [],
+    "categories": [
+      "nature"
+    ],
+    "language": "en",
+    "discovery_enabled": false,
+    "fetch_enabled": false,
+    "rewrite_policy": "unknown",
+    "image_policy": "individual_review",
+    "terms_url": "https://www.noaa.gov/office-education/outreach-communication/faq",
+    "reviewed_at": null,
+    "status": "pending",
+    "rate_limit": 1
+  },
+  {
+    "name": "BBC discovery",
+    "domain": "feeds.bbci.co.uk",
+    "feed_urls": [
+      "https://feeds.bbci.co.uk/news/rss.xml"
+    ],
+    "categories": [
+      "world",
+      "business",
+      "culture"
+    ],
+    "language": "en",
+    "discovery_enabled": false,
+    "fetch_enabled": false,
+    "rewrite_policy": "restricted",
+    "image_policy": "not_allowed",
+    "terms_url": "https://www.bbc.co.uk/usingthebbc/terms/",
+    "reviewed_at": null,
+    "status": "pending",
+    "rate_limit": 1
+  }
+]

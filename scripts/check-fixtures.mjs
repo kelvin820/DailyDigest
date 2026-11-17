@@ -1,0 +1,1 @@
+import {readFileSync} from "node:fs";import {makeDemo,stats} from "../lib/content/core.mjs";const s=JSON.parse(readFileSync(new URL("../fixtures/stories.json",import.meta.url)));for(const edition of ["elementary","junior","senior"]){try{const p=makeDemo(s,edition);console.log(edition,p.articles.map(a=>a.wordCount))}catch(e){console.error(edition,e.message);process.exitCode=1}}
