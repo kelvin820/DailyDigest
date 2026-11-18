@@ -6,7 +6,7 @@ import {factSchema} from '../lib/schemas/editorial';
 import {articleSchema,type EditionView} from '../lib/schemas/edition';
 import {safeFetch} from '../lib/content/safe-fetch.mjs';
 import {Budget,hash} from '../lib/pipeline/state.mjs';
-import {NvidiaProvider,DEFAULT_NEMOTRON_MODEL} from '../lib/providers/text';
+import {NvidiaProvider} from '../lib/providers/text';
 import {generateNvidiaImage} from '../lib/providers/image';
 import {produceEditions} from '../lib/pipeline/editorial';
 import {validatedPreviewCheckpoints} from '../lib/preview/checkpoints';
@@ -18,12 +18,13 @@ import {editionKeys,editions} from '../config/editions';
 import {DAILY_STORY_COUNT} from '../config/issue-settings.mjs';
 import {renderIssues} from './render';
 
+const TRIAL_TEXT_MODEL='nvidia/nemotron-3-ultra-550b-a55b';
 const plan=JSON.parse(await readFile('config/trial-2026-11-19.json','utf8'));
 if(plan.storyCount!==DAILY_STORY_COUNT||plan.stories.length!==4)throw Error('TRIAL_PLAN_COUNT_MISMATCH');
 const directory=resolve('output/daily-production-trial');await mkdir(directory,{recursive:true});
 const key=process.env.LLM_API_KEY?.trim()||'';
 const save=async(name:string,value:unknown)=>{const text=JSON.stringify(value,null,2);if(key&&text.includes(key))throw Error('SECRET_IN_OUTPUT');await writeFile(resolve(directory,name),text);};
-const context={contract:'real-source-four-story-trial-v1',planHash:hash(plan),model:DEFAULT_NEMOTRON_MODEL};
+const context={contract:'real-source-four-story-trial-v1',planHash:hash(plan),model:TRIAL_TEXT_MODEL};
 const records:Record<string,unknown>=Object.create(null),initial=new Set<string>(),read=new Set<string>(),written=new Set<string>();
 const budget=new Budget({usd:2,maxCalls:70,maxTokens:150000,inputRate:undefined,outputRate:undefined});
 let facts:z.infer<typeof factSchema>[]=[],issues:EditionView[]=[],reviews:unknown[]=[],errorCode:string|null=null,pdfVerified=false;
@@ -32,7 +33,7 @@ try{
   if(process.env.TRIAL_RESUME_DIR){
     const previous=resolve(process.env.TRIAL_RESUME_DIR);
     const previousContext=JSON.parse(await readFile(resolve(previous,'context.json'),'utf8'));
-    if(hash(previousContext)!==hash(context)){const previousReport=JSON.parse(await readFile(resolve(previous,'report.json'),'utf8'));if(previousReport.totalModelCalls!==0||previousReport.modelRequestAttempts!==0||previousReport.imageAttempts!==0)throw Error('TRIAL_CONTEXT_MISMATCH');}
+    if(previousContext.contract!==context.contract||previousContext.planHash!==context.planHash){const previousReport=JSON.parse(await readFile(resolve(previous,'report.json'),'utf8'));if(previousReport.totalModelCalls!==0||previousReport.modelRequestAttempts!==0||previousReport.imageAttempts!==0)throw Error('TRIAL_CONTEXT_MISMATCH');}
     const imported=validatedPreviewCheckpoints(JSON.parse(await readFile(resolve(previous,'checkpoints.json'),'utf8')));
     for(const [k,v]of Object.entries(imported)){records[k]=v;initial.add(k);}
     const prior=JSON.parse(await readFile(resolve(previous,'report.json'),'utf8'));
@@ -69,7 +70,7 @@ try{
   const invalidReplies:unknown[]=[];
   const provider=new NvidiaProvider(key,budget,async reply=>{invalidReplies.push(reply);await save('invalid-responses.json',invalidReplies);});
   const store={get:async(k:string)=>{read.add(k);return records[k];},set:async(k:string,value:unknown)=>{records[k]=value;written.add(k);await save('checkpoints.json',records);console.log('Checkpoint:',k);}};
-  const generated=await produceEditions({facts,issueDate:plan.issueDate,revision:1,provider,store,writerModel:DEFAULT_NEMOTRON_MODEL,reviewerModel:DEFAULT_NEMOTRON_MODEL});
+  const generated=await produceEditions({facts,issueDate:plan.issueDate,revision:1,provider,store,writerModel:TRIAL_TEXT_MODEL,reviewerModel:TRIAL_TEXT_MODEL});
   issues=generated.editions.map(issue=>({...issue,reviewCopy:true}));reviews=generated.reviews;
   await save('reviews.json',reviews);
   const photo:AssetRecord={kind:'event_photo',alt:'Two NIST researchers with safety glasses working beside laser equipment.',caption:'NIST researchers in the laboratory. Photo: Riley Wilson/NIST.',
@@ -108,7 +109,7 @@ try{
 const complete=!errorCode&&pdfVerified&&issues.length===3&&issues.every(i=>i.articles.length===4)&&reviews.length===12;
 const report={status:complete?'review_copy_ready':'needs_review',issueDate:plan.issueDate,generatedAt:new Date().toISOString(),storyCount:4,
   generatedArticles:issues.reduce((n,i)=>n+i.articles.length,0),reviewRecords:reviews.length,sourcePagesRead:sourceReads,sourceSnapshotsUsed,
-  model:DEFAULT_NEMOTRON_MODEL,modelRequestAttempts:budget.calls,reusedModelSteps:[...read].filter(k=>initial.has(k)&&!written.has(k)).length,
+  model:TRIAL_TEXT_MODEL,modelRequestAttempts:budget.calls,reusedModelSteps:[...read].filter(k=>initial.has(k)&&!written.has(k)).length,
   totalModelCalls:priorModelCalls+budget.calls,totalTokens:priorTokens+budget.tokens,
   costStatus:'cost_unknown',estimatedUsd:null,ledger:budget.ledger,imageAttempts,pdfVerified,media,errorCode,
   databaseWritten:false,published:false,automaticScheduleEnabled:false,sourceSelection:plan.sourceSelection,
