@@ -18,5 +18,24 @@
         "to": "Contemporary poetry will also be included."
       }
     ]
+  },
+  {
+    "storyId": "trial-quantum",
+    "edition": "junior",
+    "writerOutputHash": "07a308260613ea588bde849e5b2f7de5fa902011ac27a81873338de705739386",
+    "reason": "Developer glossary calibration: choose useful A2 process verbs appearing in this actual draft instead of specialist photon terminology; re-review both definitions.",
+    "replacements": [],
+    "vocabulary": [
+      {
+        "term": "verify",
+        "definitionEn": "to check that something is true or correct",
+        "meaningZhHant": "核實；查證"
+      },
+      {
+        "term": "protect",
+        "definitionEn": "to keep someone or something safe",
+        "meaningZhHant": "保護"
+      }
+    ]
   }
 ]

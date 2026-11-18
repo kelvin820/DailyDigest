@@ -28,7 +28,7 @@ const context={contract:'real-source-four-story-trial-v1',planHash:hash(plan),mo
 const records:Record<string,unknown>=Object.create(null),initial=new Set<string>(),read=new Set<string>(),written=new Set<string>();
 const budget=new Budget({usd:2,maxCalls:70,maxTokens:150000,inputRate:undefined,outputRate:undefined});
 let facts:z.infer<typeof factSchema>[]=[],issues:EditionView[]=[],reviews:unknown[]=[],errorCode:string|null=null,pdfVerified=false;
-let resumedFacts=false;let priorModelCalls=0,priorTokens=0;let sourceReads=0,sourceSnapshotsUsed=0,imageAttempts=0;const imageReservations:string[]=[];let media:unknown=null;
+let resumedFacts=false;let priorModelCalls=0,priorTokens=0;let sourceReads=0,sourceSnapshotsUsed=0,imageAttempts=0;const appliedCorrections:unknown[]=[];const imageReservations:string[]=[];let media:unknown=null;
 try{
   if(process.env.TRIAL_RESUME_DIR){
     const previous=resolve(process.env.TRIAL_RESUME_DIR);
@@ -44,7 +44,7 @@ try{
     const state=JSON.parse(await readFile(resolve(previous,'image-reservations.json'),'utf8'));
     if(!Array.isArray(state)||state.length>6||new Set(state).size!==state.length||state.some(id=>!editionKeys.some(e=>plan.stories.some((s:{id:string})=>e+':trial-'+s.id===id))))throw Error('TRIAL_IMAGE_STATE_INVALID');
     imageReservations.push(...state);
-    for(const file of ['assets','selected-images.json'])try{await cp(resolve(previous,file),resolve(directory,file),{recursive:true});}catch{/* optional unfinished media */}
+    for(const file of ['assets','selected-images.json','editor-corrections.json'])try{await cp(resolve(previous,file),resolve(directory,file),{recursive:true});}catch{/* optional unfinished media */}
   }
   await save('context.json',context);await save('image-reservations.json',imageReservations);
   const evidence=[];
@@ -71,13 +71,14 @@ try{
   const provider=new NvidiaProvider(key,budget,async reply=>{invalidReplies.push(reply);await save('invalid-responses.json',invalidReplies);});
   const historical=process.env.TRIAL_REVIEW_RECOVERY_DIR?validatedPreviewCheckpoints(JSON.parse(await readFile(resolve(process.env.TRIAL_REVIEW_RECOVERY_DIR,'checkpoints.json'),'utf8'))):{};
   const store={reviewedCandidates:async(storyId:string,edition:string)=>[0,1,2].map(attempt=>({writer:historical[`${storyId}:${edition}:write:${attempt}`],review:historical[`${storyId}:${edition}:review:${attempt}`]})),get:async(k:string)=>{read.add(k);return records[k];},set:async(k:string,value:unknown)=>{records[k]=value;written.add(k);await save('checkpoints.json',records);console.log('Checkpoint:',k);}};
-  const corrections=JSON.parse(await readFile('config/trial-editor-corrections.json','utf8')) as {storyId:string;edition:string;writerOutputHash:string;reason:string;replacements:{from:string;to:string}[]}[];
-  const appliedCorrections:unknown[]=[];
+  const corrections=JSON.parse(await readFile('config/trial-editor-corrections.json','utf8')) as {storyId:string;edition:string;writerOutputHash:string;reason:string;replacements:{from:string;to:string}[];vocabulary?:{term:string;definitionEn:string;meaningZhHant:string}[]}[];
+  try{const prior=JSON.parse(await readFile(resolve(directory,'editor-corrections.json'),'utf8'));if(!Array.isArray(prior)||prior.some(p=>!corrections.some(c=>hash(c)===hash(p))))throw Error('EDITOR_CORRECTION_STATE_INVALID');appliedCorrections.push(...prior);}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
   const generated=await produceEditions({editorPolicyHash:hash(corrections),editDraft:async input=>{
     const correction=corrections.find(c=>c.storyId===input.storyId&&c.edition===input.edition&&c.writerOutputHash===input.outputHash);
     if(!correction)return input.data;const data=structuredClone(input.data);
     for(const replacement of correction.replacements){let changed=0;data.body_paragraphs=data.body_paragraphs.map(p=>{if(!p.includes(replacement.from))return p;changed++;return p.replace(replacement.from,replacement.to);});if(changed!==1)throw Error('EDITOR_CORRECTION_CONTEXT_MISMATCH');}
-    appliedCorrections.push(correction);await save('editor-corrections.json',appliedCorrections);return data;
+    if(correction.vocabulary)data.vocabulary=correction.vocabulary;
+    if(!appliedCorrections.some(c=>hash(c)===hash(correction)))appliedCorrections.push(correction);await save('editor-corrections.json',appliedCorrections);return data;
   },facts,issueDate:plan.issueDate,revision:1,provider,store,writerModel:TRIAL_TEXT_MODEL,reviewerModel:TRIAL_TEXT_MODEL});
   issues=generated.editions.map(issue=>({...issue,reviewCopy:true}));reviews=generated.reviews;
   await save('reviews.json',reviews);
@@ -117,7 +118,7 @@ try{
 const complete=!errorCode&&pdfVerified&&issues.length===3&&issues.every(i=>i.articles.length===4)&&reviews.length===12;
 const report={status:complete?'review_copy_ready':'needs_review',issueDate:plan.issueDate,generatedAt:new Date().toISOString(),storyCount:4,
   generatedArticles:issues.reduce((n,i)=>n+i.articles.length,0),reviewRecords:reviews.length,sourcePagesRead:sourceReads,sourceSnapshotsUsed,
-  model:TRIAL_TEXT_MODEL,modelRequestAttempts:budget.calls,reusedModelSteps:[...read].filter(k=>initial.has(k)&&!written.has(k)).length,
+  model:TRIAL_TEXT_MODEL,editorCorrectionsApplied:appliedCorrections.length,editorCorrectionRecord:appliedCorrections.length?'editor-corrections.json':null,modelRequestAttempts:budget.calls,reusedModelSteps:[...read].filter(k=>initial.has(k)&&!written.has(k)).length,
   totalModelCalls:priorModelCalls+budget.calls,totalTokens:priorTokens+budget.tokens,
   costStatus:'cost_unknown',estimatedUsd:null,ledger:budget.ledger,imageAttempts,pdfVerified,media,errorCode,
   databaseWritten:false,published:false,automaticScheduleEnabled:false,sourceSelection:plan.sourceSelection,
@@ -126,7 +127,7 @@ const report={status:complete?'review_copy_ready':'needs_review',issueDate:plan.
     'Image reservation is serialized by the manual workflow and resumed artifacts; the hosted daily image budget is not yet verified.']};
 await save('checkpoints.json',records);await save('report.json',report);
 const css=(await readFile('app/globals.css','utf8')).replaceAll('/fonts/','fonts/');
-for(const issue of issues){const c=editions[issue.edition];await writeFile(resolve(directory,issue.edition+'.html'),`<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DayDay 四篇試產 · ${esc(c.label)}</title><style>${css}</style><body><main class="newspaper ${issue.edition}" style="--paper:${c.paper};--accent:${c.accent}"><nav>${editionKeys.map(e=>`<a href="${e}.html">${esc(editions[e].label)}</a>`).join(' · ')}</nav><header class="masthead"><div class="masthead-top">FOUR STORIES. EVERY DAY. YOUR LEVEL.</div><h1>${issue.edition==='senior'?'DAILY DIGEST':'<span class="masthead-wordmark">DAILY DIGEST</span>'}<span>by DayDay</span></h1><div class="dateline">${plan.issueDate} · ${esc(c.cefr)} · REVIEW COPY</div></header><div class="notice"><b>真實來源試產 · 待審未發布</b>每天四篇、同事件三種難度。NVIDIA 實際生成與模型複核；仍需開發者審閱。</div><p>${['color','ink'].map(mode=>pdfVerified?`<a href="DD_${plan.issueDate}_${issue.edition}_r1_${mode}.pdf">${mode==='color'?'彩色':'省墨'} PDF（兩頁）</a>`:'PDF 未通過').join(' · ')} · <a href="report.json">試產紀錄</a></p><section class="article-grid">${issue.articles.map(a=>'<article class="article">'+renderArticle(a)+'<p>正文 '+a.wordCount+' 字</p></article>').join('')}</section><footer>DayDay · 真實來源試產，不代表正式發布</footer></main><script src="media-fallback.js" defer></script></body></html>`);}
+for(const issue of issues){const c=editions[issue.edition];await writeFile(resolve(directory,issue.edition+'.html'),`<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DayDay 四篇試產 · ${esc(c.label)}</title><style>${css}</style><body><main class="newspaper ${issue.edition}" style="--paper:${c.paper};--accent:${c.accent}"><nav>${editionKeys.map(e=>`<a href="${e}.html">${esc(editions[e].label)}</a>`).join(' · ')}</nav><header class="masthead"><div class="masthead-top">FOUR STORIES. EVERY DAY. YOUR LEVEL.</div><h1>${issue.edition==='senior'?'DAILY DIGEST':'<span class="masthead-wordmark">DAILY DIGEST</span>'}<span>by DayDay</span></h1><div class="dateline">${plan.issueDate} · ${esc(c.cefr)} · REVIEW COPY</div></header><div class="notice"><b>真實來源試產 · 待審未發布</b>每天四篇、同事件三種難度。NVIDIA 生成與模型複核；${appliedCorrections.length?'含編輯校稿，原稿與修正另存紀錄；':''}仍需開發者審閱。</div><p>${['color','ink'].map(mode=>pdfVerified?`<a href="DD_${plan.issueDate}_${issue.edition}_r1_${mode}.pdf">${mode==='color'?'彩色':'省墨'} PDF（兩頁）</a>`:'PDF 未通過').join(' · ')} · <a href="report.json">試產紀錄</a></p><section class="article-grid">${issue.articles.map(a=>'<article class="article">'+renderArticle(a)+'<p>正文 '+a.wordCount+' 字</p></article>').join('')}</section><footer>DayDay · 真實來源試產，不代表正式發布</footer></main><script src="media-fallback.js" defer></script></body></html>`);}
 if(issues.length){await cp('public/media-fallback.js',resolve(directory,'media-fallback.js'));await writeFile(resolve(directory,'index.html'),'<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=elementary.html"><a href="elementary.html">四篇待審刊</a>');}
 console.log(JSON.stringify({status:report.status,errorCode,modelCalls:budget.calls,generatedArticles:report.generatedArticles,pdfVerified,published:false}));
 if(!complete)process.exitCode=1;
