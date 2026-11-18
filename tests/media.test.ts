@@ -62,7 +62,7 @@ test('NVIDIA image adapter issues one fixed-endpoint request, accepts one raster
     assert.deepEqual(Object.keys(body).sort(),['height','prompt','steps','width']);
     return new Response(JSON.stringify({artifacts:[{base64:png.toString('base64')}]}));
   };
-  assert.equal((await generateNvidiaImage('test-key',{fetcher})).mime,'image/png');assert.equal(calls,1);
+  assert.equal((await generateNvidiaImage('test-key',{fetcher,model:'black-forest-labs/flux.2-klein-4b'})).mime,'image/png');assert.equal(calls,1);
   await assert.rejects(generateNvidiaImage('test-key',{fetcher:async()=>{calls++;return new Response('sensitive error',{status:410});}}),/^Error: IMAGE_HTTP_410$/);
   assert.equal(calls,2);
   await assert.rejects(generateNvidiaImage('test-key',{fetcher:async()=>new Response(JSON.stringify({artifacts:[{base64:'PHN2Zy8+'}]}))}),/IMAGE_MIME_REJECTED/);
@@ -75,7 +75,7 @@ test('HTTP 200 with a provider error is rejected; response diagnostics exclude c
     onDiagnostic:value=>diagnostics.push(value),
   }),/^Error: IMAGE_PROVIDER_REJECTED$/);
   assert.deepEqual(diagnostics,[{httpStatus:200,hasArtifacts:false,artifactCount:0,hasProviderError:true,
-    hasImage:false,finishReason:null,validationFields:[],steps:4}]);
+    hasImage:false,finishReason:null,validationFields:[],steps:50}]);
   assert.doesNotMatch(JSON.stringify(diagnostics),/private-key|sensitive/);
 });
 

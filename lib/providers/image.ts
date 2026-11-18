@@ -1,7 +1,7 @@
 // A manual, one-image NVIDIA smoke test. No automatic publication or retries.
-export const NVIDIA_IMAGE_MODEL='black-forest-labs/flux.2-klein-4b';
+export const NVIDIA_IMAGE_MODEL='black-forest-labs/flux-3-image-klein';
 export const NVIDIA_IMAGE_MODELS=[NVIDIA_IMAGE_MODEL,'stabilityai/stable-diffusion-xl',
-  'stabilityai/stable-diffusion-3-medium','black-forest-labs/flux-3-image-klein'] as const;
+  'stabilityai/stable-diffusion-3-medium','black-forest-labs/flux.2-klein-4b'] as const;
 export type NvidiaImageModel=typeof NVIDIA_IMAGE_MODELS[number];
 export const SIMPLE_PARK_IMAGE_PROMPT='A watercolor painting of a public park with green trees, an empty bench and a winding path.';
 export const NVIDIA_OFFICIAL_IMAGE_SAMPLE='a simple coffee shop interior';

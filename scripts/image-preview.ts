@@ -10,6 +10,7 @@ import {renderIssues} from './render';
 import {demoIssue} from '../fixtures/issue';
 import {editionKeys} from '../config/editions';
 import {esc} from '../lib/render.mjs';
+import {selectIssueImages,shareSelectedImages} from '../lib/media/select';
 
 const {values}=parseArgs({options:{out:{type:'string',default:'output/image-preview'},
   comparison:{type:'string'},photo:{type:'string'},illustration:{type:'string'},nvidia:{type:'string'},'skip-pdf':{type:'boolean',default:false}}});
@@ -54,6 +55,18 @@ if(values.nvidia){
 const issues=z.array(z.custom<PreviewEdition>()).parse(JSON.parse(await readFile(resolve(comparison,'display-editions.json'),'utf8')));
 if(issues.length!==3||new Set(issues.map(i=>i.edition)).size!==3||issues.some(i=>!i.isDemo||i.articles.length!==1))throw Error('VERIFIED_SINGLE_STORY_COMPARISON_REQUIRED');
 issues.forEach(issue=>issue.articles.forEach(a=>articleSchema.parse(a)));
+const autoSelections=await selectIssueImages({stories:[{storyId:issues[0].articles[0].storyId,
+  category:issues[0].articles[0].category,illustrationUseful:true,conceptSafe:true,candidates:[
+    {id:'authorized-photo',relevant:true,record:photoRecord},
+    {id:'existing-concept',relevant:true,record:Object.fromEntries(Object.entries(generated.manifest).filter(([key])=>
+      ['kind','alt','caption','author','publisher','credit','licenseCode','licenseUrl','sourcePage','originalUrl',
+        'rightsConfirmed','photographedAt','generation'].includes(key)))},
+  ]}],loadCandidate:async candidate=>candidate.id==='authorized-photo'?photo.image:generated.image});
+const autoIssues=shareSelectedImages(issues,autoSelections);
+if(autoSelections[0].reason!=='existing_file_photo'||autoSelections[0].generationAttempted)throw Error('PHOTO_FIRST_DEMO_POLICY_FAILED');
+const primaryGenerated=variants.find(v=>v.key==='nvidia')||variants.find(v=>v.key==='generated')!;
+variants.unshift({key:'auto',label:'自動選圖',image:photo.image,
+  provenance:'這篇已找到合適的 CC0 資料照片，因此直接使用照片，不需呼叫生圖 API。其他插畫頁為獨立比較測試。'});
 const report:PreviewReport=JSON.parse(await readFile(resolve(comparison,'report.json'),'utf8'));
 report.developerNotes=[...(report.developerNotes||[]),'國中顯示稿已將原 API 詞義「蠔粉」修正為「蠟筆」，原始回應保留於 checkpoints.json。'];
 const css=(await readFile('app/globals.css','utf8'))+'\n.image-tools{border-block:1px solid #20201e55;padding:18px 0;margin:18px 0}.image-tools nav{display:flex;flex-wrap:wrap;gap:10px}.image-tools nav a{padding:8px 12px;border:1px solid #20201e55;text-decoration:none}.image-tools nav a[aria-current=page]{background:var(--accent);color:white}.image-tools p{font-size:12px;line-height:1.65}.image-tools h2{font:26px Georgia,serif;margin:0 0 16px}';
@@ -62,20 +75,21 @@ await copyFile('public/media-fallback.js',resolve(directory,'media-fallback.js')
 for(const file of ['report.json','checkpoints.json','developer-corrections.json']){
   await copyFile(resolve(comparison,file),resolve(directory,file));
 }
-const pdfVariants=['photo',variants[0].key];
+const pdfVariants=['photo',primaryGenerated.key];
 for(const variant of variants){
   for(const issue of issues){
-    const updated=structuredClone(issue);
+    const updated=structuredClone(variant.key==='auto'?autoIssues.find(i=>i.edition===issue.edition)!:issue);
     if(variant.image)updated.articles[0].image=variant.image;
-    const pdfKey=variant.key==='photo'?'photo':pdfVariants[1];
+    const pdfKey=variant.image?.kind==='file_photo'?'photo':pdfVariants[1];
+    const pdfLabel=pdfKey==='photo'?'資料照片':primaryGenerated.label;
     const pdfName=`DD_${issue.issueDate}_${issue.edition}_r1_`;
     const tools='<section class="image-tools" aria-label="圖片測試"><h2>配圖實驗室</h2><nav>'+variants.map(v=>
       `<a href="${issue.edition}-${v.key}.html"${v.key===variant.key?' aria-current="page"':''}>${esc(v.label)}</a>`).join('')+
       '</nav><p>'+esc(variant.provenance)+'</p><p>三版共用同一圖檔，保留原表頭與正文。'+
-      (values['skip-pdf']?'PDF 尚未執行。':`兩頁虛構樣刊：<a href="pdf-${pdfKey}/${pdfName}color.pdf">彩色 PDF</a> · <a href="pdf-${pdfKey}/${pdfName}ink.pdf">省墨 PDF</a>（八篇舊樣稿，僅第一篇測配圖）`)+
+      (values['skip-pdf']?'PDF 尚未執行。':`兩頁虛構樣刊（配圖：${esc(pdfLabel)}）：<a href="pdf-${pdfKey}/${pdfName}color.pdf">彩色 PDF</a> · <a href="pdf-${pdfKey}/${pdfName}ink.pdf">省墨 PDF</a>（八篇舊樣稿，僅第一篇測配圖）`)+
       '</p><details><summary>來源與測試記錄</summary><p><a href="image-report.json">圖片處理記錄</a> · '+
       (nvidiaReport?'<a href="nvidia-image-report.json">NVIDIA 圖片 API 結果</a> · ':'')+
-      '<a href="../nemotron/elementary">原文字生成比較</a></p></details></section>';
+      '<a href="../nemotron/elementary">原文字生成比較</a> · <a href="../image-probes/">圖片 API 實測</a></p></details></section>';
     let html=previewHtml(updated,report,css);
     html=html.replace(/href="(elementary|junior|senior)\.html"/g,(_match,key)=>`href="${key}-${variant.key}.html"`)
       .replace(/<div class="preview-meta">([\s\S]*?)<\/div>/,(_match,content)=>tools+'<details class="preview-review"><summary>文字生成來源與用量</summary><div class="preview-meta">'+content+'</div></details>')
@@ -99,6 +113,7 @@ if(!values['skip-pdf'])for(const key of pdfVariants){
 }
 await writeFile(resolve(directory,'image-report.json'),JSON.stringify({status:'image_demo',isDemo:true,
   generatedAt:new Date().toISOString(),variants:variants.map(v=>({key:v.key,provenance:v.provenance,assetId:v.image?.assetId??'world'})),
-  photo:photo.manifest,toolIllustration:generated.manifest,nvidiaReport,pdfVerified:!values['skip-pdf'],
+  photo:photo.manifest,toolIllustration:generated.manifest,nvidiaReport,autoSelections,
+  newImageApiCallsInThisBuild:0,pdfVerified:!values['skip-pdf'],
   pdfResults,databaseWritten:false,published:false,automaticImageGenerationEnabled:false},null,2));
 console.log('Image preview built: '+variants.length+' choices × 3 editions; '+pdfResults.length*6+' verified two-page DEMO PDFs.');

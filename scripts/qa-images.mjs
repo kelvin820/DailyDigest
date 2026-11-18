@@ -32,7 +32,7 @@ try{
     if(variant!=='icon'){
       assert.equal(state.image.length,1);assert.ok(state.image[0].width<=1200&&state.image[0].height<=1200);
       if(sharedIds.has(variant))assert.equal(state.id,sharedIds.get(variant));else sharedIds.set(variant,state.id);
-      assert.match(state.image[0].caption,variant==='photo'?/資料照片 · 非本次現場/:/AI illustration/);
+      assert.match(state.image[0].caption,['auto','photo'].includes(variant)?/資料照片 · 非本次現場/:/AI illustration/);
     }
     assert.ok(state.body.length>100);checks.push({edition,variant,width,passed:true,assetId:state.id??'world'});
     if(width===375||width===1440)await page.screenshot({path:resolve(directory,'qa',`${edition}-${variant}-${width}.png`),fullPage:true});

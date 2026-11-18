@@ -1,6 +1,6 @@
 # 集中設定清單
 
-圖片測試現況：私人 DEMO 已有實際工具生成的插畫與授權資料照，不需要先新增金鑰即可試閱。現有 NVIDIA Secret 已實測圖片端點，尚未取得可用輸出，詳見 IMAGE_PREVIEW_RESULT.md；不要為此重貼 key 或誤以為單純缺憑證。`IMAGE_PROVIDER`／`IMAGE_API_KEY`／`IMAGE_MODEL` 的正式自動化設定、每日兩張跨 runner 額度及私有 Storage 驗證仍待後續接線，目前保持關閉。
+目前依使用者決定採 NVIDIA 主線：既有 `LLM_API_KEY` 已驗證 Nemotron 文字與 FLUX 3 圖片，不需重設。Google 的 `GEMINI_API_KEY` 已存在，但 Nano Banana 回免費層配額 0；Google 測試暫停，沒有要求現在開啟計費或購買方案。最新結果見 PROVIDER_PREVIEW_STATUS.md。
 
 使用者已決定先用 NVIDIA Nemotron。以下項目仍需設定；金鑰勿貼聊天。
 

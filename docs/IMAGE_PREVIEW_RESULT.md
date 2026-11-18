@@ -1,5 +1,7 @@
 # 圖片測試 — 2026-11-18（台北）
 
+**最新進展：NVIDIA FLUX 3 Image Klein 已實際生成咖啡店與公園水彩，經下載／解碼／目視通過，並接入閱讀與 PDF 樣刊。** `/images/` 預設先用授權照片，另可切到 NVIDIA 插畫；`/image-probes/` 展示 API 原樣本。後續狀態與 Google 暫停決定以 [PROVIDER_PREVIEW_STATUS.md](PROVIDER_PREVIEW_STATUS.md) 為準；以下保留較早測試過程。
+
 私人比較頁：https://dayday-digest-demo.kelvin820.chatgpt.site/images/ 。三版表頭沿用已選 H／C／高中原字體。
 
 ## 實際完成
