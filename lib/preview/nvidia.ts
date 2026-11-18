@@ -60,7 +60,7 @@ export function partialPreview(records:Record<string,unknown>,facts:PreviewFact[
 
 export function previewHtml(issue:PreviewEdition,report:PreviewReport,css:string){
   const c=editions[issue.edition];
-  const label=report.modelResponsesWithUsage===0?'API 尚未取得生成回應':report.status==='generated_demo'?'API 試生成 · DEMO':'API 草稿 · 尚未通過全部驗證';
+  const label=report.modelResponsesWithUsage===0?'API 尚未取得生成回應':report.status==='comparison_drafts'?'API 單篇三版比較 · DEMO':report.status==='generated_demo'?'API 試生成 · DEMO':'API 草稿 · 尚未通過全部驗證';
   const provenance=report.modelResponsesWithUsage===0?'尚未取得可用的 NVIDIA 生成回應；不會以預設樣刊代替模型結果。':'自有虛構底稿，由 NVIDIA API 試寫；不是真實新聞，尚未出刊。';
   const generatedAt=new Intl.DateTimeFormat('zh-TW',{timeZone:'Asia/Taipei',dateStyle:'short',timeStyle:'medium'}).format(new Date(report.generatedAt))+'（台北）';
   const pdf=report.pdfVerified?['color','ink'].map(mode=>`<a href="DD_${issue.issueDate}_${issue.edition}_r1_${mode}.pdf">${mode==='color'?'彩色 PDF':'省墨 PDF'}</a>`).join(' · '):'PDF 尚未通過驗證';
@@ -98,5 +98,5 @@ export async function writePreviewReaders(directory:string,issues:PreviewEdition
 
 export function previewError(error:unknown){
   const message=error instanceof Error?error.message:'';
-  return /^(?:MODEL_[A-Z0-9_]+|PDF_[A-Z_]+|BUDGET_EXCEEDED|NVIDIA_KEY_REQUIRED|PREVIEW_SECRET_IN_OUTPUT|WRITER_[A-Z_]+|CLAIM_ALLOWLIST_FAILED|REVIEW_CLAIM_ALLOWLIST_FAILED|NEEDS_REVIEW:[A-Za-z0-9_-]+:(?:elementary|junior|senior))$/.test(message)?message:'PREVIEW_FAILED';
+  return /^(?:MODEL_[A-Z0-9_]+|PDF_[A-Z_]+|COMPARISON_INCOMPLETE|BUDGET_EXCEEDED|NVIDIA_KEY_REQUIRED|PREVIEW_SECRET_IN_OUTPUT|WRITER_[A-Z_]+|CLAIM_ALLOWLIST_FAILED|REVIEW_CLAIM_ALLOWLIST_FAILED|NEEDS_REVIEW:[A-Za-z0-9_-]+:(?:elementary|junior|senior))$/.test(message)?message:'PREVIEW_FAILED';
 }

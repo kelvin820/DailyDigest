@@ -4,6 +4,8 @@ import {readFile} from 'node:fs/promises';
 import {previewFacts,partialPreview,previewHtml,previewError,type PreviewReport} from '../lib/preview/nvidia';
 import {demoIssue} from '../fixtures/issue';
 import {hash} from '../lib/pipeline/state.mjs';
+import {compareOneStory} from '../lib/preview/compare';
+import type {TextModelProvider} from '../lib/providers/text';
 
 const facts=previewFacts(JSON.parse(await readFile('fixtures/stories.json','utf8')));
 const report:PreviewReport={status:'needs_review',generatedAt:'2026-11-18T00:00:00Z',model:'synthetic-test-only',
@@ -36,4 +38,18 @@ test('missing provider response is never described as successful generation; err
   assert(html.includes('API 尚未取得生成回應'));assert(!html.includes('由 NVIDIA API 試寫'));
   assert.equal(previewError(Error('MODEL_HTTP_401')),'MODEL_HTTP_401');
   assert.equal(previewError(Error('secret-private-token-value')),'PREVIEW_FAILED');
+});
+test('single-story comparison keeps three actual draft responses even if review schema fails',async()=>{
+  let writes=0,reviews=0;
+  const provider:TextModelProvider={async generateStructured(input){
+    if(input.task==='review'){reviews++;throw Error('MODEL_SCHEMA_INVALID');}
+    writes++;const edition=input.system.match(/Audience edition: (elementary|junior|senior)/)?.[1] as 'elementary'|'junior'|'senior';
+    const a=demoIssue(edition).articles[0];
+    return{data:input.schema.parse({headline:a.headline,body_paragraphs:a.bodyParagraphs,vocabulary:a.vocabulary,
+      used_claim_ids:['claim-1'],omitted_optional_claim_ids:['claim-2','claim-3'],editorial_flags:[]}),usage:{input_tokens:0,output_tokens:0}};
+  }};
+  const map=new Map<string,unknown>();
+  const result=await compareOneStory(facts,provider,{get:async key=>map.get(key),set:async(key,value)=>{map.set(key,value);}},'synthetic-test-only');
+  assert.equal(writes,3);assert.equal(reviews,3);assert(result.editions.every(issue=>issue.isDemo&&issue.articles.length===1));
+  assert(result.checks.every(check=>(check as {reviewError:string}).reviewError==='MODEL_SCHEMA_INVALID'));
 });

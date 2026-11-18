@@ -1,6 +1,12 @@
 name: NVIDIA Preview
 on:
   workflow_dispatch:
+    inputs:
+      mode:
+        description: 'compare: one story at A1/A2/B1; full: eight stories and six PDFs'
+        type: choice
+        options: [compare, full]
+        default: compare
 permissions:
   contents: read
 concurrency:
@@ -45,6 +51,7 @@ jobs:
           LIVE_GENERATION_ENABLED: 'false'
           DEMO_MODE: 'true'
           DD_PIPELINE_ACCEPTED: 'false'
+          PREVIEW_MODE: ${{ inputs.mode || 'compare' }}
       - name: Preserve actual outputs and usage, including failed review
         if: always()
         uses: actions/upload-artifact@v4

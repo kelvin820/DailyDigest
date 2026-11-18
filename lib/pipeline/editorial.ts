@@ -43,7 +43,7 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
         const vocabPass = new Set(data.vocabulary.map(v => v.term.toLowerCase())).size === 2 &&
           data.vocabulary.every(v => containsTerm(body, v.term));
         if (!mustKeep || !lengthPass || !vocabPass) {
-          feedback = { statistics: s, wordLimits: c, mustKeep, vocabPass,
+          feedback = { previous_article:data,statistics: s, wordLimits: c, mustKeep, vocabPass,
             instruction: 'Revise the complete article; do not truncate sentences.' };
           continue;
         }

@@ -20,6 +20,10 @@ runner，網站不必持有 NVIDIA key。
 
 ## 生成與檢查
 
+Workflow 預設 compare：先產生同一則虛構底稿的 A1/A2/B1，保留草稿與審查結果，
+即使某一版待修也能比較其他版本；此模式不製作整期 PDF。選 full 才執行完整
+八則 × 三版及六份兩頁 PDF 的嚴格流程。
+
 Workflow 執行 `node --import tsx scripts/nvidia-preview.ts`。本機可用忽略的
 `.env.local` 搭配 `node --env-file-if-exists=.env.local --import tsx scripts/nvidia-preview.ts`。
 
@@ -29,7 +33,8 @@ Workflow 執行 `node --import tsx scripts/nvidia-preview.ts`。本機可用忽�
 - 若失敗，保留已收到的實際草稿及錯誤代碼；不以原本示範文章補足，也不提供未通過驗證的 PDF 下載。
 - 全程不寫 Supabase、不啟用排程、不發布任何真實期刊；輸出仍標明虛構 DEMO。
 
-每次 preview 最多 80 次請求、180000 tokens；已知單價時另檢查 2 USD 估計額度。
+compare 每次最多 20 次請求、60000 tokens；full 最多 80 次請求、180000 tokens。
+已知單價時另檢查 2 USD 估計額度。
 單價未知時為 cost_unknown，**不是已保證低於 2 USD 或免費**。逾時等未確認用量會保留
 usage_unknown，重跑前先核對 NVIDIA 用量；每次手動新 run 都是新的試生成，不跨 run 恢復。
 
@@ -40,3 +45,7 @@ index.html／elementary.html，或由開發流程檢查後放入私人 DEMO 的�
 `report.json` 分開記錄 API 嘗試、帶 usage 的回應、未確認用量、稿件與 PDF 狀態。
 只有 `apiGenerationSucceeded: true` 且 `pdfVerified: true` 才代表完整試生成通過；
 `published`、`databaseWritten` 永遠為 false。
+
+compare 的 comparisonGenerated=true 僅表示三份實際模型比較稿已取得；不等於審稿／整期通過。
+若 JSON schema 不合，invalid-responses.json 保留回應本文與驗證錯誤以便修復，不包含 reasoning_content；
+輸出前檢查不得含實際 key，格式修復也會帶入 schema 驗證原因。

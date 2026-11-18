@@ -20,7 +20,9 @@ export class FixtureProvider implements TextModelProvider {
       providerRequestId: 'fixture-not-live' };
   }
 }
-type ProviderOptions = { responseFormat?: 'json_object' | 'prompt'; disableThinking?: boolean };
+export type InvalidStructuredReply = {task:Task;model:string;attempt:number;content:string;validation:unknown};
+type ProviderOptions = { responseFormat?: 'json_object' | 'prompt'; disableThinking?: boolean;
+  onInvalidReply?:(reply:InvalidStructuredReply)=>Promise<void> };
 export class CompatibleProvider implements TextModelProvider {
   readonly cacheIdentity: string;
   constructor(private baseUrl: string, private key: string, private budget: BudgetPort,
@@ -31,12 +33,13 @@ export class CompatibleProvider implements TextModelProvider {
   }
   async generateStructured<T>(input: GenerationRequest<T>) {
     const schemaText = JSON.stringify(z.toJSONSchema(input.schema));
-    const user = JSON.stringify({ untrusted_data: input.data });
     const totals = { input_tokens: 0, output_tokens: 0 };
     let formatRepairs = 0;
+    let formatFeedback:unknown=null;
     for (let attempt = 0; attempt < 3; attempt++) {
       const system = input.system + '\nReturn only JSON matching this schema; no prose, code fences or reasoning:\n' + schemaText +
         (formatRepairs ? '\nThe prior response was invalid. Return the complete schema-conforming JSON object only.' : '');
+      const user = JSON.stringify({untrusted_data:input.data,...(formatFeedback?{format_validation:formatFeedback}:{})});
       const inputEstimate = Math.ceil((system.length + user.length) / 2) + 1000;
       const ticket = await this.budget.reserve(inputEstimate, input.maxOutputTokens);
       let response: Response;
@@ -81,7 +84,11 @@ export class CompatibleProvider implements TextModelProvider {
         if (raw.choices?.[0]?.finish_reason === 'length') throw Error('TRUNCATED_JSON');
         return { data: input.schema.parse(JSON.parse(raw.choices[0].message.content)),
           usage: totals, providerRequestId: typeof raw.id === 'string' ? raw.id : undefined };
-      } catch {
+      } catch (error) {
+        formatFeedback=error instanceof z.ZodError?error.issues:{code:'invalid_json_or_truncated_response'};
+        if(this.options.onInvalidReply)await this.options.onInvalidReply({task:input.task,model:input.model,
+          attempt,content:typeof raw.choices?.[0]?.message?.content==='string'?
+            raw.choices[0].message.content.replace(/<think>[\s\S]*?<\/think>/gi,'').slice(0,50000):'',validation:formatFeedback});
         if (formatRepairs++ < 1 && attempt < 2) continue;
         throw Error('MODEL_SCHEMA_INVALID');
       }
@@ -94,7 +101,7 @@ export class CompatibleProvider implements TextModelProvider {
 export const NVIDIA_BASE_URL = 'https://integrate.api.nvidia.com/v1';
 export const DEFAULT_NEMOTRON_MODEL = 'nvidia/nemotron-3.5-lightning-30b-a3b';
 export class NvidiaProvider extends CompatibleProvider {
-  constructor(key: string, budget: BudgetPort) {
-    super(NVIDIA_BASE_URL, key, budget, { responseFormat: 'prompt', disableThinking: true });
+  constructor(key: string, budget: BudgetPort, onInvalidReply?:ProviderOptions['onInvalidReply']) {
+    super(NVIDIA_BASE_URL, key, budget, { responseFormat: 'prompt', disableThinking: true,onInvalidReply });
   }
 }
