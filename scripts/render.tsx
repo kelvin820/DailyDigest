@@ -17,11 +17,11 @@ export async function renderIssues(issues: EditionView[], outDir: string) {
   issues.forEach(p => editionSchema.parse(p));
   await mkdir(resolve(outDir, 'fonts'), { recursive: true });
   for (const font of ['NotoSans-Regular.ttf', 'Newsreader.ttf', 'NotoSansTC.ttf',
-    'InstrumentSerif-Regular.ttf', 'LibreCaslonText.ttf']) {
+    'InstrumentSerif-Regular.ttf', 'LibreCaslonText.ttf', 'OldStandard-Bold.ttf', 'PlayfairDisplay.ttf']) {
     await copyFile(resolve('public/fonts', font), resolve(outDir, 'fonts', font));
   }
   for (const license of ['OFL.txt', 'Newsreader.ttf.license.txt', 'NotoSansTC.ttf.license.txt',
-    'InstrumentSerif-OFL.txt', 'LibreCaslonText-OFL.txt']) {
+    'InstrumentSerif-OFL.txt', 'LibreCaslonText-OFL.txt', 'oldstandardtt-OFL.txt', 'playfairdisplay-OFL.txt']) {
     await copyFile(resolve('public/fonts', license), resolve(outDir, 'fonts', license));
   }
   const css = (await readFile('app/globals.css', 'utf8')).replaceAll('/fonts/', 'fonts/');

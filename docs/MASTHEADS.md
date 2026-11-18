@@ -1,5 +1,23 @@
 # Edition masthead trials
 
+## Current approved selection
+
+The user selected Elementary H, Junior C, and keeping Senior unchanged.
+
+| Edition | Font | Weight | Width | Tracking |
+|---|---|---|---|---|
+| Elementary | H / Playfair Display | 600 | 92% | -0.030em |
+| Junior | C / Old Standard TT Bold | 700 | 70% | -0.070em |
+| Senior | Libre Caslon Text | 700 | unchanged | unchanged |
+
+Junior uses the settings visible in the user's selected C preview. Elementary
+uses H's trial defaults. Web and PDF share these settings. Only the wordmark
+is compressed; the by DayDay signature and all article typography are retained.
+The trial page remains available and now records the approved C defaults.
+The following sections describe earlier rounds, superseded by this selection.
+
+## Round 1
+
 The Elementary masthead retains its original font, weight, size, and spacing.
 Only the Junior and Senior `DAILY DIGEST` mastheads change. Article typography,
 edition colors, and the `by DayDay` signature retain the existing design.
