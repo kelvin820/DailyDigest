@@ -2,6 +2,8 @@
 
 從使用者提供的 M1 原始碼、public 與 output 接續；原始交付另存於工作區供比對。下表區分「程式／離線證據」與「外部服務實測」，不是 M0–M5 全部完成。
 
+2026-11-18 已將原始碼推送備份至 https://github.com/kelvin820/DailyDigest 的 main 分支。此備份不代表部署或真實出刊完成；output 樣刊與驗證產物仍保留在獨立 review archive。
+
 | 里程碑 | 本輪完成／驗證 | 尚待完成 |
 |---|---|---|
 | M0 | Node 24、pnpm 11 固定版本、實際 lockfile、frozen install、typecheck/lint/build；CI 更新 | 在目標 GitHub repo 跑雲端 CI |

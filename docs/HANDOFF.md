@@ -1,8 +1,8 @@
 # 本輪交接
 
-工作目錄：本 source archive 的 dayday-daily-digest。分支 codex/continue-dayday；未設定 remote、未推 GitHub、未部署。
+工作目錄：本 source archive 的 dayday-daily-digest。本地分支 codex/continue-dayday，追蹤 origin/main；已推送備份至 https://github.com/kelvin820/DailyDigest 。尚未部署。
 
-先讀 STATUS.md、SETUP.md。NVIDIA 已決定，初始 Nano 型號已配好；下一步是安全設定使用者現有 key 與 Supabase／目標 repo／Vercel，再做真實出刊與三期試讀，不能把 DEMO 或合成 DB 測試算作成功。
+先讀 STATUS.md、SETUP.md。NVIDIA 已決定，初始 Nano 型號已配好；下一步是安全設定使用者現有 key 與 Supabase／Vercel，以及 GitHub runner 設定，再做真實出刊與三期試讀，不能把 DEMO 或合成 DB 測試算作成功。
 
 保留原 M1 的主題、24 篇虛構稿與字體授權。原始 public、output 曾分包；本輪 source archive 重新包含 public，review archive 不重複字體，以免超過單檔 32 MiB。PDF 自帶字體；可直接審閱。
 
