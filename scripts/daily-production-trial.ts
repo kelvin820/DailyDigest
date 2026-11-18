@@ -82,7 +82,7 @@ try{
     const manifest=JSON.parse(await readFile(resolve(directory,'assets',image.assetId+'.json'),'utf8'));
     const {createHash}=await import('node:crypto');if(createHash('sha256').update(bytes).digest('hex')!==manifest.print.sha256)throw Error('TRIAL_ASSET_HASH_MISMATCH');const cacheKey=entry.edition+':'+entry.storyId;cached.set(cacheKey,image);cachedRecords.set(cacheKey,Object.fromEntries(Object.entries(manifest).filter(([k])=>['kind','alt','caption','author','publisher','credit','licenseCode','licenseUrl','sourcePage','originalUrl','rightsConfirmed','photographedAt','generation'].includes(k))) as AssetRecord);
   }}}catch{/* no completed media checkpoint */}
-  const prompts:Record<string,string>={'trial-nicer':'A watercolor illustration of stars in a dark blue night sky, with a simple telescope silhouette.','trial-voices':'A watercolor illustration of an open book and a folded map on a wooden reading table.'};
+  const prompts:Record<string,string>={'trial-nicer':'A watercolor concept illustration of stars and a telescope, without technical equipment details.','trial-voices':'A watercolor illustration of an open book and a folded map on a wooden reading table.'};
   const selections:({edition:string}&Record<string,unknown>)[]=[],withImages:EditionView[]=[];
   let sharedPhoto:unknown;
   for(const issue of issues){

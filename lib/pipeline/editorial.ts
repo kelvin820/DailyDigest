@@ -31,13 +31,14 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
           .replaceAll('{{english_variant}}', 'American English').replaceAll('{{min_words}}', String(c.min))
           .replaceAll('{{max_words}}', String(c.max)).replaceAll('{{avg_sentence_max}}', String(c.avg))
           .replaceAll('{{sentence_max}}', String(c.sentenceMax));
+        system+='\nFINAL BODY CHECK: Write about '+(edition==='elementary'?'seven short sentences of six to eight words each':edition==='junior'?'six or seven sentences of ten to thirteen words each':'seven or eight sentences of thirteen to sixteen words each')+'. Restate claims in your own simple sentences, rather than copying long fact-bundle sentences. Body must total '+c.min+'–'+c.max+' words; sentence average at most '+c.avg+', every sentence at most '+c.sentenceMax+' words.';
         if(attempt){
           const previous=feedback as {statistics?:{count:number;average:number;max:number}};
           const s=previous.statistics;
           system+='\nTRUSTED REVISION REQUIREMENT: Rewrite the body to '+c.min+'–'+c.max+
             ' words; aim for '+Math.round((c.min+c.max)/2)+' words. '+
             (s?'The previous body has '+s.count+' words. '+(s.count>c.max?'SHORTEN it; omit optional details. ':s.count<c.min?'EXPAND using supported details only. ':''):'')+
-            'Keep every must_keep claim. Use shorter sentences. Then choose two terms occurring in the revised body.';
+            'The previous longest sentence has '+(s?.max??'unknown')+' words; average '+(s?.average??'unknown')+'. Rewrite and split long sentences: EVERY sentence must have at most '+c.sentenceMax+' words, with an average at most '+c.avg+'. Keep all must_keep facts but do not copy their sentence structure. Then choose two useful, level-appropriate terms occurring in the revised body; avoid previousLevelTerms.';
         }
         const input = { fact, feedback, previousLevelTerms, system, model: writerModel, promptVersion: 'writer.v1', edition, attempt, provider: provider.cacheIdentity };
         const result = await cachedStep(store, `${fact.story_id}:${edition}:write:${attempt}`, input,

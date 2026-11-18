@@ -43,6 +43,10 @@ jobs:
           LLM_API_KEY: ${{ secrets.LLM_API_KEY || secrets.NVIDIA_API_KEY }}
           LIVE_GENERATION_ENABLED: 'false'
           DEMO_MODE: 'false'
+      - name: Build vocabulary and age-specific artwork comparison
+        run: node scripts/build-trial-review.mjs
+      - name: Verify responsive readers and distinct terms/images
+        run: node scripts/qa-daily-trial.mjs
       - name: Subset private artifact font copies
         if: always()
         run: test ! -d output/daily-production-trial/fonts || python scripts/subset-preview-fonts.py output/daily-production-trial
