@@ -84,12 +84,13 @@ export function previewHtml(issue:PreviewEdition,report:PreviewReport,css:string
     `<section class="${issue.articles.length===1?'story-detail':'article-grid'}">${issue.articles.map(article=>'<article class="article">'+renderArticle(article)+
       `<p class="preview-review">正文 ${article.wordCount} 字 · 目標 ${c.min}–${c.max} 字 · ${report.status==='generated_demo'?'寫稿與複核門檻已通過，仍待人工校準':'開發草稿，未取得整期通過結果'}</p></article>`).join('')}</section>`+
     (!issue.articles.length?'<p class="preview-error">此版本尚未取得可顯示的模型草稿。</p>':'')+
-    '<footer><b>DayDay INC.</b><span>真實 API 試生成，不代表真實出刊；CEFR 為目標難度。</span></footer></main></body></html>';
+    '<footer><b>DayDay INC.</b><span>真實 API 試生成，不代表真實出刊；CEFR 為目標難度。</span></footer></main><script src="media-fallback.js" defer></script></body></html>';
 }
 
 export async function writePreviewReaders(directory:string,issues:PreviewEdition[],report:PreviewReport){
   const css=await readFile('app/globals.css','utf8');
   await mkdir(resolve(directory,'fonts'),{recursive:true});
+  await copyFile('public/media-fallback.js',resolve(directory,'media-fallback.js'));
   for(const file of ['NotoSans-Regular.ttf','Newsreader.ttf','NotoSansTC.ttf','LibreCaslonText.ttf',
     'OldStandard-Bold.ttf','PlayfairDisplay.ttf','OFL.txt','Newsreader.ttf.license.txt','NotoSansTC.ttf.license.txt',
     'LibreCaslonText-OFL.txt','oldstandardtt-OFL.txt','playfairdisplay-OFL.txt']){

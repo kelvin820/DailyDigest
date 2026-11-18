@@ -1,6 +1,12 @@
 name: Google Preview
 on:
   workflow_dispatch:
+    inputs:
+      text_model:
+        description: 'Optional explicit writer/reviewer model, checked against the live Google catalog'
+        type: choice
+        options: ['', gemini-3.8-flash, gemini-3.7-flash, gemini-3.6-flash, gemini-2.5-flash]
+        default: ''
 permissions:
   contents: read
 concurrency:
@@ -32,6 +38,7 @@ jobs:
         run: node --import tsx scripts/google-preview.ts
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || secrets.GOOGLE_API_KEY }}
+          GOOGLE_TEXT_MODEL: ${{ inputs.text_model }}
       - name: Keep preview artifact small
         if: always()
         run: test ! -d output/google-preview/fonts || python scripts/subset-preview-fonts.py output/google-preview

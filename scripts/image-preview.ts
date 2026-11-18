@@ -79,8 +79,7 @@ for(const variant of variants){
     let html=previewHtml(updated,report,css);
     html=html.replace(/href="(elementary|junior|senior)\.html"/g,(_match,key)=>`href="${key}-${variant.key}.html"`)
       .replace(/<div class="preview-meta">([\s\S]*?)<\/div>/,(_match,content)=>tools+'<details class="preview-review"><summary>文字生成來源與用量</summary><div class="preview-meta">'+content+'</div></details>')
-      .replace(/<div class="preview-error">([\s\S]*?)<\/div>/g,'<details class="preview-review"><summary>詞義修訂記錄</summary>$1</details>')
-      .replace('</body>','<script src="media-fallback.js"></script></body>');
+      .replace(/<div class="preview-error">([\s\S]*?)<\/div>/g,'<details class="preview-review"><summary>詞義修訂記錄</summary>$1</details>');
     const audit:string[]=[];
     html=html.replace(/<details class="preview-review">[\s\S]*?<\/details>/g,section=>{audit.push(section);return '';});
     html=html.replace('<footer>','<details class="image-audit"><summary>查看文字生成與詞義修訂記錄</summary>'+audit.join('')+'</details><footer>');

@@ -14,6 +14,10 @@ export class GoogleProvider extends CompatibleProvider{
   }
 }
 
+export class GoogleApiError extends Error{
+  constructor(code:string,readonly diagnostic:{httpStatus:number;apiStatus:string|null;zeroQuota:boolean;
+    freeTierQuota:boolean;billingMentioned:boolean;retrySeconds:number|null}){super(code);}
+}
 async function googleJson(response:Response){
   const max=response.ok?14_000_000:64_000;
   if(!response.body||Number(response.headers.get('content-length'))>max){
@@ -29,7 +33,13 @@ async function googleJson(response:Response){
   if(!response.ok){
     const status=['RESOURCE_EXHAUSTED','PERMISSION_DENIED','INVALID_ARGUMENT','UNAUTHENTICATED','NOT_FOUND',
       'FAILED_PRECONDITION','UNAVAILABLE'].includes(raw?.error?.status)?'_'+raw.error.status:'';
-    throw Error('GOOGLE_HTTP_'+response.status+status);
+    // Inspect bounded error text only in memory; persist diagnostic booleans, never raw messages/IDs.
+    const message=JSON.stringify(raw);
+    const delay=Number(response.headers.get('retry-after'));
+    throw new GoogleApiError('GOOGLE_HTTP_'+response.status+status,{httpStatus:response.status,
+      apiStatus:status?status.slice(1):null,zeroQuota:/limit["']?\s*[:=]\s*0\b|quota(?:value)?["']?\s*[:=]\s*0\b/i.test(message),
+      freeTierQuota:/free[_ -]?tier/i.test(message),billingMentioned:/billing|insufficient.*(?:quota|credit|balance)/i.test(message),
+      retrySeconds:response.headers.has('retry-after')&&Number.isFinite(delay)&&delay>=0&&delay<=3600?delay:null});
   }
   return raw;
 }

@@ -1,7 +1,7 @@
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {z} from 'zod';
-import {GoogleProvider,GOOGLE_TEXT_MODELS,GOOGLE_IMAGE_MODELS,listGoogleModels,generateGoogleImage} from '../lib/providers/google';
+import {GoogleProvider,GoogleApiError,GOOGLE_TEXT_MODELS,GOOGLE_IMAGE_MODELS,listGoogleModels,generateGoogleImage} from '../lib/providers/google';
 import {SIMPLE_PARK_IMAGE_PROMPT} from '../lib/providers/image';
 import {Budget} from '../lib/pipeline/state.mjs';
 import {compareOneStory} from '../lib/preview/compare';
@@ -21,12 +21,17 @@ const facts=previewFacts(JSON.parse(await readFile('fixtures/stories.json','utf8
 await writeFile(resolve(directory,'facts.json'),safe(facts));
 let issues:PreviewEdition[]=[],checks:unknown[]=[],textError:string|null=null,imageError:string|null=null;
 let textModel:string|null=null,imageModel:string|null=null,image=null,imageCalls=0;
-let imageUsage:unknown=null,catalogError:string|null=null;
+let imageUsage:unknown=null,imageDiagnostic:unknown=null,catalogError:string|null=null;
 try{
   if(!key)throw Error('GOOGLE_KEY_MISSING');
   const available=await listGoogleModels(key);
   textModel=GOOGLE_TEXT_MODELS.find(model=>available.includes(model))||null;
   imageModel=GOOGLE_IMAGE_MODELS.find(model=>available.includes(model))||null;
+  if(process.env.GOOGLE_TEXT_MODEL){
+    if(!GOOGLE_TEXT_MODELS.includes(process.env.GOOGLE_TEXT_MODEL as typeof GOOGLE_TEXT_MODELS[number])||
+      !available.includes(process.env.GOOGLE_TEXT_MODEL))throw Error('GOOGLE_TEXT_MODEL_UNAVAILABLE');
+    textModel=process.env.GOOGLE_TEXT_MODEL;
+  }
   await writeFile(resolve(directory,'models.json'),safe({selectedText:textModel,selectedImage:imageModel,
     availableSupportedText:GOOGLE_TEXT_MODELS.filter(m=>available.includes(m)),
     availableSupportedImage:GOOGLE_IMAGE_MODELS.filter(m=>available.includes(m))}));
@@ -54,7 +59,7 @@ if(!catalogError)try{
     generation:{provider:'google',model:imageModel,prompt:result.prompt,generatedAt:new Date().toISOString()}},directory);
   image=asset.image;await writeFile(resolve(directory,'image.json'),safe(image));
   for(const issue of issues)for(const article of issue.articles)article.image=image;
-}catch(error){imageError=code(error);}
+}catch(error){imageError=code(error);if(error instanceof GoogleApiError)imageDiagnostic=error.diagnostic;}
 type Ledger={status:string;input_tokens?:number;output_tokens?:number};
 const ledger=budget.ledger as Ledger[],textComplete=!catalogError&&!textError&&issues.every(i=>i.articles.length===1);
 const report:PreviewReport&Record<string,unknown>={status:textComplete?'comparison_drafts':'needs_review',
@@ -66,7 +71,7 @@ const report:PreviewReport&Record<string,unknown>={status:textComplete?'comparis
   newsFetched:false,isDemo:true,scope:'one-fictional-story-three-levels-and-one-image',
   errorCode:catalogError||textError,comparisonChecks:checks,comparisonGenerated:textComplete,
   text:{status:textComplete?'generated':'failed',errorCode:catalogError||textError},
-  image:{status:image?'generated':'failed',errorCode:catalogError||imageError,requestAttempts:imageCalls,usage:imageUsage,
+  image:{status:image?'generated':'failed',errorCode:catalogError||imageError,requestAttempts:imageCalls,usage:imageUsage,diagnostic:imageDiagnostic,
     assetId:image?.assetId??null},
   developerNotes:['同一份自有虛構底稿，由 Google API 實際寫稿、複核及試生成配圖。尚未出刊；CEFR 為目標難度。',
     ...(image?[]:['圖片尚未生成成功；下方使用 DayDay 自有分類圖示，沒有用其他供應商圖片代替。'])],
