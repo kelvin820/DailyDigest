@@ -37,12 +37,17 @@ jobs:
             gh run download "$previous_run" --repo "$GITHUB_REPOSITORY" -n daily-production-trial -D output/previous-daily-trial
             echo 'TRIAL_RESUME_DIR=output/previous-daily-trial' >> "$GITHUB_ENV"
           fi
+      - name: Recover earlier verified article pairs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download 44419269972 --repo "$GITHUB_REPOSITORY" -n daily-production-trial -D output/earlier-reviewed-trial
       - name: Generate four real-source stories in three levels and verify PDFs
         run: node --import tsx scripts/daily-production-trial.ts
         env:
           LLM_API_KEY: ${{ secrets.LLM_API_KEY || secrets.NVIDIA_API_KEY }}
           LIVE_GENERATION_ENABLED: 'false'
           DEMO_MODE: 'false'
+          TRIAL_REVIEW_RECOVERY_DIR: output/earlier-reviewed-trial
       - name: Build vocabulary and age-specific artwork comparison
         run: node scripts/build-trial-review.mjs
       - name: Verify responsive readers and distinct terms/images

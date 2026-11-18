@@ -8,9 +8,10 @@ import { stats } from '../content/metrics';
 import { containsTerm } from '../content/core.mjs';
 import { cachedStep,hash } from './state.mjs';
 import {learningTermKey} from '../content/vocabulary.mjs';
+import {recoverReviewedArticle} from './recover-reviewed';
 import {supportedStoryCounts} from '../../config/issue-settings.mjs';
 
-export type Store = { get: (key: string) => Promise<unknown>; set: (key: string, value: unknown) => Promise<void> };
+export type Store = { get: (key: string) => Promise<unknown>; set: (key: string, value: unknown) => Promise<void>; reviewedCandidates?:(storyId:string,edition:string)=>Promise<{writer:unknown;review:unknown}[]> };
 export async function produceEditions({ facts, issueDate, revision, provider, store, writerModel, reviewerModel,storyCount=facts.length }: {
   facts: z.infer<typeof factSchema>[]; issueDate: string; revision: number; provider: TextModelProvider;
   store: Store; writerModel: string; reviewerModel: string;storyCount?:number;
@@ -25,12 +26,18 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
     const c = editions[edition], articles: ArticleView[] = [];
     for (const [index, fact] of facts.entries()) {
       const previousLevelTerms=payloads.flatMap(p=>p.articles.filter(a=>a.storyId===fact.story_id).flatMap(a=>a.vocabulary.map(v=>v.term)));
-      const acceptedInput={fact,edition,config:c,writer,reviewPrompt,writerModel,reviewerModel,previousLevelTerms,provider:provider.cacheIdentity,policy:'tiered-v1'};
+      const acceptedInput={fact,edition,order:index+1,config:c,writer,reviewPrompt,writerModel,reviewerModel,previousLevelTerms,provider:provider.cacheIdentity,policy:'tiered-v1'};
       const acceptedKey=`${fact.story_id}:${edition}:accepted:0`;
       const prior=await store.get(acceptedKey) as {status?:string;inputHash?:string;output?:{article:unknown;review:unknown};outputHash?:string}|undefined;
       if(prior?.status==='success'&&prior.inputHash===hash(acceptedInput)&&prior.output&&prior.outputHash===hash(prior.output)){
         articles.push(articleSchema.parse(prior.output.article));reviews.push({...reviewSchema.parse(prior.output.review),storyId:fact.story_id,edition});continue;
       }
+      let recovered;
+      for(const pair of await store.reviewedCandidates?.(fact.story_id,edition)||[]){
+        recovered=recoverReviewedArticle({...pair,fact,index,config:c,previousLevelTerms,reviewerModel,reviewPrompt,provider:provider.cacheIdentity});if(recovered)break;
+      }
+      if(recovered){await store.set(acceptedKey,{status:'success',inputHash:hash(acceptedInput),output:recovered,outputHash:hash(recovered)});
+        articles.push(recovered.article);reviews.push({...recovered.review,storyId:fact.story_id,edition});continue;}
       let feedback: unknown = null, accepted = false;
       for (let attempt = 0; attempt <= 2; attempt++) {
         let system = writer.replaceAll('{{edition}}', edition).replaceAll('{{target_cefr}}', c.cefr)

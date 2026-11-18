@@ -69,7 +69,8 @@ try{
   if(!key)throw Error('NVIDIA_KEY_REQUIRED');
   const invalidReplies:unknown[]=[];
   const provider=new NvidiaProvider(key,budget,async reply=>{invalidReplies.push(reply);await save('invalid-responses.json',invalidReplies);});
-  const store={get:async(k:string)=>{read.add(k);return records[k];},set:async(k:string,value:unknown)=>{records[k]=value;written.add(k);await save('checkpoints.json',records);console.log('Checkpoint:',k);}};
+  const historical=process.env.TRIAL_REVIEW_RECOVERY_DIR?validatedPreviewCheckpoints(JSON.parse(await readFile(resolve(process.env.TRIAL_REVIEW_RECOVERY_DIR,'checkpoints.json'),'utf8'))):{};
+  const store={reviewedCandidates:async(storyId:string,edition:string)=>[0,1,2].map(attempt=>({writer:historical[`${storyId}:${edition}:write:${attempt}`],review:historical[`${storyId}:${edition}:review:${attempt}`]})),get:async(k:string)=>{read.add(k);return records[k];},set:async(k:string,value:unknown)=>{records[k]=value;written.add(k);await save('checkpoints.json',records);console.log('Checkpoint:',k);}};
   const generated=await produceEditions({facts,issueDate:plan.issueDate,revision:1,provider,store,writerModel:TRIAL_TEXT_MODEL,reviewerModel:TRIAL_TEXT_MODEL});
   issues=generated.editions.map(issue=>({...issue,reviewCopy:true}));reviews=generated.reviews;
   await save('reviews.json',reviews);
