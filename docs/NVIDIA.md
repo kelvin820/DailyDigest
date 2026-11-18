@@ -10,4 +10,4 @@
 
 在有繼承 HTTP(S)_PROXY 的 Cloud 本機環境，使用 Node 24 的 NODE_USE_ENV_PROXY=1（環境範例已列），保留原代理與 CA。GitHub runner 沒有代理時會正常直連。來源抓取另有釘選 IP 的代理 transport；不關閉 TLS 驗證。
 
-`tests/nvidia.test.ts` 是合成回應測試，證明請求與帳務控制，**不是 NVIDIA 連線或計費驗收**。目前沒有 key、沒有 live 呼叫，也沒有確認單價；使用 cost_unknown。NVIDIA 帳戶的模型可用性、quota／credits 與費率，以使用者帳戶為準。
+`tests/nvidia.test.ts` 是合成回應測試，證明請求與帳務控制，**不是 NVIDIA 連線或計費驗收**。另有 NVIDIA_PREVIEW.md 的手動實際 API 試生成流程，使用者已回報將 key 存入 GitHub Secret；實際呼叫結果以該 run 的 report.json 為準。未確認單價時使用 cost_unknown。NVIDIA 帳戶的模型可用性、quota／credits 與費率，以使用者帳戶為準。

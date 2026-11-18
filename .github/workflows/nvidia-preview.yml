@@ -1,0 +1,55 @@
+name: NVIDIA Preview
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: dayday-nvidia-preview
+  cancel-in-progress: false
+jobs:
+  preview:
+    if: github.ref_name == github.event.repository.default_branch
+    timeout-minutes: 45
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Check NVIDIA credential availability
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+        run: |
+          node --input-type=module <<'JS'
+          if (!process.env.LLM_API_KEY?.trim()) {
+            console.error('Add repository secret LLM_API_KEY with your NVIDIA API key. No key is printed.');
+            process.exit(1);
+          }
+          console.log('NVIDIA credential is available; no API request made by this check.');
+          JS
+      - uses: pnpm/action-setup@v4
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements-pdf.txt
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Generate and review three DEMO editions with NVIDIA
+        run: node --import tsx scripts/nvidia-preview.ts
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_INPUT_USD_PER_MILLION: ${{ vars.LLM_INPUT_USD_PER_MILLION }}
+          LLM_OUTPUT_USD_PER_MILLION: ${{ vars.LLM_OUTPUT_USD_PER_MILLION }}
+          LIVE_GENERATION_ENABLED: 'false'
+          DEMO_MODE: 'true'
+          DD_PIPELINE_ACCEPTED: 'false'
+      - name: Preserve actual outputs and usage, including failed review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nemotron-preview
+          path: output/nvidia-preview/
+          if-no-files-found: ignore
+          retention-days: 7

@@ -2,9 +2,12 @@
 
 使用者已提供 Project URL：`https://bqoqzxharmatphcqwldo.supabase.co`。
 
-目前只確認端點可連到，無憑證的 Auth health 請求回傳 401。這不代表
-已完成資料庫初始化、登入、Storage 或真實出刊。執行環境尚無 API key、
-資料庫管理憑證，也沒有可共用使用者登入的 Supabase 瀏覽器 session。
+使用者已回報 SQL Editor 執行成功：schema_initialized、migration_count 14、
+issue_count 0、member_count 0，publishing.mode 為 review、live_enabled 為 false。
+這是使用者提供的雲端初始化結果；尚未以 Data API／Auth／Storage 實測。
+
+使用者目前只有開發者本人使用，已要求先測 NVIDIA 生成。家長帳號、邀請與
+登入設定暫緩，並非 API 試生成的前置條件；見 NVIDIA_PREVIEW.md。
 
 ## 第一步：初始化空專案
 

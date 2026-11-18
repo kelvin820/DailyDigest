@@ -2,7 +2,7 @@
 
 使用者已決定先用 NVIDIA Nemotron。以下項目仍需設定；金鑰勿貼聊天。
 
-已取得 Supabase Project URL：https://bqoqzxharmatphcqwldo.supabase.co 。目前只有 URL，尚未登入或變更雲端資料庫。先依 SUPABASE_SETUP.md 執行空專案初始化；合併 SQL 可從 scripts/build-supabase-bootstrap.mjs 產生，已通過本機原子交易與失敗回滾檢查。
+已取得 Supabase Project URL：https://bqoqzxharmatphcqwldo.supabase.co 。使用者已回報 14 份 migration 初始化成功，期刊與成員皆為 0、review 模式、live_enabled=false。使用者要求先看模型生成，家長登入暫緩；下一步按 NVIDIA_PREVIEW.md 進行不依賴帳號的 API 試生成。
 
 GitHub 原始碼已備份至 https://github.com/kelvin820/DailyDigest ，遠端主分支為 main；runner secrets／variables 與正式出刊設定仍待完成。
 

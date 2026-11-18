@@ -34,3 +34,5 @@
 Supabase 接續：已取得 https://bqoqzxharmatphcqwldo.supabase.co ，未帶憑證的 Auth health 請求回傳 401。已準備 14 份 migration 的單一交易初始化 SQL，並在隔離 PostgreSQL 驗證初始化、重跑拒絕、保留既有資料及中途失敗回滾。證據：output/supabase-bootstrap-verification.json；操作見 SUPABASE_SETUP.md。尚未對此雲端專案套用 SQL，也沒有取得任何 API key。
 
 表頭選定：使用者指定國小 H（Playfair Display）、國中 C（Old Standard TT Bold），高中不改。國小採 H 預設 600／92%／-0.030em；國中沿用當前試字頁的 700／70%／-0.070em。已同步閱讀網頁與六份兩頁 PDF，正文與署名保留原設計。最新設定以 MASTHEADS.md 的 Current approved selection 為準。
+
+使用者已回報 Supabase schema_initialized（14 migrations、0 issues、0 members、review、live_enabled=false）。家長帳號暫緩；先用新 NVIDIA Preview 手動流程驗證 Nemotron 三版生成，不依賴 Supabase／登入，不寫庫、不發布。使用者已回報設定 GitHub Secret LLM_API_KEY；實際模型回應、用量與產物仍須以該次 API run 為準。
