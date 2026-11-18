@@ -12,6 +12,7 @@ runner，網站不必持有 NVIDIA key。
 
 在 kelvin820/DailyDigest 的 Settings → Secrets and variables → Actions →
 **Secrets** 新增 repository secret `LLM_API_KEY`，值為 NVIDIA API key。
+也接受既有的 repository secret NVIDIA_API_KEY，workflow 會映射為 LLM_API_KEY。
 不要放在 Variables，不要提交 Git，也不要貼聊天。
 
 `NVIDIA Preview` workflow 只允許從預設分支手動執行；不會因 push、PR 或

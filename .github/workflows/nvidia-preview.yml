@@ -20,11 +20,11 @@ jobs:
           node-version: 24
       - name: Check NVIDIA credential availability
         env:
-          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY || secrets.NVIDIA_API_KEY }}
         run: |
           node --input-type=module <<'JS'
           if (!process.env.LLM_API_KEY?.trim()) {
-            console.error('Add repository secret LLM_API_KEY with your NVIDIA API key. No key is printed.');
+            console.error('Add repository secret LLM_API_KEY (or NVIDIA_API_KEY) with your NVIDIA API key. Variables are not secrets. No key is printed.');
             process.exit(1);
           }
           console.log('NVIDIA credential is available; no API request made by this check.');
@@ -39,7 +39,7 @@ jobs:
       - name: Generate and review three DEMO editions with NVIDIA
         run: node --import tsx scripts/nvidia-preview.ts
         env:
-          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY || secrets.NVIDIA_API_KEY }}
           LLM_INPUT_USD_PER_MILLION: ${{ vars.LLM_INPUT_USD_PER_MILLION }}
           LLM_OUTPUT_USD_PER_MILLION: ${{ vars.LLM_OUTPUT_USD_PER_MILLION }}
           LIVE_GENERATION_ENABLED: 'false'
