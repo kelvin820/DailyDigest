@@ -95,7 +95,15 @@
       ],
       "uncertainties": [
         "The November 16 release announces a planned opening. Do not claim the opening has already occurred. Indigenous traditions continue today."
-      ]
+      ],
+      "approvedSnapshot": {
+        "capturedAt": "2026-11-18T23:08:12.608Z",
+        "sourceUrl": "https://newsroom.loc.gov/news/library-of-congress-to-unveil--voices-of-the-early-americas---featuring-rare-artifacts--maps-and-ind/s/5c73564c-f9f9-4270-ba24-355c36cca6bc",
+        "pageSha256": "d709eebb36b59279f7ab4f7f10643ae1289246ca2264321d9d623b760967f596",
+        "evidence": "A 1531 court case, a wooden box from the seventh century inscribed with Maya hieroglyphs and a sheet from the only surviving copy of the 1507 map that named America are among the treasures in “Voices of the Early Americas,” a new permanent exhibition opening to the public on Nov. 19 in the new Jay I. Kislak Gallery of the Library of Congress’ Thomas Jefferson Building. The exhibition uses over 200 artifacts, maps, manuscripts, paintings, photographs and contemporary poetry spanning more than 3,000 years to explore Indigenous histories, cultures and enduring traditions across the Western Hemisphere.“The history of the Americas is a story of many peoples, cultures and perspectives, and the Library of Congress is uniquely positioned to help tell that story through its extraordinary collections,” said Acting Librarian of Congress Robert R. Newlen. “These objects do more than illuminate the past; they remind us that the history of the Americas is still being told through the voices, languages, and traditions of the people who call them home.”",
+        "evidenceHash": "b6722b2675966d12e8daf9b9294a4994dc02bef7c4c0ee1c2045e87ca7e2d53e",
+        "review": "developer-read official press release; approved for this dated review-only trial"
+      }
     },
     {
       "id": "climate",

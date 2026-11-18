@@ -27,11 +27,12 @@ const context={contract:'real-source-four-story-trial-v1',planHash:hash(plan),mo
 const records:Record<string,unknown>=Object.create(null),initial=new Set<string>(),read=new Set<string>(),written=new Set<string>();
 const budget=new Budget({usd:2,maxCalls:70,maxTokens:150000,inputRate:undefined,outputRate:undefined});
 let facts:z.infer<typeof factSchema>[]=[],issues:EditionView[]=[],reviews:unknown[]=[],errorCode:string|null=null,pdfVerified=false;
-let resumedFacts=false;let priorModelCalls=0,priorTokens=0;let sourceReads=0,imageAttempts=0;const imageReservations:string[]=[];let media:unknown=null;
+let resumedFacts=false;let priorModelCalls=0,priorTokens=0;let sourceReads=0,sourceSnapshotsUsed=0,imageAttempts=0;const imageReservations:string[]=[];let media:unknown=null;
 try{
   if(process.env.TRIAL_RESUME_DIR){
     const previous=resolve(process.env.TRIAL_RESUME_DIR);
-    if(hash(JSON.parse(await readFile(resolve(previous,'context.json'),'utf8')))!==hash(context))throw Error('TRIAL_CONTEXT_MISMATCH');
+    const previousContext=JSON.parse(await readFile(resolve(previous,'context.json'),'utf8'));
+    if(hash(previousContext)!==hash(context)){const previousReport=JSON.parse(await readFile(resolve(previous,'report.json'),'utf8'));if(previousReport.totalModelCalls!==0||previousReport.modelRequestAttempts!==0||previousReport.imageAttempts!==0)throw Error('TRIAL_CONTEXT_MISMATCH');}
     const imported=validatedPreviewCheckpoints(JSON.parse(await readFile(resolve(previous,'checkpoints.json'),'utf8')));
     for(const [k,v]of Object.entries(imported)){records[k]=v;initial.add(k);}
     const prior=JSON.parse(await readFile(resolve(previous,'report.json'),'utf8'));
@@ -48,9 +49,10 @@ try{
   const evidence=[];
   for(const s of plan.stories){
     const response=await safeFetch(s.url,[new URL(s.url).hostname],{timeoutMs:30000});
-    const $=load(response.text);$('script,style,nav,header,footer').remove();const text=$('body').text().replace(/\s+/g,' ');
+    const $=load(response.text);$('script,style,nav,header,footer').remove();let text=$('body').text().replace(/\s+/g,' ');let evidenceMode='fetched';
+    if(!text.trim()&&s.approvedSnapshot){const snapshot=s.approvedSnapshot;if(snapshot.sourceUrl!==s.url||snapshot.evidenceHash!==hash(snapshot.evidence)||Date.now()-Date.parse(snapshot.capturedAt)>86400_000)throw Error('SOURCE_SNAPSHOT_INVALID');text=snapshot.evidence;evidenceMode='reviewed_snapshot';sourceSnapshotsUsed++;}
     if(s.quotes.some((q:string)=>!text.includes(q))){await save('source-diagnostic.json',{storyId:s.id,title:$('title').text(),textLength:text.length,missingQuotes:s.quotes.filter((q:string)=>!text.includes(q)),excerpt:text.slice(0,1800)});throw Error('SOURCE_EVIDENCE_CHANGED_'+s.id);}
-    sourceReads++;evidence.push({storyId:'trial-'+s.id,url:response.url,readAt:new Date().toISOString(),sha256:hash(response.text),verifiedQuotes:s.quotes});
+    if(evidenceMode==='fetched')sourceReads++;evidence.push({storyId:'trial-'+s.id,url:response.url,readAt:new Date().toISOString(),sha256:hash(response.text),evidenceMode,snapshotCapturedAt:evidenceMode==='reviewed_snapshot'?s.approvedSnapshot.capturedAt:null,verifiedQuotes:s.quotes});
     if(!resumedFacts){
       const now=new Date().toISOString(),sourceId='source-'+s.id,published=s.date+'T00:00:00Z';
       facts.push(factSchema.parse({story_id:'trial-'+s.id,event_key:'official-'+s.id+'-'+s.date,
@@ -105,7 +107,7 @@ try{
 }
 const complete=!errorCode&&pdfVerified&&issues.length===3&&issues.every(i=>i.articles.length===4)&&reviews.length===12;
 const report={status:complete?'review_copy_ready':'needs_review',issueDate:plan.issueDate,generatedAt:new Date().toISOString(),storyCount:4,
-  generatedArticles:issues.reduce((n,i)=>n+i.articles.length,0),reviewRecords:reviews.length,sourcePagesRead:sourceReads,
+  generatedArticles:issues.reduce((n,i)=>n+i.articles.length,0),reviewRecords:reviews.length,sourcePagesRead:sourceReads,sourceSnapshotsUsed,
   model:DEFAULT_NEMOTRON_MODEL,modelRequestAttempts:budget.calls,reusedModelSteps:[...read].filter(k=>initial.has(k)&&!written.has(k)).length,
   totalModelCalls:priorModelCalls+budget.calls,totalTokens:priorTokens+budget.tokens,
   costStatus:'cost_unknown',estimatedUsd:null,ledger:budget.ledger,imageAttempts,pdfVerified,media,errorCode,
