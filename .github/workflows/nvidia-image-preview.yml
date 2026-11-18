@@ -10,7 +10,12 @@ on:
           - stabilityai/stable-diffusion-3-medium
           - black-forest-labs/flux-3-image-klein
           - black-forest-labs/flux.2-klein-4b
-        default: stabilityai/stable-diffusion-xl
+        default: black-forest-labs/flux-3-image-klein
+      prompt_case:
+        description: 'park: DayDay illustration; official_coffee: NVIDIA sample prompt'
+        type: choice
+        options: [park, official_coffee]
+        default: park
 permissions:
   contents: read
 concurrency:
@@ -35,6 +40,7 @@ jobs:
         env:
           LLM_API_KEY: ${{ secrets.LLM_API_KEY || secrets.NVIDIA_API_KEY }}
           IMAGE_TEST_MODEL: ${{ inputs.model }}
+          IMAGE_TEST_PROMPT_CASE: ${{ inputs.prompt_case }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:

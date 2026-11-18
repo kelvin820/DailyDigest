@@ -4,6 +4,7 @@ export const NVIDIA_IMAGE_MODELS=[NVIDIA_IMAGE_MODEL,'stabilityai/stable-diffusi
   'stabilityai/stable-diffusion-3-medium','black-forest-labs/flux-3-image-klein'] as const;
 export type NvidiaImageModel=typeof NVIDIA_IMAGE_MODELS[number];
 export const SIMPLE_PARK_IMAGE_PROMPT='A watercolor illustration of a wooden park bench under a leafy green tree beside a gently winding footpath. Warm ivory paper texture, sage green and muted ochre colors, clear welcoming composition, editorial illustration, landscape format.';
+export const NVIDIA_OFFICIAL_IMAGE_SAMPLE='a simple coffee shop interior';
 export const PARK_IMAGE_PROMPT='Editorial watercolor illustration on warm ivory paper: an open sketchbook on a wooden outdoor table showing simple green tree shapes and curved paths for a possible future community park, colored pencils, leafy trees softly in the background. No people, no lettering, no logos. Conceptual planning scene, not a photograph or a completed real event. Sage green, muted ochre and terracotta. Keep the important sketchbook centered with generous space around it for newspaper landscape cropping.';
 
 type ImageDiagnostic={httpStatus:number;hasArtifacts:boolean;artifactCount:number;hasProviderError:boolean;
