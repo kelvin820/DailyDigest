@@ -20,3 +20,42 @@ Sources:
 
 Licenses are preserved in `public/fonts/InstrumentSerif-OFL.txt` and
 `public/fonts/LibreCaslonText-OFL.txt`.
+
+
+## Round 2: eight selectable alternatives
+
+The user found the first two substitutes insufficiently similar. The new
+`public/mastheads.html` study offers eight additional candidates in one layout,
+plus the two previous faces as baselines. It supports paper color, supported
+font weights, horizontal width, tracking, reset, URL/local selection retention,
+and copying the selected values. Unsupported weights are disabled rather than
+synthesized. The Elementary reader masthead remains unchanged.
+
+| Choice | Font | Source folder in google/fonts/ofl |
+|---|---|---|
+| A | Bodoni Moda | bodonimoda |
+| B | GFS Didot | gfsdidot |
+| C | Old Standard TT Bold | oldstandardtt |
+| D | Prata | prata |
+| E | Libre Caslon Display | librecaslondisplay |
+| F | DM Serif Display | dmserifdisplay |
+| G | Cormorant Garamond | cormorantgaramond |
+| H | Playfair Display | playfairdisplay |
+
+All fonts and their OFL files are local under public/fonts; the catalog records
+the filename, license, supported weight range, and trial defaults. No hosted
+font service or purchase is required. The original reader and PDF defaults
+remain on Round 1 until the user selects the new treatment. The trial page
+states this explicitly.
+
+Research references distinguish the publishers' custom lettering from these
+open-source trials:
+
+- MCKL's WSJ-derived Journal House letterforms: https://www.mckltype.com/custom/journalhouse
+- Order's Journal House identity: https://order.design/project/journal-house
+- Klim's Financial Times typography: https://klim.co.nz/in-use/financial-times/
+
+Verification: ten actual loaded fonts at 320/375/768/1440, fitting title bounds,
+reader navigation, paper/card/keyboard controls, reload retention, reset, invalid
+URL parameters and refused local storage; no browser errors or external requests.
+Evidence is in output/masthead-trials/verification.json and gallery screenshots.

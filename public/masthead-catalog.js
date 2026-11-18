@@ -1,0 +1,12 @@
+export const mastheadTrials = [
+  {id:'a',label:'A',name:'Bodoni Moda',family:'Trial Bodoni',file:'BodoniModa.ttf',license:'bodonimoda-OFL.txt',folder:'bodonimoda',min:400,max:900,weight:600,width:82,tracking:-20,description:'直立高對比，收窄後更有老報紙報頭的輪廓。'},
+  {id:'b',label:'B',name:'GFS Didot',family:'Trial Didot',file:'GFSDidot-Regular.ttf',license:'gfsdidot-OFL.txt',folder:'gfsdidot',min:400,max:400,weight:400,width:86,tracking:-15,description:'細橫筆、直立厚筆，較銳利、克制。'},
+  {id:'c',label:'C',name:'Old Standard TT',family:'Trial Standard',file:'OldStandard-Bold.ttf',license:'oldstandardtt-OFL.txt',folder:'oldstandardtt',min:700,max:700,weight:700,width:86,tracking:-20,description:'傳統鉛字的骨架，帶一點舊式新聞紙的厚度。'},
+  {id:'d',label:'D',name:'Prata',family:'Trial Prata',file:'Prata-Regular.ttf',license:'prata-OFL.txt',folder:'prata',min:400,max:400,weight:400,width:88,tracking:-30,description:'高挑、細緻，字腳更明顯，輪廓較有雕刻感。'},
+  {id:'e',label:'E',name:'Libre Caslon Display',family:'Trial Caslon Display',file:'LibreCaslonDisplay-Regular.ttf',license:'librecaslondisplay-OFL.txt',folder:'librecaslondisplay',min:400,max:400,weight:400,width:100,tracking:-20,description:'改試 Display 字型，較上一輪 Text 版更輕、更舒展。'},
+  {id:'f',label:'F',name:'DM Serif Display',family:'Trial DM',file:'DMSerifDisplay-Regular.ttf',license:'dmserifdisplay-OFL.txt',folder:'dmserifdisplay',min:400,max:400,weight:400,width:94,tracking:-25,description:'厚實但不擁擠，適合比較金融報紙的穩重感。'},
+  {id:'g',label:'G',name:'Cormorant Garamond',family:'Trial Cormorant',file:'CormorantGaramond.ttf',license:'cormorantgaramond-OFL.txt',folder:'cormorantgaramond',min:300,max:700,weight:700,width:92,tracking:-10,description:'修長、古典，字母有較明顯的書卷氣。'},
+  {id:'h',label:'H',name:'Playfair Display',family:'Trial Playfair',file:'PlayfairDisplay.ttf',license:'playfairdisplay-OFL.txt',folder:'playfairdisplay',min:400,max:900,weight:600,width:92,tracking:-30,description:'比較醒目的展示字，粗細對比強、辨識度高。'},
+  {id:'i',label:'上一輪國中',name:'Instrument Serif',family:'Trial Instrument',file:'InstrumentSerif-Regular.ttf',license:'InstrumentSerif-OFL.txt',folder:'instrumentserif',min:400,max:400,weight:400,width:100,tracking:-25,previous:true,description:'保留作比較基準。'},
+  {id:'j',label:'上一輪高中',name:'Libre Caslon Text',family:'Trial Caslon Text',file:'LibreCaslonText.ttf',license:'LibreCaslonText-OFL.txt',folder:'librecaslontext',min:400,max:700,weight:700,width:100,tracking:-45,previous:true,description:'保留作比較基準。'},
+];
