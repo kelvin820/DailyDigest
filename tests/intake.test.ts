@@ -65,7 +65,7 @@ test('daily intake defaults to four distinct events across categories and reject
  const mock=fixtureProvider(false,stories.slice(2,6));
  const input={registry,collect,issueDate:'2026-11-17',history:[],model:'fixture',store:store(),provider:mock.provider};
  const result=await intakeFacts(input);assert.equal(result.facts.length,4);assert.equal(mock.calls(),5);
- assert.equal(new Set(result.facts.map(f=>f.primary_category)).size,4);
+ assert.equal(new Set(result.facts.map((f:{primary_category:string})=>f.primary_category)).size,4);
  await assert.rejects(intakeFacts({...input,storyCount:5}),/INVALID_STORY_COUNT/);
  const concentrated=fixtureProvider(false,stories.slice(2,6).map(s=>({...s,category:'science' as const})));
  await assert.rejects(intakeFacts({...input,store:store(),provider:concentrated.provider}),/CATEGORY_QUOTA_FAILED/);
