@@ -75,7 +75,7 @@ test('HTTP 200 with a provider error is rejected; response diagnostics exclude c
     onDiagnostic:value=>diagnostics.push(value),
   }),/^Error: IMAGE_PROVIDER_REJECTED$/);
   assert.deepEqual(diagnostics,[{httpStatus:200,hasArtifacts:false,artifactCount:0,hasProviderError:true,
-    hasImage:false,finishReason:null,validationFields:[]}]);
+    hasImage:false,finishReason:null,validationFields:[],steps:4}]);
   assert.doesNotMatch(JSON.stringify(diagnostics),/private-key|sensitive/);
 });
 
@@ -99,4 +99,12 @@ test('SDXL and SD3 use their own payloads and documented response shapes; filter
   await assert.rejects(generateNvidiaImage('test-key',{onDiagnostic:d=>diagnostics.push(d),
     fetcher:async()=>new Response(JSON.stringify({detail:[{loc:['body','steps','private-key'],input:'private-key'}]}),{status:422})}),/IMAGE_HTTP_422/);
   assert.doesNotMatch(JSON.stringify(diagnostics),/private-key/);
+});
+
+test('FLUX 3 uses its documented 50-step default rather than FLUX 2 distilled settings',async()=>{
+  const png=await sharp({create:{width:256,height:256,channels:3,background:'#abc'}}).png().toBuffer();
+  await generateNvidiaImage('test-key',{model:'black-forest-labs/flux-3-image-klein',fetcher:async(_url,options)=>{
+    assert.equal(JSON.parse(String(options?.body)).steps,50);
+    return new Response(JSON.stringify({artifacts:[{base64:png.toString('base64'),finishReason:'SUCCESS'}]}));
+  }});
 });

@@ -8,7 +8,7 @@ export const NVIDIA_OFFICIAL_IMAGE_SAMPLE='a simple coffee shop interior';
 export const PARK_IMAGE_PROMPT='Editorial watercolor illustration on warm ivory paper: an open sketchbook on a wooden outdoor table showing simple green tree shapes and curved paths for a possible future community park, colored pencils, leafy trees softly in the background. No people, no lettering, no logos. Conceptual planning scene, not a photograph or a completed real event. Sage green, muted ochre and terracotta. Keep the important sketchbook centered with generous space around it for newspaper landscape cropping.';
 
 type ImageDiagnostic={httpStatus:number;hasArtifacts:boolean;artifactCount:number;hasProviderError:boolean;
-  hasImage:boolean;finishReason:string|null;validationFields:string[]};
+  hasImage:boolean;finishReason:string|null;validationFields:string[];steps:number};
 export async function generateNvidiaImage(key:string,{fetcher=fetch,prompt=PARK_IMAGE_PROMPT,
   model=NVIDIA_IMAGE_MODEL,onDiagnostic}:{fetcher?:typeof fetch;prompt?:string;model?:NvidiaImageModel;
     onDiagnostic?:(diagnostic:ImageDiagnostic)=>void}={}){
@@ -18,7 +18,7 @@ export async function generateNvidiaImage(key:string,{fetcher=fetch,prompt=PARK_
     {text_prompts:[{text:prompt,weight:1}],cfg_scale:5,sampler:'K_DPM_2_ANCESTRAL',seed:18,steps:25}:
     model==='stabilityai/stable-diffusion-3-medium'?
       {prompt,cfg_scale:5,aspect_ratio:'3:2',seed:18,steps:28,negative_prompt:''}:
-      {prompt,width:1216,height:832,steps:4};
+      {prompt,width:1216,height:832,steps:model==='black-forest-labs/flux-3-image-klein'?50:4};
   const response=await fetcher('https://ai.api.nvidia.com/v1/genai/'+model,{
     method:'POST',redirect:'error',signal:AbortSignal.timeout(180_000),
     headers:{Authorization:'Bearer '+key,'Content-Type':'application/json',Accept:'application/json'},
@@ -45,7 +45,7 @@ export async function generateNvidiaImage(key:string,{fetcher=fetch,prompt=PARK_
     Array.isArray(item?.loc)?item.loc.filter((part):part is string=>typeof part==='string'&&fields.has(part)):[]))]:[];
   onDiagnostic?.({httpStatus:response.status,hasArtifacts:Array.isArray(data?.artifacts),
     artifactCount:Array.isArray(data?.artifacts)?data.artifacts.length:0,hasProviderError:!!(data?.error||data?.errors),
-    hasImage:typeof data?.image==='string',finishReason,validationFields});
+    hasImage:typeof data?.image==='string',finishReason,validationFields,steps:payload.steps});
   if(!response.ok)throw Error('IMAGE_HTTP_'+response.status);
   if(data?.error||data?.errors)throw Error('IMAGE_PROVIDER_REJECTED');
   if(finishReason==='CONTENT_FILTERED')throw Error('IMAGE_CONTENT_FILTERED');
