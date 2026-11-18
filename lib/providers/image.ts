@@ -1,5 +1,5 @@
 // A manual, one-image NVIDIA smoke test. No automatic publication or retries.
-export const NVIDIA_IMAGE_MODEL='black-forest-labs/flux.1-schnell';
+export const NVIDIA_IMAGE_MODEL='black-forest-labs/flux.2-klein-4b';
 export const PARK_IMAGE_PROMPT='Editorial watercolor illustration on warm ivory paper: an open sketchbook on a wooden outdoor table showing simple green tree shapes and curved paths for a possible future community park, colored pencils, leafy trees softly in the background. No people, no lettering, no logos. Conceptual planning scene, not a photograph or a completed real event. Sage green, muted ochre and terracotta. Keep the important sketchbook centered with generous space around it for newspaper landscape cropping.';
 
 export async function generateNvidiaImage(key:string,{fetcher=fetch,prompt=PARK_IMAGE_PROMPT}={}){

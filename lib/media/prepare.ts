@@ -35,6 +35,9 @@ export async function prepareAsset(bytes:Buffer,mime:string,record:AssetRecord,d
   const info=await input.metadata();
   if(info.format!==formats[declared]||!info.width||!info.height||info.width<240||info.height<160||
     (info.pages??1)>1)throw Error('IMAGE_RASTER_INVALID');
+  const quality=await input.clone().stats();
+  if(quality.channels.slice(0,3).every(c=>c.stdev<2)||
+    (info.hasAlpha&&quality.channels.at(-1)!.max<16))throw Error('IMAGE_EMPTY_OR_FLAT');
   const id=digest(bytes),webPath=`assets/${id}-web.webp`,printPath=`assets/${id}-print.jpg`;
   await mkdir(resolve(directory,'assets'),{recursive:true});
   // Rotation honors EXIF; default re-encoding strips location/other EXIF metadata.

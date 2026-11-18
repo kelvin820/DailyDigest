@@ -23,7 +23,9 @@ test('photo rights must be explicit; unknown, CC BY-SA and absent provenance fai
 test('raster pipeline checks MIME, rejects SVG/oversize and strips metadata with bounded web rendition',async()=>{
   const directory=await mkdtemp(join(tmpdir(),'dayday-media-'));
   try{
-    const bytes=await sharp({create:{width:1800,height:1200,channels:3,background:'#abc'}})
+    const pixels=Buffer.alloc(1800*1200*3);
+    for(let i=0;i<pixels.length;i++)pixels[i]=i%251;
+    const bytes=await sharp(pixels,{raw:{width:1800,height:1200,channels:3}})
       .withMetadata({exif:{IFD0:{Artist:'Private camera metadata'}}}).jpeg().toBuffer();
     const result=await prepareAsset(bytes,'image/jpeg',record,directory);
     const web=await sharp(await readFile(join(directory,result.image.rendition.webPath))).metadata();
@@ -32,6 +34,8 @@ test('raster pipeline checks MIME, rejects SVG/oversize and strips metadata with
     await assert.rejects(prepareAsset(bytes,'image/png',record,directory),/IMAGE_RASTER_INVALID/);
     await assert.rejects(prepareAsset(Buffer.from('<svg/>'),'image/svg+xml',record,directory),/IMAGE_MIME_REJECTED/);
     await assert.rejects(prepareAsset(Buffer.alloc(10_000_001),'image/jpeg',record,directory),/IMAGE_SIZE_LIMIT/);
+    const blank=await sharp({create:{width:256,height:256,channels:3,background:'#000'}}).png().toBuffer();
+    await assert.rejects(prepareAsset(blank,'image/png',record,directory),/IMAGE_EMPTY_OR_FLAT/);
   }finally{await rm(directory,{recursive:true,force:true});}
 });
 
@@ -53,7 +57,7 @@ test('NVIDIA image adapter issues one fixed-endpoint request, accepts one raster
   const png=await sharp({create:{width:256,height:256,channels:3,background:'#abc'}}).png().toBuffer();
   let calls=0;
   const fetcher:typeof fetch=async(url,options)=>{
-    calls++;assert.equal(url,'https://ai.api.nvidia.com/v1/genai/black-forest-labs/flux.1-schnell');
+    calls++;assert.equal(url,'https://ai.api.nvidia.com/v1/genai/black-forest-labs/flux.2-klein-4b');
     const body=JSON.parse(String(options?.body));assert.equal(body.steps,4);
     assert.deepEqual(Object.keys(body).sort(),['height','prompt','steps','width']);
     return new Response(JSON.stringify({artifacts:[{base64:png.toString('base64')}]}));
