@@ -1,5 +1,20 @@
 # NVIDIA Nemotron 整合
 
+目前預設 writer／reviewer：`nvidia/nemotron-3.5-lightning-30b-a3b`。
+2026-11-18 的實測發現舊 `nvidia/nemotron-3-nano-30b-a3b` 回傳 HTTP 410；
+官方即時 `/v1/models` 已不再列出該型號。已改用目錄中可用的 Lightning，
+模型生成前先檢查 catalog，不會自動改用未指定的更大型號。
+
+現行官方參考：
+- https://build.nvidia.com/nvidia/nemotron-3.5-lightning-30b-a3b
+- https://docs.api.nvidia.com/nim/reference/llm-apis
+- https://integrate.api.nvidia.com/v1/models
+
+官方範例支援 chat_template_kwargs.enable_thinking；維持 false、明確 token 上限，
+不保存 reasoning_content。下列為最初 Nano adapter 的設計與測試紀錄，
+型號以本段與實際 report.json 為準。
+
+
 使用者於 2026-11-18 指定 NVIDIA Nemotron。初始 writer、reviewer 均用 `nvidia/nemotron-3-nano-30b-a3b`，各自獨立請求；型號不是學習成效或 A1 適合度的保證，需 live 校準。
 
 官方 API：[Nano inference reference](https://docs.api.nvidia.com/nim/reference/nvidia-nemotron-3-nano-30b-a3b-infer)、[Nano model card](https://docs.api.nvidia.com/nim/reference/nvidia-nemotron-3-nano-30b-a3b)。端點 `https://integrate.api.nvidia.com/v1/chat/completions`；採 Bearer key、非串流、明確 max_tokens、chat_template_kwargs.enable_thinking=false。

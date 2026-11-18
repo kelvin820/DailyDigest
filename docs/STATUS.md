@@ -36,3 +36,5 @@ Supabase 接續：已取得 https://bqoqzxharmatphcqwldo.supabase.co ，未帶�
 表頭選定：使用者指定國小 H（Playfair Display）、國中 C（Old Standard TT Bold），高中不改。國小採 H 預設 600／92%／-0.030em；國中沿用當前試字頁的 700／70%／-0.070em。已同步閱讀網頁與六份兩頁 PDF，正文與署名保留原設計。最新設定以 MASTHEADS.md 的 Current approved selection 為準。
 
 使用者已回報 Supabase schema_initialized（14 migrations、0 issues、0 members、review、live_enabled=false）。家長帳號暫緩；先用新 NVIDIA Preview 手動流程驗證 Nemotron 三版生成，不依賴 Supabase／登入，不寫庫、不發布。使用者已回報設定 GitHub Secret LLM_API_KEY；實際模型回應、用量與產物仍須以該次 API run 為準。
+
+NVIDIA 首次實際 API 試驗：run 44306426113 已讀到 Secret，但舊 Nano 型號回傳 MODEL_HTTP_410，尚未生成稿件。已依官方即時 catalog 與現行 model page 改為 Nemotron 3.5 Lightning 30B-A3B，保留失敗 report；新的生成結果另行驗證。

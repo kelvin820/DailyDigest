@@ -92,7 +92,7 @@ export class CompatibleProvider implements TextModelProvider {
 // NVIDIA NIM basic API contract verified against its official Nano reference.
 // No undocumented structured-output parameter is assumed. Prompt JSON + Zod remain strict.
 export const NVIDIA_BASE_URL = 'https://integrate.api.nvidia.com/v1';
-export const DEFAULT_NEMOTRON_MODEL = 'nvidia/nemotron-3-nano-30b-a3b';
+export const DEFAULT_NEMOTRON_MODEL = 'nvidia/nemotron-3.5-lightning-30b-a3b';
 export class NvidiaProvider extends CompatibleProvider {
   constructor(key: string, budget: BudgetPort) {
     super(NVIDIA_BASE_URL, key, budget, { responseFormat: 'prompt', disableThinking: true });

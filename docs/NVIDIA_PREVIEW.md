@@ -23,7 +23,7 @@ runner，網站不必持有 NVIDIA key。
 Workflow 執行 `node --import tsx scripts/nvidia-preview.ts`。本機可用忽略的
 `.env.local` 搭配 `node --env-file-if-exists=.env.local --import tsx scripts/nvidia-preview.ts`。
 
-- 真正使用 NvidiaProvider 與 `nvidia/nemotron-3-nano-30b-a3b`，沒有 fixture provider fallback。
+- 真正使用 NvidiaProvider 與 `nvidia/nemotron-3.5-lightning-30b-a3b`，沒有 fixture provider fallback。
 - 以同一批八則自有虛構底稿，分別寫 A1/A2/B1，使用既有 Prompt、字數／句長／詞彙檢查與獨立複核。
 - 成功後輸出 24 篇、三版閱讀 HTML、六份驗證過的兩頁 PDF、複核、checkpoint 與 usage report。
 - 若失敗，保留已收到的實際草稿及錯誤代碼；不以原本示範文章補足，也不提供未通過驗證的 PDF 下載。

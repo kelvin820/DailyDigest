@@ -1,7 +1,7 @@
 import {mkdir,readFile,writeFile,readdir,unlink} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {randomUUID} from 'node:crypto';
-import {NvidiaProvider,DEFAULT_NEMOTRON_MODEL} from '../lib/providers/text';
+import {NvidiaProvider,DEFAULT_NEMOTRON_MODEL,NVIDIA_BASE_URL} from '../lib/providers/text';
 import {Budget} from '../lib/pipeline/state.mjs';
 import {produceEditions} from '../lib/pipeline/editorial';
 import {renderIssues} from './render';
@@ -32,6 +32,10 @@ const facts=previewFacts(JSON.parse(await readFile('fixtures/stories.json','utf8
 await writeFile(resolve(directory,'facts.json'),safeJson(facts));
 try{
   if(!key)throw Error('NVIDIA_KEY_REQUIRED');
+  const catalogResponse=await fetch(NVIDIA_BASE_URL+'/models',{redirect:'error',signal:AbortSignal.timeout(20000)});
+  if(!catalogResponse.ok)throw Error('MODEL_CATALOG_HTTP_'+catalogResponse.status);
+  const catalog=await catalogResponse.json() as {data?:{id:string}[]};
+  if(!catalog.data?.some(model=>model.id===DEFAULT_NEMOTRON_MODEL))throw Error('MODEL_UNAVAILABLE');
   const provider=new NvidiaProvider(key,budget);
   const content=await produceEditions({facts,issueDate:PREVIEW_ISSUE_DATE,revision:1,
     provider,store,writerModel:DEFAULT_NEMOTRON_MODEL,reviewerModel:DEFAULT_NEMOTRON_MODEL});
@@ -71,5 +75,5 @@ if(process.env.GITHUB_STEP_SUMMARY)await writeFile(process.env.GITHUB_STEP_SUMMA
   `PDF verified: ${pdfVerified}. Published: false. Database written: false.\n\n`+
   `Download the nemotron-preview artifact to inspect the actual drafts, reviews and report.\n`+
   (errorCode?`\nStopped: ${errorCode}. No predefined article body replaces missing output.\n`:''));
-console.log('NVIDIA preview:',report.status,'requests:',budget.calls,'PDF verified:',pdfVerified,'published: false');
+console.log('NVIDIA preview:',report.status,'requests:',budget.calls,'PDF verified:',pdfVerified,'published: false','error:',errorCode||'none');
 if(errorCode)process.exitCode=1;

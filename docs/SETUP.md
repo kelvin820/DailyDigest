@@ -9,7 +9,7 @@ GitHub 原始碼已備份至 https://github.com/kelvin820/DailyDigest ，遠端�
 | 設定 | 放置位置 | 目的 |
 |---|---|---|
 | NVIDIA API key → LLM_API_KEY | GitHub production environment secret；本機用忽略的 .env.local | 模型生成／複核 |
-| writer/reviewer 模型 | runner variables；初始均為 nvidia/nemotron-3-nano-30b-a3b | 可分別調整；目前僅 mock 合約通過 |
+| writer/reviewer 模型 | runner variables；初始均為 nvidia/nemotron-3.5-lightning-30b-a3b | 可分別調整；目前僅 mock 合約通過 |
 | Supabase publishable key、管理者 email | Vercel；在 Supabase 邀請家長並設定 site_members | 私人登入與 reader/admin；Project URL 已取得 |
 | SUPABASE_SERVICE_ROLE_KEY | 只放 runner secret | 背景 DB／private Storage；讀者網站不需要它 |
 | Vercel 專案、實際 HTTPS APP_URL | 各平台與 runner variables | 部署及 PDF 本期網址 |
