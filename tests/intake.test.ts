@@ -16,11 +16,11 @@ const registry = evidence.map(e => sourceSchema.parse({ name: e.source_name, dom
 const stories = categories.map((category, i) => ({ candidate_ids: ['candidate-' + i,
   ...(i < 2 ? ['candidate-' + (i + 8)] : [])], event_key: 'event-' + i, category, content_kind: 'news', update_reason: null }));
 const collect = async () => ({ evidence, failures: [] });
-function fixtureProvider(invalidQuote = false) {
+function fixtureProvider(invalidQuote = false,selectedStories=stories) {
   let calls = 0;
   const provider: TextModelProvider = { async generateStructured(input) {
     calls++;
-    let response: unknown = { status: 'selected', stories };
+    let response: unknown = { status: 'selected', stories:selectedStories };
     if (input.task === 'facts') {
       const data = input.data as { sources: { source_id: string; evidence: string }[] };
       response = { claims: [{ claim_id: 'core', text: 'An attributed synthetic plan exists.',
@@ -58,4 +58,15 @@ test('invented quotations, recycled events without updates, and pending rights s
   const pending = fixtureProvider();
   await assert.rejects(intakeFacts({storyCount:8, registry: registry.map(r => ({ ...r, status: 'pending' as const })), collect,
     issueDate: '2026-11-17', history: [], store: store(), provider: pending.provider, model: 'fixture' }), /SOURCE_POLICY_NOT_APPROVED/);
+});
+
+
+test('daily intake defaults to four distinct events across categories and rejects unsupported counts',async()=>{
+ const mock=fixtureProvider(false,stories.slice(2,6));
+ const input={registry,collect,issueDate:'2026-11-17',history:[],model:'fixture',store:store(),provider:mock.provider};
+ const result=await intakeFacts(input);assert.equal(result.facts.length,4);assert.equal(mock.calls(),5);
+ assert.equal(new Set(result.facts.map(f=>f.primary_category)).size,4);
+ await assert.rejects(intakeFacts({...input,storyCount:5}),/INVALID_STORY_COUNT/);
+ const concentrated=fixtureProvider(false,stories.slice(2,6).map(s=>({...s,category:'science' as const})));
+ await assert.rejects(intakeFacts({...input,store:store(),provider:concentrated.provider}),/CATEGORY_QUOTA_FAILED/);
 });

@@ -1,4 +1,4 @@
-import {DAILY_STORY_COUNT} from '../../config/issue-settings.mjs';
+import {DAILY_STORY_COUNT,supportedStoryCounts} from '../../config/issue-settings.mjs';
 import { readFile } from 'node:fs/promises';
 import { z } from 'zod';
 import { discoverSources, fetchCandidate } from '../content/sources.mjs';
@@ -53,6 +53,7 @@ export async function intakeFacts({ registry, issueDate, history, store, provide
   storyCount?:number; registry: Source[]; issueDate: string; history: History; store: Store; provider: TextModelProvider; model: string;
   collect?: () => Promise<{ evidence: Evidence[]; failures: unknown[] }>;
 }) {
+  if(!supportedStoryCounts.includes(storyCount))throw Error('INVALID_STORY_COUNT');
   const selectionSchema=selectionSchemaFor(storyCount);
   const selectPrompt = (await readFile('prompts/select.v1.txt', 'utf8')).replaceAll('{{story_count}}',String(storyCount));
   const factsPrompt = await readFile('prompts/facts.v1.txt', 'utf8');
