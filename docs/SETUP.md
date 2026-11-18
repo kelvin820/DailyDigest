@@ -1,6 +1,8 @@
 # 集中設定清單
 
-使用者已決定先用 NVIDIA Nemotron。以下項目仍未取得；金鑰勿貼聊天。
+使用者已決定先用 NVIDIA Nemotron。以下項目仍需設定；金鑰勿貼聊天。
+
+已取得 Supabase Project URL：https://bqoqzxharmatphcqwldo.supabase.co 。目前只有 URL，尚未登入或變更雲端資料庫。先依 SUPABASE_SETUP.md 執行空專案初始化；合併 SQL 可從 scripts/build-supabase-bootstrap.mjs 產生，已通過本機原子交易與失敗回滾檢查。
 
 GitHub 原始碼已備份至 https://github.com/kelvin820/DailyDigest ，遠端主分支為 main；runner secrets／variables 與正式出刊設定仍待完成。
 
@@ -8,7 +10,7 @@ GitHub 原始碼已備份至 https://github.com/kelvin820/DailyDigest ，遠端�
 |---|---|---|
 | NVIDIA API key → LLM_API_KEY | GitHub production environment secret；本機用忽略的 .env.local | 模型生成／複核 |
 | writer/reviewer 模型 | runner variables；初始均為 nvidia/nemotron-3-nano-30b-a3b | 可分別調整；目前僅 mock 合約通過 |
-| Supabase project URL、publishable key、管理者 email | Vercel；在 Supabase 邀請家長並設定 site_members | 私人登入與 reader/admin |
+| Supabase publishable key、管理者 email | Vercel；在 Supabase 邀請家長並設定 site_members | 私人登入與 reader/admin；Project URL 已取得 |
 | SUPABASE_SERVICE_ROLE_KEY | 只放 runner secret | 背景 DB／private Storage；讀者網站不需要它 |
 | Vercel 專案、實際 HTTPS APP_URL | 各平台與 runner variables | 部署及 PDF 本期網址 |
 | DAILY_BUDGET_USD、MAX_MODEL_CALLS、MAX_MODEL_TOKENS | runner；預設 2 / 100 / 200000 | 不是實測成本承諾；0 USD 暫停模型呼叫 |

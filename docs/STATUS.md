@@ -30,3 +30,5 @@
 使用者已指定先用 NVIDIA Nemotron；不再等待供應商選擇。待設定項目集中於 SETUP.md。沒有建立其他網站或購買方案。
 
 表頭第二輪：DEMO 閱讀頁新增「表頭試字」入口；mastheads.html 提供八款新候選與上一輪兩款對照，可切換紙色、字重、字寬與字距。選定前不改動閱讀頁或 PDF 預設。四尺寸、十款字型實際載入、選擇記憶與儲存拒絕檢查通過。
+
+Supabase 接續：已取得 https://bqoqzxharmatphcqwldo.supabase.co ，未帶憑證的 Auth health 請求回傳 401。已準備 14 份 migration 的單一交易初始化 SQL，並在隔離 PostgreSQL 驗證初始化、重跑拒絕、保留既有資料及中途失敗回滾。證據：output/supabase-bootstrap-verification.json；操作見 SUPABASE_SETUP.md。尚未對此雲端專案套用 SQL，也沒有取得任何 API key。
