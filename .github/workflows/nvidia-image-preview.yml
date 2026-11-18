@@ -1,6 +1,16 @@
 name: NVIDIA Image Preview
 on:
   workflow_dispatch:
+    inputs:
+      model:
+        description: 'One model, one test image, no retries or publication'
+        type: choice
+        options:
+          - stabilityai/stable-diffusion-xl
+          - stabilityai/stable-diffusion-3-medium
+          - black-forest-labs/flux-3-image-klein
+          - black-forest-labs/flux.2-klein-4b
+        default: stabilityai/stable-diffusion-xl
 permissions:
   contents: read
 concurrency:
@@ -24,6 +34,7 @@ jobs:
         run: node --import tsx scripts/nvidia-image-preview.ts
         env:
           LLM_API_KEY: ${{ secrets.LLM_API_KEY || secrets.NVIDIA_API_KEY }}
+          IMAGE_TEST_MODEL: ${{ inputs.model }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:

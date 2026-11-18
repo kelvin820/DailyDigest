@@ -74,6 +74,29 @@ test('HTTP 200 with a provider error is rejected; response diagnostics exclude c
     fetcher:async()=>new Response(JSON.stringify({error:{description:'private-key sensitive provider text'}})),
     onDiagnostic:value=>diagnostics.push(value),
   }),/^Error: IMAGE_PROVIDER_REJECTED$/);
-  assert.deepEqual(diagnostics,[{httpStatus:200,hasArtifacts:false,artifactCount:0,hasProviderError:true}]);
+  assert.deepEqual(diagnostics,[{httpStatus:200,hasArtifacts:false,artifactCount:0,hasProviderError:true,
+    hasImage:false,finishReason:null,validationFields:[]}]);
   assert.doesNotMatch(JSON.stringify(diagnostics),/private-key|sensitive/);
+});
+
+test('SDXL and SD3 use their own payloads and documented response shapes; filtered images fail closed',async()=>{
+  const png=await sharp({create:{width:256,height:256,channels:3,background:'#abc'}}).png().toBuffer();
+  for(const model of ['stabilityai/stable-diffusion-xl','stabilityai/stable-diffusion-3-medium'] as const){
+    const result=await generateNvidiaImage('test-key',{model,fetcher:async(url,options)=>{
+      assert.equal(url,'https://ai.api.nvidia.com/v1/genai/'+model);
+      const payload=JSON.parse(String(options?.body));
+      if(model.endsWith('-xl')){assert.equal(payload.text_prompts.length,1);assert.equal(payload.steps,25);}
+      else{assert.equal(payload.aspect_ratio,'3:2');assert.equal(payload.steps,28);}
+      return new Response(JSON.stringify(model.endsWith('-xl')?
+        {artifacts:[{base64:png.toString('base64'),finishReason:'SUCCESS',seed:18}]}:
+        {image:png.toString('base64'),finish_reason:'SUCCESS',seed:18}));
+    }});
+    assert.equal(result.model,model);assert.equal(result.seed,18);
+  }
+  await assert.rejects(generateNvidiaImage('test-key',{fetcher:async()=>new Response(JSON.stringify({
+    artifacts:[{base64:png.toString('base64'),finishReason:'CONTENT_FILTERED'}]}))}),/IMAGE_CONTENT_FILTERED/);
+  const diagnostics:unknown[]=[];
+  await assert.rejects(generateNvidiaImage('test-key',{onDiagnostic:d=>diagnostics.push(d),
+    fetcher:async()=>new Response(JSON.stringify({detail:[{loc:['body','steps','private-key'],input:'private-key'}]}),{status:422})}),/IMAGE_HTTP_422/);
+  assert.doesNotMatch(JSON.stringify(diagnostics),/private-key/);
 });
