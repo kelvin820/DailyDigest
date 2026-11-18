@@ -1,0 +1,33 @@
+name: NVIDIA Image Preview
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: dayday-nvidia-image-preview
+  cancel-in-progress: false
+jobs:
+  preview:
+    if: github.ref_name == github.event.repository.default_branch
+    timeout-minutes: 8
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: pnpm/action-setup@v4
+      - run: pnpm install --frozen-lockfile
+      - name: Generate exactly one conceptual illustration, without retries
+        run: node --import tsx scripts/nvidia-image-preview.ts
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY || secrets.NVIDIA_API_KEY }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nvidia-image-preview
+          path: output/nvidia-image-preview/
+          if-no-files-found: ignore
+          retention-days: 7

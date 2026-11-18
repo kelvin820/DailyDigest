@@ -25,3 +25,12 @@
 .newspaper.elementary .masthead h1,.print-edition.elementary .print-head h1{--wordmark-scale:.92;--wordmark-height:1.08695652;font-family:"DD Elementary Masthead",Georgia,serif;font-weight:600;letter-spacing:-.03em}
 .masthead h1>.masthead-wordmark,.print-head h1>.masthead-wordmark{font:inherit;letter-spacing:inherit;display:inline-block;white-space:nowrap;margin:0;zoom:var(--wordmark-scale,1);transform:scaleY(var(--wordmark-height,1));transform-origin:center}
 @media(max-width:767px){.newspaper.elementary .masthead h1{font-size:clamp(36px,10.5vw,64px)}}
+
+/* Locally served raster assets share the article/PDF renderer with original icons. */
+.article .asset-visual img{width:100%;aspect-ratio:5/3;object-fit:cover;display:block}
+.media-figure [hidden]{display:none!important}
+.article .asset-visual{background:#efe9d9}
+.article .media-figure figcaption{line-height:1.55;opacity:.85}
+.print-article .asset-visual img{width:100%;height:27mm;display:block;object-fit:cover}
+.print-edition.junior .print-article .asset-visual img,.print-edition.senior .print-article .asset-visual img{width:36mm;height:18mm}
+.print-article .asset-visual{overflow:hidden}

@@ -3,6 +3,7 @@ import { v1Rules } from '../../config/edition-settings.mjs';
 import { stats } from '../content/metrics';
 import { containsTerm } from '../content/core.mjs';
 import { httpsUrl } from './urls';
+import {validAssetPath} from '../media/paths.mjs';
 
 export const vocabularySchema = z.object({ term: z.string().trim().min(1),
   definitionEn: z.string().trim().min(1), meaningZhHant: z.string().trim().min(1) }).strict();
@@ -15,6 +16,9 @@ export const articleSchema = z.object({
     assetId: z.string().min(1), alt: z.string().min(1), caption: z.string(),
     kind: z.enum(['event_photo', 'file_photo', 'illustration', 'generated_illustration', 'icon']),
     credit: z.string().min(1), licenseUrl: httpsUrl.optional(), sourcePage: httpsUrl.optional(),
+    rendition:z.object({webPath:z.string().refine(validAssetPath),printPath:z.string().refine(validAssetPath),
+      width:z.number().int().positive().max(1200),height:z.number().int().positive().max(1200)}).strict().optional(),
+    focalPoint:z.object({x:z.number().min(0).max(100),y:z.number().min(0).max(100)}).strict().optional(),
   }).strict(),
   sources: z.array(z.object({ publisher: z.string().min(1), url: httpsUrl, publishedAt: z.iso.datetime() }).strict()).min(1),
   eventDate: z.iso.date().nullable(), correctionNote: z.string().optional(),
