@@ -1,7 +1,7 @@
 # DayDay Daily Digest
-Eight stories. Every day. Your level.
+Four stories. Every day. Your level.
 
-接續原 M1 成果開發，保留三版設計與 2026-11-17 虛構樣刊。Next.js 正式 build、三版讀者流程、六份兩頁 PDF、隔離 PostgreSQL 權限與恢復測試已驗證。**沒有部署 Vercel、連接使用者 Supabase、呼叫真實 Nemotron 或發布真實新聞。** 完整進度見 [STATUS](docs/STATUS.md)，設定需求集中在 [SETUP](docs/SETUP.md)。
+接續原 M1 成果開發，保留已選定的三版表頭與舊八篇虛構樣刊。新刊改為每日四篇，三版依程度另選學習單字，生成插畫採分齡風格。NVIDIA 文字／圖片已有實際 API 測試，四篇真實來源試產以 Actions artifact 的 report 為準；**試產不代表正式發布，也未完成 Vercel／Supabase Storage 的出刊驗收。** 四篇試產操作見 [FOUR_STORY_TRIAL](docs/FOUR_STORY_TRIAL.md)。完整進度見 [STATUS](docs/STATUS.md)，設定需求集中在 [SETUP](docs/SETUP.md)。
 
 ## 本機閱讀
 本輪分為 source、review 兩個 ZIP；在同一位置解壓，便會同時具有程式與 output/preview 的六份樣刊 PDF。只從 Git 取得原始碼時，先依下面的 PDF 步驟生成樣刊，下載按鈕才有檔案可讀。

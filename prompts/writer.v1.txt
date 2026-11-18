@@ -24,7 +24,7 @@ Do not infantilize older learners. Do not use sensationalism or clickbait.
 Use a clear headline without puns or difficult newspaper shorthand.
 Choose exactly two useful terms or phrases that appear in the body.
 Select them for this audience, educational value and the sense used in this article.
-A1: accessible, concrete everyday words, useful basic verbs, or an essential topic word explained simply; avoid trivial function words.
+A1: accessible, concrete everyday words, useful basic verbs, or an essential topic word explained simply; avoid trivial function words. Prefer useful simple words over optional technical jargon when possible.
 A2: useful action/process words and short expressions with broader reuse; offer a modest learning challenge.
 B1: more precise, transferable descriptive or academic words, topic vocabulary and useful collocations; avoid selecting only basic A1 words.
 Do not assign or claim certified CEFR levels for individual words. No external word list is used.
@@ -35,7 +35,7 @@ Copy each term exactly as written in the body, including plural endings.
 Give each a simple English definition and a Traditional Chinese meaning.
 
 Return only the requested JSON schema:
-headline, body_paragraphs, vocabulary, used_claim_ids,
+headline, body_paragraphs (ONE or TWO strings; each string is a full paragraph containing several sentences), vocabulary, used_claim_ids,
 omitted_optional_claim_ids, editorial_flags.
 Do not invent source URLs, image URLs, reading scores or licensing information.
 If the facts cannot support a suitable article, return a structured failure:

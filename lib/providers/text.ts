@@ -21,7 +21,7 @@ export class FixtureProvider implements TextModelProvider {
   }
 }
 export type InvalidStructuredReply = {task:Task;model:string;attempt:number;content:string;validation:unknown};
-type ProviderOptions = { responseFormat?: 'json_object' | 'prompt'; disableThinking?: boolean;
+type ProviderOptions = { joinWriterSentenceItems?:boolean; responseFormat?: 'json_object' | 'prompt'; disableThinking?: boolean;
   reasoningEffort?:'low';
   onInvalidReply?:(reply:InvalidStructuredReply)=>Promise<void> };
 export class CompatibleProvider implements TextModelProvider {
@@ -84,7 +84,14 @@ export class CompatibleProvider implements TextModelProvider {
       totals.input_tokens += usage.input_tokens; totals.output_tokens += usage.output_tokens;
       try {
         if (raw.choices?.[0]?.finish_reason === 'length') throw Error('TRUNCATED_JSON');
-        return { data: input.schema.parse(JSON.parse(raw.choices[0].message.content)),
+        let parsed=JSON.parse(raw.choices[0].message.content);
+        const formatTransformations=[];
+        if(this.options.joinWriterSentenceItems&&['write','revise'].includes(input.task)&&Array.isArray(parsed?.body_paragraphs)&&parsed.body_paragraphs.length>2&&parsed.body_paragraphs.length<=20&&parsed.body_paragraphs.every((p:unknown)=>typeof p==='string'&&p.length>0&&p.length<=4000)){
+          const original=parsed.body_paragraphs;
+          parsed={...parsed,body_paragraphs:[original.join(' ')]};
+          formatTransformations.push({field:'body_paragraphs',operation:'join_with_space',originalValue:original});
+        }
+        return { data: input.schema.parse(parsed),...(formatTransformations.length?{formatTransformations}:{}),
           usage: totals, providerRequestId: typeof raw.id === 'string' ? raw.id : undefined };
       } catch (error) {
         formatFeedback=error instanceof z.ZodError?error.issues:{code:'invalid_json_or_truncated_response'};
@@ -104,6 +111,6 @@ export const NVIDIA_BASE_URL = 'https://integrate.api.nvidia.com/v1';
 export const DEFAULT_NEMOTRON_MODEL = 'nvidia/nemotron-3.5-lightning-30b-a3b';
 export class NvidiaProvider extends CompatibleProvider {
   constructor(key: string, budget: BudgetPort, onInvalidReply?:ProviderOptions['onInvalidReply']) {
-    super(NVIDIA_BASE_URL, key, budget, { responseFormat: 'prompt', disableThinking: true,onInvalidReply });
+    super(NVIDIA_BASE_URL, key, budget, { responseFormat: 'prompt', disableThinking: true,joinWriterSentenceItems:true,onInvalidReply });
   }
 }

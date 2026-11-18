@@ -27,3 +27,13 @@ test('NVIDIA contract uses bounded non-streaming JSON, disables thinking, accoun
   assert.equal(budget.calls, 2); assert.equal(budget.ledger.length, 2);
   assert.equal(JSON.stringify(result).includes('discarded'), false);
 });
+
+test('sentence-per-item NVIDIA output preserves every word and original array when joining paragraphs',async t=>{
+ const original=['NASA ended the science work.','The telescope studied stars.','Teams will keep its data.'];
+ t.mock.method(globalThis,'fetch',async()=>new Response(JSON.stringify({choices:[{message:{content:JSON.stringify({body_paragraphs:original})},finish_reason:'stop'}],usage:{prompt_tokens:20,completion_tokens:15}})));
+ const budget=new Budget({maxCalls:1,inputRate:undefined,outputRate:undefined});
+ const result=await new NvidiaProvider('fixture-not-key',budget).generateStructured({task:'write',system:'Synthetic formatting test',data:{},schema:z.object({body_paragraphs:z.array(z.string()).max(2)}).strict(),model:DEFAULT_NEMOTRON_MODEL,timeoutMs:1000,maxOutputTokens:100});
+ assert.deepEqual(result.data.body_paragraphs,[original.join(' ')]);
+ assert.deepEqual(result.formatTransformations,[{field:'body_paragraphs',operation:'join_with_space',originalValue:original}]);
+ assert.equal(budget.calls,1);
+});
