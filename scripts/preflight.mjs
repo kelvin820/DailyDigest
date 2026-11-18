@@ -1,3 +1,4 @@
+import {DAILY_STORY_COUNT} from '../config/issue-settings.mjs';
 import { readFile } from 'node:fs/promises';
 function stop(error,details){console.error(JSON.stringify({error,...details}));process.exit(1)}
 // A deployment operator sets this only after actual source/model/Storage E2E acceptance.
@@ -9,7 +10,7 @@ if(process.env.LLM_PROVIDER!=='nvidia')stop('PROVIDER_NOT_CONFIGURED');
 if(process.env.GITHUB_ACTIONS==='true'&&process.env.GITHUB_REF_NAME!==process.env.GITHUB_DEFAULT_BRANCH)stop('DEFAULT_BRANCH_REQUIRED');
 if(process.env.APPROVED_FACTS_FILE){
   const facts=JSON.parse(await readFile(process.env.APPROVED_FACTS_FILE,'utf8'));
-  if(!Array.isArray(facts)||facts.length!==8||facts.some(f=>f.is_demo!==false))stop('LIVE_FACTS_REQUIRED');
+  if(!Array.isArray(facts)||facts.length!==DAILY_STORY_COUNT||facts.some(f=>f.is_demo!==false))stop('LIVE_FACTS_REQUIRED');
 }else{
   const sources=JSON.parse(await readFile('config/sources.json','utf8'));
   if(!sources.some(s=>s.status==='enabled'&&s.discovery_enabled&&s.fetch_enabled&&s.reviewed_at&&

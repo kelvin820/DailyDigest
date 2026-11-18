@@ -38,7 +38,7 @@ function store() { const map = new Map<string, unknown>(); return { get: async (
 
 test('intake joins only read URLs and verbatim evidence, keeps event date unknown, reuses completed model steps', async () => {
   const mock = fixtureProvider(), checkpoints = store();
-  const input = { registry, collect, issueDate: '2026-11-17', history: [], model: 'fixture-nemotron',
+  const input = { storyCount:8, registry, collect, issueDate: '2026-11-17', history: [], model: 'fixture-nemotron',
     store: checkpoints, provider: mock.provider };
   const result = await intakeFacts(input);
   assert.equal(result.facts.length, 8); assert.equal(mock.calls(), 9);
@@ -50,12 +50,12 @@ test('intake joins only read URLs and verbatim evidence, keeps event date unknow
 });
 test('invented quotations, recycled events without updates, and pending rights stop intake', async () => {
   const invalid = fixtureProvider(true);
-  await assert.rejects(intakeFacts({ registry, collect, issueDate: '2026-11-17', history: [],
+  await assert.rejects(intakeFacts({storyCount:8, registry, collect, issueDate: '2026-11-17', history: [],
     store: store(), provider: invalid.provider, model: 'fixture' }), /EVIDENCE_QUOTE_NOT_VERBATIM/);
   const duplicate = fixtureProvider();
-  await assert.rejects(intakeFacts({ registry, collect, issueDate: '2026-11-17',
+  await assert.rejects(intakeFacts({storyCount:8, registry, collect, issueDate: '2026-11-17',
     history: [{ event_key: 'event-0', claims: [] }], store: store(), provider: duplicate.provider, model: 'fixture' }), /RECENT_EVENT_DUPLICATE/);
   const pending = fixtureProvider();
-  await assert.rejects(intakeFacts({ registry: registry.map(r => ({ ...r, status: 'pending' as const })), collect,
+  await assert.rejects(intakeFacts({storyCount:8, registry: registry.map(r => ({ ...r, status: 'pending' as const })), collect,
     issueDate: '2026-11-17', history: [], store: store(), provider: pending.provider, model: 'fixture' }), /SOURCE_POLICY_NOT_APPROVED/);
 });

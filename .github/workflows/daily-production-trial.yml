@@ -1,0 +1,55 @@
+name: Four Story Production Trial
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: dayday-four-story-trial-2026-11-19
+  cancel-in-progress: false
+jobs:
+  trial:
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: pnpm/action-setup@v4
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements-pdf.txt fonttools
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Resume latest dated trial to avoid repeating successful paid requests
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/actions/workflows/daily-production-trial.yml/runs?branch=$GITHUB_REF_NAME&status=completed&per_page=30" > /tmp/dayday-trial-runs.json
+          previous_run=$(node --input-type=module -e "import{readFileSync}from'node:fs';const runs=JSON.parse(readFileSync('/tmp/dayday-trial-runs.json')).workflow_runs;process.stdout.write(String(runs.find(r=>r.id!==Number(process.env.GITHUB_RUN_ID))?.id||''))")
+          if [ -n "$previous_run" ]; then
+            gh run download "$previous_run" --repo "$GITHUB_REPOSITORY" -n daily-production-trial -D output/previous-daily-trial
+            echo 'TRIAL_RESUME_DIR=output/previous-daily-trial' >> "$GITHUB_ENV"
+          fi
+      - name: Generate four real-source stories in three levels and verify PDFs
+        run: node --import tsx scripts/daily-production-trial.ts
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY || secrets.NVIDIA_API_KEY }}
+          LIVE_GENERATION_ENABLED: 'false'
+          DEMO_MODE: 'false'
+      - name: Subset private artifact font copies
+        if: always()
+        run: test ! -d output/daily-production-trial/fonts || python scripts/subset-preview-fonts.py output/daily-production-trial
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: daily-production-trial
+          path: output/daily-production-trial/
+          retention-days: 7
+          if-no-files-found: ignore

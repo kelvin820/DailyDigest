@@ -1,3 +1,4 @@
+import {DAILY_STORY_COUNT} from '../config/issue-settings.mjs';
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { randomUUID, createHash } from 'node:crypto';
@@ -39,9 +40,9 @@ const rate = (name: string) => process.env[name] ? z.coerce.number().finite().no
 const limits = { usd: settings.DAILY_BUDGET_USD, inputRate: rate('LLM_INPUT_USD_PER_MILLION'),
   outputRate: rate('LLM_OUTPUT_USD_PER_MILLION'), maxCalls: settings.MAX_MODEL_CALLS, maxTokens: settings.MAX_MODEL_TOKENS };
 const registry = z.array(sourceSchema).parse(JSON.parse(await readFile('config/sources.json', 'utf8')));
-const suppliedFacts = settings.APPROVED_FACTS_FILE ? z.array(factSchema).length(8).parse(
+const suppliedFacts = settings.APPROVED_FACTS_FILE ? z.array(factSchema).length(DAILY_STORY_COUNT).parse(
   JSON.parse(await readFile(settings.APPROVED_FACTS_FILE, 'utf8'))) : undefined;
-if (suppliedFacts && (suppliedFacts.some(f => f.is_demo) || new Set(suppliedFacts.map(f => f.event_key)).size !== 8)) {
+if (suppliedFacts && (suppliedFacts.some(f => f.is_demo) || new Set(suppliedFacts.map(f => f.event_key)).size !== DAILY_STORY_COUNT)) {
   throw Error('DEMO_OR_DUPLICATE_EVENTS_REJECTED');
 }
 if (!suppliedFacts && !registry.some(s => s.status === 'enabled' && s.fetch_enabled && s.rewrite_policy === 'allowed' &&
@@ -56,7 +57,7 @@ if (automatic) {
   }
 }
 const owner = randomUUID();
-const intakeRequestHash='intake:'+hash({registry,model:settings.WRITER_MODEL,provider:settings.LLM_PROVIDER,
+const intakeRequestHash='intake:'+hash({storyCount:DAILY_STORY_COUNT,registry,model:settings.WRITER_MODEL,provider:settings.LLM_PROVIDER,
   prompts:await Promise.all(['prompts/select.v1.txt','prompts/facts.v1.txt'].map(async path=>hash(await readFile(path,'utf8'))))});
 const { data: work, error: jobError } = await db.rpc('start_issue_job', {
   day: settings.ISSUE_DATE, owner, story_ids: suppliedFacts?.map(f => f.story_id) || [],
@@ -103,7 +104,7 @@ try {
             fact_payload: z.object({ claims: z.unknown() }) }) })).parse(refs);
           return bundles.map(b => ({ event_key: b.story_bundles.event_key, claims: b.story_bundles.fact_payload.claims }));
         }) })).facts;
-    const validatedFacts = z.array(factSchema).length(8).parse(facts);
+    const validatedFacts = z.array(factSchema).length(DAILY_STORY_COUNT).parse(facts);
     const { error: bindError } = await db.rpc('bind_issue_facts', { job: work.job_id, owner,
       story_ids: validatedFacts.map(f => f.story_id), facts_hash: hash(validatedFacts) });
     if (bindError) throw bindError;

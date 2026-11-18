@@ -7,6 +7,10 @@ Check all assertions inside each must_keep claim, not only the general topic.
 Check both vocabulary terms, their English definitions and Traditional Chinese meanings.
 Flag mistranslations, nonsensical Chinese, wrong word senses, or meanings unrelated to the body.
 Traditional Chinese should use natural Taiwan usage. The glossary is part of the review.
+Assess whether the two terms are worth learning at the specific target, not merely easy to extract.
+A1 should be concrete and accessible; A2 should add useful process/action expressions; B1 should offer precision and transferable vocabulary.
+Reject trivial function words, unjustified specialist jargon, and terms repeated from previousLevelTerms (including simple plural/case variants).
+Do not claim that any individual word has a certified CEFR rating.
 Check CEFR target fit with concrete difficult words, meanings, grammar, and background assumptions.
 This is a model assessment, never CEFR certification. Do not produce word-level CEFR scores.
 Check child suitability. Sensitive or conflicting evidence needs human review.

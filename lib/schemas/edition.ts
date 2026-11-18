@@ -4,6 +4,7 @@ import { stats } from '../content/metrics';
 import { containsTerm } from '../content/core.mjs';
 import { httpsUrl } from './urls';
 import {validAssetPath} from '../media/paths.mjs';
+import {storyCountOf} from '../../config/issue-settings.mjs';
 
 export const vocabularySchema = z.object({ term: z.string().trim().min(1),
   definitionEn: z.string().trim().min(1), meaningZhHant: z.string().trim().min(1) }).strict();
@@ -29,12 +30,17 @@ export const editionSchema = z.object({
   edition: z.enum(['elementary', 'junior', 'senior']), targetCefr: z.enum(['A1', 'A2', 'B1', 'B2']),
   templateVersion: z.string().min(1), publishedAt: z.iso.datetime().nullable(), isDemo: z.boolean(),
   webUrl: httpsUrl.optional(),
+  reviewCopy:z.boolean().optional(),
+  vocabularyPolicy:z.literal('tiered-v1').optional(),
+  storyCount:z.union([z.literal(4),z.literal(8)]).optional(),
   readingRules:z.object({min:z.number().int().positive(),max:z.number().int().positive(),
     avg:z.number().positive(),maxSentence:z.number().int().positive()}).strict().optional(),
-  articles: z.array(articleSchema).length(8),
+  articles: z.array(articleSchema).min(4).max(8),
 }).strict().superRefine((payload, ctx) => {
   const rules = payload.readingRules || v1Rules[payload.edition];
-  if (new Set(payload.articles.map(a => a.storyId)).size !== 8) ctx.addIssue({ code: 'custom', message: 'Eight distinct stories required' });
+  const count=storyCountOf(payload);
+  if(payload.articles.length!==count||new Set(payload.articles.map(a=>a.storyId)).size!==count)
+    ctx.addIssue({code:'custom',message:'Story count snapshot or distinct story set mismatch'});
   payload.articles.forEach((a, i) => {
     const body = a.bodyParagraphs.join(' '), s = stats(body);
     if (a.order !== i + 1 || s.count !== a.wordCount || s.count < rules.min || s.count > rules.max ||

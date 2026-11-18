@@ -1,0 +1,132 @@
+{
+  "issueDate": "2026-11-19",
+  "storyCount": 4,
+  "mode": "review",
+  "sourceSelection": "developer-curated primary-source trial; not automatic feed selection",
+  "stories": [
+    {
+      "id": "nicer",
+      "category": "science",
+      "publisher": "NASA",
+      "date": "2026-11-17",
+      "url": "https://www.nasa.gov/missions/station/nicer-status-updates/",
+      "quotes": [
+        "NASA’s NICER (Neutron star Interior Composition Explorer) telescope on the International Space Station has ended science operations.",
+        "Launched in 2017, NICER embarked on an initial 18-month prime mission."
+      ],
+      "claims": [
+        [
+          "NASA reports that NICER, a telescope on the International Space Station, has ended its science work.",
+          true,
+          "reported"
+        ],
+        [
+          "NICER launched in 2017 and studied neutron stars and other objects using X-rays.",
+          false,
+          "reported"
+        ],
+        [
+          "Engineers think an internal motor failed. They are planning to complete the data archive and remove the telescope.",
+          false,
+          "reported_plan"
+        ]
+      ],
+      "uncertainties": [
+        "The motor failure is an engineering assessment, not a confirmed diagnosis. Removal is planned, not completed."
+      ]
+    },
+    {
+      "id": "quantum",
+      "category": "technology",
+      "publisher": "NIST",
+      "date": "2026-11-18",
+      "url": "https://www.nist.gov/news-events/news/2026/11/quantum-physics-can-verify-persons-location-nist-researchers-show",
+      "quotes": [
+        "Although applying the technique to real-life situations is a decade or more away",
+        "The photons are used to securely verify the position of a distant party in a new protocol developed by NIST scientists."
+      ],
+      "claims": [
+        [
+          "NIST researchers demonstrated a laboratory method using light particles to check a distant party’s location.",
+          true,
+          "reported"
+        ],
+        [
+          "Real-world use may be a decade or more away; this is not an available security product.",
+          true,
+          "uncertain"
+        ],
+        [
+          "The team uses linked light particles called entangled photons and optical fibers. The method could help protect private information in future networks.",
+          false,
+          "reported"
+        ]
+      ],
+      "uncertainties": [
+        "This is a laboratory experiment. Real-life applications remain a decade or more away. Do not say it locates anyone anywhere."
+      ]
+    },
+    {
+      "id": "voices",
+      "category": "culture",
+      "publisher": "Library of Congress",
+      "date": "2026-11-16",
+      "url": "https://newsroom.loc.gov/news/library-of-congress-to-unveil--voices-of-the-early-americas---featuring-rare-artifacts--maps-and-ind/s/5c73564c-f9f9-4270-ba24-355c36cca6bc",
+      "quotes": [
+        "a new permanent exhibition opening to the public on Nov. 19",
+        "The exhibition uses over 200 artifacts, maps, manuscripts, paintings, photographs and contemporary poetry spanning more than 3,000 years"
+      ],
+      "claims": [
+        [
+          "The Library of Congress plans to open Voices of the Early Americas on November 19, 2026, in its Thomas Jefferson Building.",
+          true,
+          "reported_plan"
+        ],
+        [
+          "The exhibition explores Indigenous histories, cultures and enduring traditions through over 200 objects and contemporary poetry.",
+          true,
+          "reported"
+        ],
+        [
+          "Its materials span more than 3,000 years and include maps, manuscripts, photographs and a Maya wooden box.",
+          false,
+          "reported"
+        ]
+      ],
+      "uncertainties": [
+        "The November 16 release announces a planned opening. Do not claim the opening has already occurred. Indigenous traditions continue today."
+      ]
+    },
+    {
+      "id": "climate",
+      "category": "nature",
+      "publisher": "NOAA NCEI",
+      "date": "2026-11-12",
+      "url": "https://www.ncei.noaa.gov/news/global-climate-202610",
+      "quotes": [
+        "The global surface temperature in October 2026 was 2.57°F (1.43°C) above the 20th-century average",
+        "all 10 of the warmest Octobers on record have occurred since 2015."
+      ],
+      "claims": [
+        [
+          "NOAA reports that October 2026 global surface temperature was 1.43 degrees Celsius above the twentieth-century average.",
+          true,
+          "reported"
+        ],
+        [
+          "This was the highest temperature departure for any month in NOAA’s 1850–2026 record. It is a global average, not every place’s local weather.",
+          false,
+          "reported"
+        ],
+        [
+          "All ten of the warmest Octobers in this record have occurred since 2015.",
+          false,
+          "reported"
+        ]
+      ],
+      "uncertainties": [
+        "A global average does not mean every place was equally warm. The baseline is the twentieth-century average, not preindustrial levels."
+      ]
+    }
+  ]
+}

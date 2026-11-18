@@ -7,13 +7,16 @@ import type { TextModelProvider } from '../providers/text';
 import { stats } from '../content/metrics';
 import { containsTerm } from '../content/core.mjs';
 import { cachedStep } from './state.mjs';
+import {learningTermKey} from '../content/vocabulary.mjs';
+import {supportedStoryCounts} from '../../config/issue-settings.mjs';
 
 export type Store = { get: (key: string) => Promise<unknown>; set: (key: string, value: unknown) => Promise<void> };
-export async function produceEditions({ facts, issueDate, revision, provider, store, writerModel, reviewerModel }: {
+export async function produceEditions({ facts, issueDate, revision, provider, store, writerModel, reviewerModel,storyCount=facts.length }: {
   facts: z.infer<typeof factSchema>[]; issueDate: string; revision: number; provider: TextModelProvider;
-  store: Store; writerModel: string; reviewerModel: string;
+  store: Store; writerModel: string; reviewerModel: string;storyCount?:number;
 }) {
-  if (facts.length !== 8 || new Set(facts.map(f => f.story_id)).size !== 8) throw Error('EIGHT_EVENTS_REQUIRED');
+  if(!supportedStoryCounts.includes(storyCount)||facts.length!==storyCount||
+    new Set(facts.map(f=>f.story_id)).size!==storyCount)throw Error('DISTINCT_EVENTS_REQUIRED');
   facts.forEach(f => factSchema.parse(f));
   const writer = await readFile('prompts/writer.v1.txt', 'utf8');
   const reviewPrompt = await readFile('prompts/reviewer.v1.txt', 'utf8');
@@ -21,15 +24,24 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
   for (const edition of editionKeys) {
     const c = editions[edition], articles: ArticleView[] = [];
     for (const [index, fact] of facts.entries()) {
+      const previousLevelTerms=payloads.flatMap(p=>p.articles.filter(a=>a.storyId===fact.story_id).flatMap(a=>a.vocabulary.map(v=>v.term)));
       let feedback: unknown = null, accepted = false;
       for (let attempt = 0; attempt <= 2; attempt++) {
-        const system = writer.replaceAll('{{edition}}', edition).replaceAll('{{target_cefr}}', c.cefr)
+        let system = writer.replaceAll('{{edition}}', edition).replaceAll('{{target_cefr}}', c.cefr)
           .replaceAll('{{english_variant}}', 'American English').replaceAll('{{min_words}}', String(c.min))
           .replaceAll('{{max_words}}', String(c.max)).replaceAll('{{avg_sentence_max}}', String(c.avg))
           .replaceAll('{{sentence_max}}', String(c.sentenceMax));
-        const input = { fact, feedback, system, model: writerModel, promptVersion: 'writer.v1', edition, attempt, provider: provider.cacheIdentity };
+        if(attempt){
+          const previous=feedback as {statistics?:{count:number;average:number;max:number}};
+          const s=previous.statistics;
+          system+='\nTRUSTED REVISION REQUIREMENT: Rewrite the body to '+c.min+'–'+c.max+
+            ' words; aim for '+Math.round((c.min+c.max)/2)+' words. '+
+            (s?'The previous body has '+s.count+' words. '+(s.count>c.max?'SHORTEN it; omit optional details. ':s.count<c.min?'EXPAND using supported details only. ':''):'')+
+            'Keep every must_keep claim. Use shorter sentences. Then choose two terms occurring in the revised body.';
+        }
+        const input = { fact, feedback, previousLevelTerms, system, model: writerModel, promptVersion: 'writer.v1', edition, attempt, provider: provider.cacheIdentity };
         const result = await cachedStep(store, `${fact.story_id}:${edition}:write:${attempt}`, input,
-          () => provider.generateStructured({ task: attempt ? 'revise' : 'write', system, data: { fact, feedback },
+          () => provider.generateStructured({ task: attempt ? 'revise' : 'write', system, data: { fact, feedback, previousLevelTerms },
             schema: writerResponseSchema, model: writerModel, timeoutMs: 60_000, maxOutputTokens: 1800 }));
         const data = writerResponseSchema.parse(result.data);
         if ('failure' in data) throw Error('WRITER_' + data.failure.code.toUpperCase());
@@ -41,7 +53,7 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
         const mustKeep = fact.claims.every(claim => !claim.must_keep || data.used_claim_ids.includes(claim.claim_id));
         const lengthPass = s.count >= c.min && s.count <= c.max && s.average <= c.avg && s.max <= c.sentenceMax;
         const vocabPass = new Set(data.vocabulary.map(v => v.term.toLowerCase())).size === 2 &&
-          data.vocabulary.every(v => containsTerm(body, v.term));
+          data.vocabulary.every(v => containsTerm(body, v.term)&&!previousLevelTerms.some(term=>learningTermKey(term)===learningTermKey(v.term)));
         if (!mustKeep || !lengthPass || !vocabPass) {
           feedback = { previous_article:data,statistics: s, wordLimits: c, mustKeep, vocabPass,
             instruction: 'Revise the complete article; do not truncate sentences.' };
@@ -57,7 +69,7 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
         const reviewed = await cachedStep(store, `${fact.story_id}:${edition}:review:${attempt}`,
           { fact, article, target: c.cefr, stats: s, model: reviewerModel, promptVersion: 'reviewer.v1', prompt: reviewPrompt, provider: provider.cacheIdentity },
           () => provider.generateStructured({ task: 'review', system: reviewPrompt,
-            data: { fact, article, target: c.cefr, statistics: s }, schema: reviewSchema,
+            data: { fact, article, target: c.cefr, statistics: s, previousLevelTerms }, schema: reviewSchema,
             model: reviewerModel, timeoutMs: 60_000, maxOutputTokens: 2200 }));
         const review = reviewSchema.parse(reviewed.data);
         if (review.issues.some(issue => issue.claim_ids.some(id => !ids.has(id)))) throw Error('REVIEW_CLAIM_ALLOWLIST_FAILED');
@@ -69,9 +81,9 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
       }
       if (!accepted) throw Error(`NEEDS_REVIEW:${fact.story_id}:${edition}`);
     }
-    payloads.push(editionSchema.parse({ schemaVersion: '1.0', issueDate, revision, edition,
+    payloads.push(editionSchema.parse({ schemaVersion: '1.0', issueDate, revision, edition,storyCount,
       readingRules:{min:c.min,max:c.max,avg:c.avg,maxSentence:c.sentenceMax},
-      targetCefr: c.cefr, templateVersion: '1.0', publishedAt: null, isDemo: facts.some(f => f.is_demo), articles }));
+      targetCefr: c.cefr, templateVersion: '1.0', vocabularyPolicy:'tiered-v1', publishedAt: null, isDemo: facts.some(f => f.is_demo), articles }));
   }
   return { editions: payloads, reviews };
 }

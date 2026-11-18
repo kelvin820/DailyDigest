@@ -1,0 +1,15 @@
+# Four-story daily production trial
+
+Current policy: one dated issue, four distinct events, the same events at A1/A2/B1; twelve independently written and reviewed articles, six two-page PDFs. Four-story selection covers at least three categories, with no category over two. Historical eight-story issues retain their original layout and rules.
+
+The manual **Four Story Production Trial** workflow freezes the curated official-source plan in `config/trial-2026-11-19.json`, fetches each page and verifies exact evidence excerpts before NVIDIA requests. It does not invent a fresh news date or pretend that this fixed trial is automatic daily source discovery. Date-only publication metadata is explicitly marked; midnight is normalization, not a known release time.
+
+The latest completed trial artifact is resumed automatically. Context/facts/model and checkpoint hashes must match. Completed requests are reused; incompatible or missing resume state fails closed. A serialized workflow and artifact reservations limit this dated trial to 70 text calls / 150,000 reserved or used text tokens and six image attempts across retries. These are request limits, not a verified dollar limit; provider prices remain unknown. Artifacts expire after seven days; expiry blocks resumption rather than silently spending again. Unknown usage requires reconciliation.
+
+Vocabulary is selected for educational value and each audience in context, not from Cambridge or another purchased word list. The writer receives the easier versions' glossary terms; simple plural/case repeats are rejected. Review includes definitions, Taiwan Traditional Chinese, learning value and target difficulty. `vocabularyPolicy: tiered-v1` snapshots this rule. Historic fixture glossaries are unchanged.
+
+Images remain photo-first. This trial uses the source's credited NIST lab photo. The telescope and reading-table concepts receive separate elementary/junior/senior prompts: bright simple shapes / approachable moderate detail / mature editorial watercolor. At most two generated concepts per edition; failed requests consume reservations and use the original category icon. All generated images are labeled conceptual, not event photos. Photos retain their documentary content. Prompt differentiation still needs visual human review; it is not proof that a generated picture is suitable.
+
+The artifact includes actual model checkpoints, reviews, source evidence, media provenance, render verification and honest failure status. No substitute fixture body is inserted. A review copy is not publication. This workflow has no cron, database write, email delivery or live publication permission.
+
+Migration `202611190015_four_story_issues.sql` updates database staging, revisions and publication checks while preserving legacy eight-story revisions and hardened function search paths. Local database tests do not apply this migration to hosted Supabase. Hosted credentials, migration and private Storage acceptance remain separate setup items.

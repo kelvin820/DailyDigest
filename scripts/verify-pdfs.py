@@ -18,6 +18,9 @@ proofs = []
 for file in manifest:
     path = pathlib.Path(file['path'])
     issue = json.loads(pathlib.Path(file['payloadPath']).read_text(encoding='utf-8'))
+    story_count = issue.get('storyCount', 8)
+    assert story_count in (4, 8) and len(issue['articles']) == story_count
+    per_page = story_count // 2
     assert issue['edition'] == file['edition']
     assert issue['issueDate'] == file['issueDate'] and issue['revision'] == file['revision']
     assert issue['templateVersion'] == file['templateVersion']
@@ -44,18 +47,18 @@ for file in manifest:
             fonts.append({'font': str(font.get('/BaseFont')), 'embedded': embedded})
     assert fonts and all(f['embedded'] for f in fonts), (path, 'font not embedded')
     for i, article in enumerate(issue['articles']):
-        text = texts[i // 4]
+        text = texts[i // per_page]
         assert normalize(article['headline']) in text, (path, article['storyId'], 'missing headline')
         for para in article['bodyParagraphs']:
             assert normalize(para) in text, (path, article['storyId'], 'missing body')
-            assert normalize(para) in readable_texts[i // 4], (path, article['storyId'], 'body below minimum font size')
+            assert normalize(para) in readable_texts[i // per_page], (path, article['storyId'], 'body below minimum font size')
         for vocab in article['vocabulary']:
             for key in ['term', 'definitionEn', 'meaningZhHant']:
                 assert normalize(vocab[key]) in text, (path, 'missing vocabulary', key)
-    assert len(file['layout']['articles']) == 8
+    assert len(file['layout']['articles']) == story_count
     assert all(a['fontPt'] >= minimum - .01 for a in file['layout']['articles'])
     file['textVerified'], file['fontsEmbedded'] = True, True
-    proofs.append({'file': path.name, 'pages': 2, 'eight_full_bodies_verified': True,
+    proofs.append({'file': path.name, 'pages': 2, 'all_full_bodies_verified': True, 'story_count': story_count,
         'minimum_body_pt': minimum, 'pdf_body_size_verified': True, 'fonts': fonts})
 # Only update verification flags after all six files have passed.
 manifest_path.write_text(json.dumps(manifest, indent=2), encoding='utf-8')

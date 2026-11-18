@@ -1,3 +1,4 @@
+import {DAILY_STORY_COUNT} from '../../config/issue-settings.mjs';
 import { readFile } from 'node:fs/promises';
 import { z } from 'zod';
 import { discoverSources, fetchCandidate } from '../content/sources.mjs';
@@ -14,13 +15,13 @@ export const sourceSchema = z.object({ name: z.string(), domain: z.string(), fee
   reviewed_at: z.string().nullable(), evidence_policy: z.enum(['none', 'permanent_excerpt']).default('none'),
 }).passthrough();
 export type Source = z.infer<typeof sourceSchema>;
-const selectionSchema = z.discriminatedUnion('status', [
+const selectionSchemaFor = (storyCount:number) => z.discriminatedUnion('status', [
   z.object({ status: z.literal('insufficient_material'), reason: z.string() }).strict(),
   z.object({ status: z.literal('selected'), stories: z.array(z.object({
     candidate_ids: z.array(z.string()).min(1).max(3), event_key: z.string().min(1),
     category: z.enum(categories), content_kind: z.enum(['news', 'update', 'knowledge']),
     update_reason: z.string().min(1).max(300).nullable(),
-  }).strict()).length(8) }).strict(),
+  }).strict()).length(storyCount) }).strict(),
 ]);
 const factDraftSchema = z.object({ claims: z.array(claimSchema).min(1), event_date: z.iso.date().nullable(),
   uncertainties: z.array(z.string()), sensitivity: z.enum(['low', 'high']),
@@ -48,15 +49,16 @@ export async function collectEvidence(registry: Source[],issueDate:string) {
   return { evidence, failures };
 }
 export async function intakeFacts({ registry, issueDate, history, store, provider, model,
-  collect = () => collectEvidence(registry,issueDate) }: {
-  registry: Source[]; issueDate: string; history: History; store: Store; provider: TextModelProvider; model: string;
+  storyCount=DAILY_STORY_COUNT, collect = () => collectEvidence(registry,issueDate) }: {
+  storyCount?:number; registry: Source[]; issueDate: string; history: History; store: Store; provider: TextModelProvider; model: string;
   collect?: () => Promise<{ evidence: Evidence[]; failures: unknown[] }>;
 }) {
-  const selectPrompt = await readFile('prompts/select.v1.txt', 'utf8');
+  const selectionSchema=selectionSchemaFor(storyCount);
+  const selectPrompt = (await readFile('prompts/select.v1.txt', 'utf8')).replaceAll('{{story_count}}',String(storyCount));
   const factsPrompt = await readFile('prompts/facts.v1.txt', 'utf8');
-  return cachedStep(store, 'intake', { registry, issueDate, history, model, selectPrompt, factsPrompt, provider: provider.cacheIdentity }, async () => {
+  return cachedStep(store, 'intake', { registry, issueDate, history, storyCount, model, selectPrompt, factsPrompt, provider: provider.cacheIdentity }, async () => {
     const { evidence, failures } = await collect();
-    if (evidence.length < 8) throw Error('INSUFFICIENT_SOURCE_MATERIAL');
+    if (evidence.length < storyCount) throw Error('INSUFFICIENT_SOURCE_MATERIAL');
     const selectionInput = { issueDate, history, candidates: evidence.map(e => ({ id: e.id,
       title: e.title, published_at: e.published_at, excerpt: e.evidence.slice(0, 1500),
       independence_group: e.independence_group, content_hash: e.content_hash })) };
@@ -65,13 +67,13 @@ export async function intakeFacts({ registry, issueDate, history, store, provide
         schema: selectionSchema, model, timeoutMs: 60_000, maxOutputTokens: 3500 }));
     const selection = selectionSchema.parse(selected.data);
     if (selection.status !== 'selected') throw Error('INSUFFICIENT_SOURCE_MATERIAL');
-    if (new Set(selection.stories.map(s => s.event_key)).size !== 8 ||
+    if (new Set(selection.stories.map(s => s.event_key)).size !== storyCount ||
       new Set(selection.stories.flatMap(s => s.candidate_ids)).size !== selection.stories.flatMap(s => s.candidate_ids).length) {
       throw Error('DUPLICATE_EVENT_OR_SOURCE_SELECTION');
     }
     if (categories.some(category => {
-      const n = selection.stories.filter(s => s.category === category).length; return n < 1 || n > 2;
-    }) || selection.stories.filter(s => s.content_kind === 'knowledge').length > 2) throw Error('CATEGORY_QUOTA_FAILED');
+      const n = selection.stories.filter(s => s.category === category).length; return (storyCount===8&&n<1)||n>2;
+    }) || (storyCount===4&&new Set(selection.stories.map(s=>s.category)).size<3) || selection.stories.filter(s => s.content_kind === 'knowledge').length > 2) throw Error('CATEGORY_QUOTA_FAILED');
     const bundles: z.infer<typeof factSchema>[] = [];
     for (const story of selection.stories) {
       const sources = story.candidate_ids.map(id => evidence.find(e => e.id === id));

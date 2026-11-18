@@ -41,7 +41,7 @@ export async function renderIssues(issues: EditionView[], outDir: string) {
         await writeFile(resolve(outDir, name + '.html'), '<!doctype html><html lang="zh-Hant"><meta charset="utf-8">' +
           '<style>' + css + '</style><body>' + renderPrint(issue, mode) + '</body></html>');
         await page.goto(`${server.origin}/${name}.html`);
-        const layout = await checkPrintLayout(page, editions[issue.edition].minPrintSize);
+        const layout = await checkPrintLayout(page, editions[issue.edition].minPrintSize, issue.storyCount ?? 8);
         const path = resolve(outDir, name + '.pdf');
         const pdf = await page.pdf({ path, format: 'A4', printBackground: true, preferCSSPageSize: true });
         if ((await PDFDocument.load(pdf)).getPageCount() !== 2) throw Error('PDF_PAGE_COUNT');

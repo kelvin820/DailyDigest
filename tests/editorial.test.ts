@@ -1,3 +1,4 @@
+import {learningTermKey} from '../lib/content/vocabulary.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { z } from 'zod';
@@ -36,11 +37,11 @@ test('three writers use the same facts; 24 reviews; repeat run reuses success; D
   const provider: TextModelProvider = { async generateStructured(input) {
     let response: unknown = goodReview;
     if (input.task !== 'review') {
-      const { fact } = input.data as { fact: typeof facts[number] }; seen.push(fact);
+      const { fact,previousLevelTerms=[] } = input.data as { fact: typeof facts[number];previousLevelTerms?:string[] }; seen.push(fact);
       const edition = input.system.match(/Audience edition: (elementary|junior|senior)/)?.[1] as 'elementary' | 'junior' | 'senior';
       const article = demoIssue(edition).articles.find(a => a.storyId === fact.story_id)!;
       response = { headline: article.headline, body_paragraphs: article.bodyParagraphs,
-        vocabulary: article.vocabulary, used_claim_ids: ['core'], omitted_optional_claim_ids: [], editorial_flags: [] };
+        vocabulary: [...new Set(article.bodyParagraphs.join(' ').match(/[A-Za-z]{4,}/g))].filter(t=>!previousLevelTerms.some(p=>learningTermKey(p)===learningTermKey(t))).slice(0,2).map(term=>({term,definitionEn:'Synthetic test definition',meaningZhHant:'測試詞義'})), used_claim_ids: ['core'], omitted_optional_claim_ids: [], editorial_flags: [] };
     }
     return { data: input.schema.parse(response), usage: { input_tokens: 0, output_tokens: 0 } };
   } };
