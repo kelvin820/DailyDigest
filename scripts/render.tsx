@@ -16,10 +16,12 @@ export async function renderIssues(issues: EditionView[], outDir: string) {
   if (issues.length !== 3 || new Set(issues.map(p => p.edition)).size !== 3) throw Error('THREE_EDITIONS_REQUIRED');
   issues.forEach(p => editionSchema.parse(p));
   await mkdir(resolve(outDir, 'fonts'), { recursive: true });
-  for (const font of ['NotoSans-Regular.ttf', 'Newsreader.ttf', 'NotoSansTC.ttf']) {
+  for (const font of ['NotoSans-Regular.ttf', 'Newsreader.ttf', 'NotoSansTC.ttf',
+    'InstrumentSerif-Regular.ttf', 'LibreCaslonText.ttf']) {
     await copyFile(resolve('public/fonts', font), resolve(outDir, 'fonts', font));
   }
-  for (const license of ['OFL.txt', 'Newsreader.ttf.license.txt', 'NotoSansTC.ttf.license.txt']) {
+  for (const license of ['OFL.txt', 'Newsreader.ttf.license.txt', 'NotoSansTC.ttf.license.txt',
+    'InstrumentSerif-OFL.txt', 'LibreCaslonText-OFL.txt']) {
     await copyFile(resolve('public/fonts', license), resolve(outDir, 'fonts', license));
   }
   const css = (await readFile('app/globals.css', 'utf8')).replaceAll('/fonts/', 'fonts/');

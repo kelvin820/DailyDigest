@@ -4,6 +4,8 @@
 
 2026-11-18 已將原始碼推送備份至 https://github.com/kelvin820/DailyDigest 的 main 分支。此備份不代表部署或真實出刊完成；output 樣刊與驗證產物仍保留在獨立 review archive。
 
+初次備份的 GitHub CI 已通過。私人靜態閱讀 DEMO：https://dayday-digest-demo.kelvin820.chatgpt.site 。依使用者回饋，小學表頭保留，國中試用 Instrument Serif、高中試用 Libre Caslon Text 粗體，網頁與 PDF 同步；詳見 MASTHEADS.md。這是虛構樣刊預覽，不是真實每日出刊。
+
 | 里程碑 | 本輪完成／驗證 | 尚待完成 |
 |---|---|---|
 | M0 | Node 24、pnpm 11 固定版本、實際 lockfile、frozen install、typecheck/lint/build；CI 更新 | 在目標 GitHub repo 跑雲端 CI |

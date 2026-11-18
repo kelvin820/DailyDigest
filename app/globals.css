@@ -11,3 +11,12 @@
 .print-edition.junior .print-article figure svg{height:12mm}.print-edition.senior .print-article figure svg{height:8mm}.print-edition.junior .print-article .body-copy{font-size:12pt}.print-edition.senior .print-article .body-copy{font-size:11pt}.print-article h2{font-size:15pt;min-height:10mm}.print-article .vocabulary{margin-top:1mm}
 .print-edition.junior .print-article figure,.print-edition.senior .print-article figure{float:right;width:36mm;margin:0 0 1mm 2mm}.print-edition.junior .print-article figure svg,.print-edition.senior .print-article figure svg{height:auto;width:36mm}.print-article .vocabulary{clear:both}.print-edition.junior .print-article figcaption,.print-edition.senior .print-article figcaption{font-size:5pt}
 .print-head h1 small,.masthead h1 span{font-family:"DD Serif",serif}.print-edition svg text{font-family:"DD Sans",sans-serif}
+
+/* Edition mastheads: keep Elementary's original typography as the reference. */
+@font-face{font-family:"DD Journal";src:url('/fonts/InstrumentSerif-Regular.ttf') format('truetype');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:"DD Financial";src:url('/fonts/LibreCaslonText.ttf') format('truetype');font-style:normal;font-weight:400 700;font-display:swap}
+.newspaper.junior .masthead h1{font-family:"DD Journal",Georgia,serif;font-size:clamp(64px,10.2vw,126px);font-weight:400;line-height:.94;letter-spacing:-.025em}
+.newspaper.senior .masthead h1{font-family:"DD Financial",Georgia,serif;font-size:clamp(38px,7.2vw,90px);font-weight:700;line-height:1;letter-spacing:-.045em}
+.print-edition.junior .print-head h1{font-family:"DD Journal",Georgia,serif;font-size:37pt;font-weight:400;line-height:.85;letter-spacing:-.02em}
+.print-edition.senior .print-head h1{font-family:"DD Financial",Georgia,serif;font-weight:700;letter-spacing:-.035em}
+@media(max-width:767px){.newspaper.junior .masthead h1{font-size:clamp(54px,16vw,96px)}.newspaper.senior .masthead h1{font-size:clamp(36px,10.8vw,72px)}}
