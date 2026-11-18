@@ -71,7 +71,14 @@ try{
   const provider=new NvidiaProvider(key,budget,async reply=>{invalidReplies.push(reply);await save('invalid-responses.json',invalidReplies);});
   const historical=process.env.TRIAL_REVIEW_RECOVERY_DIR?validatedPreviewCheckpoints(JSON.parse(await readFile(resolve(process.env.TRIAL_REVIEW_RECOVERY_DIR,'checkpoints.json'),'utf8'))):{};
   const store={reviewedCandidates:async(storyId:string,edition:string)=>[0,1,2].map(attempt=>({writer:historical[`${storyId}:${edition}:write:${attempt}`],review:historical[`${storyId}:${edition}:review:${attempt}`]})),get:async(k:string)=>{read.add(k);return records[k];},set:async(k:string,value:unknown)=>{records[k]=value;written.add(k);await save('checkpoints.json',records);console.log('Checkpoint:',k);}};
-  const generated=await produceEditions({facts,issueDate:plan.issueDate,revision:1,provider,store,writerModel:TRIAL_TEXT_MODEL,reviewerModel:TRIAL_TEXT_MODEL});
+  const corrections=JSON.parse(await readFile('config/trial-editor-corrections.json','utf8')) as {storyId:string;edition:string;writerOutputHash:string;reason:string;replacements:{from:string;to:string}[]}[];
+  const appliedCorrections:unknown[]=[];
+  const generated=await produceEditions({editorPolicyHash:hash(corrections),editDraft:async input=>{
+    const correction=corrections.find(c=>c.storyId===input.storyId&&c.edition===input.edition&&c.writerOutputHash===input.outputHash);
+    if(!correction)return input.data;const data=structuredClone(input.data);
+    for(const replacement of correction.replacements){let changed=0;data.body_paragraphs=data.body_paragraphs.map(p=>{if(!p.includes(replacement.from))return p;changed++;return p.replace(replacement.from,replacement.to);});if(changed!==1)throw Error('EDITOR_CORRECTION_CONTEXT_MISMATCH');}
+    appliedCorrections.push(correction);await save('editor-corrections.json',appliedCorrections);return data;
+  },facts,issueDate:plan.issueDate,revision:1,provider,store,writerModel:TRIAL_TEXT_MODEL,reviewerModel:TRIAL_TEXT_MODEL});
   issues=generated.editions.map(issue=>({...issue,reviewCopy:true}));reviews=generated.reviews;
   await save('reviews.json',reviews);
   const photo:AssetRecord={kind:'event_photo',alt:'Two NIST researchers with safety glasses working beside laser equipment.',caption:'NIST researchers in the laboratory. Photo: Riley Wilson/NIST.',

@@ -1,0 +1,22 @@
+[
+  {
+    "storyId": "trial-voices",
+    "edition": "elementary",
+    "writerOutputHash": "7d1dafbb3eed4a8063862114d1df207b121921fac539c36501e22ddcfcbccc1f",
+    "reason": "Developer copy edit: the announced opening is a plan; do not imply it has occurred. Raw model response stays unchanged.",
+    "replacements": [
+      {
+        "from": "It opens on November 19, 2026.",
+        "to": "Opening is planned for November 19, 2026."
+      },
+      {
+        "from": "Over 200 objects are on display.",
+        "to": "Over 200 objects will be on display."
+      },
+      {
+        "from": "Contemporary poetry is also included.",
+        "to": "Contemporary poetry will also be included."
+      }
+    ]
+  }
+]

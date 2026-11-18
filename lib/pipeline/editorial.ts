@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { z } from 'zod';
 import { editions, editionKeys } from '../../config/editions';
 import { articleSchema, editionSchema, type ArticleView } from '../schemas/edition';
-import { factSchema, writerResponseSchema, reviewSchema } from '../schemas/editorial';
+import { factSchema, writerResponseSchema, writerSchema, reviewSchema } from '../schemas/editorial';
 import type { TextModelProvider } from '../providers/text';
 import { stats } from '../content/metrics';
 import { containsTerm } from '../content/core.mjs';
@@ -12,9 +12,9 @@ import {recoverReviewedArticle} from './recover-reviewed';
 import {supportedStoryCounts} from '../../config/issue-settings.mjs';
 
 export type Store = { get: (key: string) => Promise<unknown>; set: (key: string, value: unknown) => Promise<void>; reviewedCandidates?:(storyId:string,edition:string)=>Promise<{writer:unknown;review:unknown}[]> };
-export async function produceEditions({ facts, issueDate, revision, provider, store, writerModel, reviewerModel,storyCount=facts.length }: {
+export async function produceEditions({ facts, issueDate, revision, provider, store, writerModel, reviewerModel,editDraft,editorPolicyHash,storyCount=facts.length }: {
   facts: z.infer<typeof factSchema>[]; issueDate: string; revision: number; provider: TextModelProvider;
-  store: Store; writerModel: string; reviewerModel: string;storyCount?:number;
+  store: Store; writerModel: string; reviewerModel: string;storyCount?:number;editorPolicyHash?:string;editDraft?:(input:{storyId:string;edition:string;outputHash:string;data:z.infer<typeof writerSchema>})=>Promise<z.infer<typeof writerSchema>>;
 }) {
   if(!supportedStoryCounts.includes(storyCount)||facts.length!==storyCount||
     new Set(facts.map(f=>f.story_id)).size!==storyCount)throw Error('DISTINCT_EVENTS_REQUIRED');
@@ -26,7 +26,7 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
     const c = editions[edition], articles: ArticleView[] = [];
     for (const [index, fact] of facts.entries()) {
       const previousLevelTerms=payloads.flatMap(p=>p.articles.filter(a=>a.storyId===fact.story_id).flatMap(a=>a.vocabulary.map(v=>v.term)));
-      const acceptedInput={fact,edition,order:index+1,config:c,writer,reviewPrompt,writerModel,reviewerModel,previousLevelTerms,provider:provider.cacheIdentity,policy:'tiered-v1'};
+      const acceptedInput={fact,edition,order:index+1,config:c,writer,reviewPrompt,writerModel,reviewerModel,previousLevelTerms,provider:provider.cacheIdentity,policy:'tiered-v1',editorPolicyHash};
       const acceptedKey=`${fact.story_id}:${edition}:accepted:0`;
       const prior=await store.get(acceptedKey) as {status?:string;inputHash?:string;output?:{article:unknown;review:unknown};outputHash?:string}|undefined;
       if(prior?.status==='success'&&prior.inputHash===hash(acceptedInput)&&prior.output&&prior.outputHash===hash(prior.output)){
@@ -63,8 +63,9 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
         const result = await cachedStep(store, `${fact.story_id}:${edition}:write:${attempt}`, input,
           () => provider.generateStructured({ task: attempt ? 'revise' : 'write', system, data: { fact:writingFact, feedback:revisionFeedback, previousLevelTerms },
             schema: writerResponseSchema, model: writerModel, timeoutMs: 60_000, maxOutputTokens: 1800 }));
-        const data = writerResponseSchema.parse(result.data);
+        let data = writerResponseSchema.parse(result.data);
         if ('failure' in data) throw Error('WRITER_' + data.failure.code.toUpperCase());
+        if(editDraft)data=writerSchema.parse(await editDraft({storyId:fact.story_id,edition,outputHash:hash(result),data}));
         const ids = new Set(fact.claims.map(claim => claim.claim_id));
         if (data.used_claim_ids.some(id => !ids.has(id)) || data.omitted_optional_claim_ids.some(id => !ids.has(id))) {
           throw Error('CLAIM_ALLOWLIST_FAILED');
