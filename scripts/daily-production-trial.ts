@@ -71,12 +71,15 @@ try{
   const provider=new NvidiaProvider(key,budget,async reply=>{invalidReplies.push(reply);await save('invalid-responses.json',invalidReplies);});
   const historical=process.env.TRIAL_REVIEW_RECOVERY_DIR?validatedPreviewCheckpoints(JSON.parse(await readFile(resolve(process.env.TRIAL_REVIEW_RECOVERY_DIR,'checkpoints.json'),'utf8'))):{};
   const store={reviewedCandidates:async(storyId:string,edition:string)=>[0,1,2].map(attempt=>({writer:historical[`${storyId}:${edition}:write:${attempt}`],review:historical[`${storyId}:${edition}:review:${attempt}`]})),get:async(k:string)=>{read.add(k);return records[k];},set:async(k:string,value:unknown)=>{records[k]=value;written.add(k);await save('checkpoints.json',records);console.log('Checkpoint:',k);}};
-  const corrections=JSON.parse(await readFile('config/trial-editor-corrections.json','utf8')) as {storyId:string;edition:string;writerOutputHash:string;reason:string;replacements:{from:string;to:string}[];vocabulary?:{term:string;definitionEn:string;meaningZhHant:string}[]}[];
+  const corrections=JSON.parse(await readFile('config/trial-editor-corrections.json','utf8')) as {storyId:string;edition:string;writerOutputHash:string;reason:string;replacements:{from:string;to:string}[];headline?:string;used_claim_ids?:string[];omitted_optional_claim_ids?:string[];vocabulary?:{term:string;definitionEn:string;meaningZhHant:string}[]}[];
   try{const prior=JSON.parse(await readFile(resolve(directory,'editor-corrections.json'),'utf8'));if(!Array.isArray(prior)||prior.some(p=>!corrections.some(c=>hash(c)===hash(p))))throw Error('EDITOR_CORRECTION_STATE_INVALID');appliedCorrections.push(...prior);}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
   const generated=await produceEditions({editorPolicyHash:hash(corrections),editDraft:async input=>{
     const correction=corrections.find(c=>c.storyId===input.storyId&&c.edition===input.edition&&c.writerOutputHash===input.outputHash);
     if(!correction)return input.data;const data=structuredClone(input.data);
     for(const replacement of correction.replacements){let changed=0;data.body_paragraphs=data.body_paragraphs.map(p=>{if(!p.includes(replacement.from))return p;changed++;return p.replace(replacement.from,replacement.to);});if(changed!==1)throw Error('EDITOR_CORRECTION_CONTEXT_MISMATCH');}
+    if(correction.headline)data.headline=correction.headline;
+    if(correction.used_claim_ids)data.used_claim_ids=correction.used_claim_ids;
+    if(correction.omitted_optional_claim_ids)data.omitted_optional_claim_ids=correction.omitted_optional_claim_ids;
     if(correction.vocabulary)data.vocabulary=correction.vocabulary;
     if(!appliedCorrections.some(c=>hash(c)===hash(correction)))appliedCorrections.push(correction);await save('editor-corrections.json',appliedCorrections);return data;
   },facts,issueDate:plan.issueDate,revision:1,provider,store,writerModel:TRIAL_TEXT_MODEL,reviewerModel:TRIAL_TEXT_MODEL});
