@@ -35,9 +35,9 @@ function memoryStore() {
 }
 
 test('three writers use the same facts; 24 reviews; repeat run reuses success; DEMO stays DEMO', async () => {
-  const seen: unknown[] = [];
+  const seen: unknown[] = [];let reviewCalls=0;
   const provider: TextModelProvider = { async generateStructured(input) {
-    let response: unknown = goodReview;
+    let response: unknown = goodReview;if(input.task==='review')reviewCalls++;
     if (input.task !== 'review') {
       const { fact,previousLevelTerms=[] } = input.data as { fact: typeof facts[number];previousLevelTerms?:string[] }; seen.push(fact);
       const edition = input.system.match(/Audience edition: (elementary|junior|senior)/)?.[1] as 'elementary' | 'junior' | 'senior';
@@ -60,6 +60,13 @@ test('three writers use the same facts; 24 reviews; repeat run reuses success; D
   assert.equal(recoverReviewedArticle({...candidate,previousLevelTerms:content.editions[0].articles[0].vocabulary.map(v=>v.term)}),undefined);
 
   await produceEditions({ ...options, provider, store }); assert.equal(seen.length, 24);
+  assert.equal(reviewCalls,24);
+  const rawBefore=hash(await store.get('demo-1:elementary:write:0'));
+  const edited=await produceEditions({...options,provider,store,editorPolicyHash:'synthetic-copy-edit-v1',
+    editDraft:async({data})=>({...data,headline:data.headline+'.'})});
+  assert.equal(reviewCalls,48);assert.equal(hash(await store.get('demo-1:elementary:write:0')),rawBefore);
+  assert.equal(edited.editions[0].articles[0].headline,content.editions[0].articles[0].headline+'.');
+
   const files = content.editions.flatMap(p => ['color', 'ink'].map(mode => ({ edition: p.edition, mode,
     pages: 2, noOverflow: true, textVerified: true, fontsEmbedded: true,
     revision: p.revision, issueDate: p.issueDate, templateVersion: p.templateVersion, contentHash: hash(p) })));
