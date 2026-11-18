@@ -25,14 +25,36 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install -r requirements-pdf.txt fonttools
-      - run: pnpm exec playwright install --with-deps chromium
+      - name: Use installed Chrome or install the browser only
+        run: |
+          set -euo pipefail
+          browser_path=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || true)
+          if [ -n "$browser_path" ]; then
+            echo "DD_CHROME=$browser_path" >> "$GITHUB_ENV"
+          else
+            pnpm exec playwright install chromium
+          fi
       - name: Resume latest dated trial to avoid repeating successful paid requests
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           gh api "repos/$GITHUB_REPOSITORY/actions/workflows/daily-production-trial.yml/runs?branch=$GITHUB_REF_NAME&status=completed&per_page=30" > /tmp/dayday-trial-runs.json
-          previous_run=$(node --input-type=module -e "import{readFileSync}from'node:fs';const runs=JSON.parse(readFileSync('/tmp/dayday-trial-runs.json')).workflow_runs;process.stdout.write(String(runs.find(r=>r.id!==Number(process.env.GITHUB_RUN_ID))?.id||''))")
+          node --input-type=module -e "import{readFileSync}from'node:fs';for(const r of JSON.parse(readFileSync('/tmp/dayday-trial-runs.json')).workflow_runs)if(r.id!==Number(process.env.GITHUB_RUN_ID))console.log(r.id)" > /tmp/dayday-trial-ids.txt
+          previous_run=''
+          while read -r candidate_run; do
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$candidate_run/artifacts" > /tmp/dayday-trial-artifacts.json
+            artifact_state=$(node --input-type=module -e "import{readFileSync}from'node:fs';const a=JSON.parse(readFileSync('/tmp/dayday-trial-artifacts.json')).artifacts.find(a=>a.name==='daily-production-trial');process.stdout.write(a?(a.expired?'expired':'present'):'absent')")
+            if [ "$artifact_state" = expired ]; then echo 'Resume artifact expired; refusing fresh spending.'; exit 1; fi
+            if [ "$artifact_state" = present ]; then previous_run="$candidate_run"; break; fi
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$candidate_run/jobs" > /tmp/dayday-trial-jobs.json
+            node --input-type=module <<'JS'
+          import {readFileSync} from 'node:fs';
+          const steps=JSON.parse(readFileSync('/tmp/dayday-trial-jobs.json')).jobs.flatMap(j=>j.steps||[]);
+          const generation=steps.find(s=>s.name==='Generate four real-source stories in three levels and verify PDFs');
+          if(generation?.conclusion!=='skipped')throw Error('MISSING_RESUME_STATE_AFTER_POSSIBLE_MODEL_REQUEST');
+          JS
+          done < /tmp/dayday-trial-ids.txt
           if [ -n "$previous_run" ]; then
             gh run download "$previous_run" --repo "$GITHUB_REPOSITORY" -n daily-production-trial -D output/previous-daily-trial
             echo 'TRIAL_RESUME_DIR=output/previous-daily-trial' >> "$GITHUB_ENV"
