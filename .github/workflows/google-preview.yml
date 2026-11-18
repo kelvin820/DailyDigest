@@ -1,0 +1,44 @@
+name: Google Preview
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: dayday-google-preview
+  cancel-in-progress: false
+jobs:
+  preview:
+    if: github.ref_name == github.event.repository.default_branch
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Check Google secret availability
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || secrets.GOOGLE_API_KEY }}
+        run: node -e "if(!process.env.GEMINI_API_KEY?.trim()){console.error('Repository Secret GEMINI_API_KEY is missing');process.exit(1)}"
+      - uses: pnpm/action-setup@v4
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install fonttools
+      - name: Test Google writing, review, and one Nano Banana image
+        run: node --import tsx scripts/google-preview.ts
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || secrets.GOOGLE_API_KEY }}
+      - name: Keep preview artifact small
+        if: always()
+        run: test ! -d output/google-preview/fonts || python scripts/subset-preview-fonts.py output/google-preview
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: google-preview
+          path: output/google-preview/
+          if-no-files-found: ignore
+          retention-days: 7

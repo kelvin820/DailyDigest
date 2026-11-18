@@ -15,7 +15,7 @@ type Step={status:string;output:unknown;outputHash:string};
 export type PreviewReport={status:string;generatedAt:string;model:string;modelRequestAttempts:number;
   modelResponsesWithUsage:number;usageUnknownAttempts:number;inputTokens:number;outputTokens:number;
   costStatus:string;estimatedUsd:number|null;errorCode:string|null;pdfVerified:boolean;published:false;
-  developerNotes?:string[];comparisonChecks?:unknown[]};
+  developerNotes?:string[];comparisonChecks?:unknown[];providerName?:string};
 
 export function previewFacts(input:unknown):PreviewFact[]{
   const rows=z.array(z.array(z.string()).length(11)).length(8).parse(input);
@@ -60,20 +60,20 @@ export function partialPreview(records:Record<string,unknown>,facts:PreviewFact[
 }
 
 export function previewHtml(issue:PreviewEdition,report:PreviewReport,css:string){
-  const c=editions[issue.edition];
+  const c=editions[issue.edition],provider=report.providerName||'NVIDIA';
   const label=report.modelResponsesWithUsage===0?'API 尚未取得生成回應':report.status==='comparison_drafts'?'API 單篇三版比較 · DEMO':report.status==='generated_demo'?'API 試生成 · DEMO':'API 草稿 · 尚未通過全部驗證';
-  const provenance=report.modelResponsesWithUsage===0?'尚未取得可用的 NVIDIA 生成回應；不會以預設樣刊代替模型結果。':'自有虛構底稿，由 NVIDIA API 試寫；不是真實新聞，尚未出刊。';
+  const provenance=report.modelResponsesWithUsage===0?'尚未取得可用的 '+provider+' 生成回應；不會以預設樣刊代替模型結果。':'自有虛構底稿，由 '+provider+' API 試寫；不是真實新聞，尚未出刊。';
   const generatedAt=new Intl.DateTimeFormat('zh-TW',{timeZone:'Asia/Taipei',dateStyle:'short',timeStyle:'medium'}).format(new Date(report.generatedAt))+'（台北）';
   const pdf=report.pdfVerified?['color','ink'].map(mode=>`<a href="DD_${issue.issueDate}_${issue.edition}_r1_${mode}.pdf">${mode==='color'?'彩色 PDF':'省墨 PDF'}</a>`).join(' · '):report.status==='comparison_drafts'?'單篇比較（未製作整期 PDF）':'PDF 尚未通過驗證';
   return '<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+
-    '<title>NVIDIA 試生成 · '+esc(c.label)+' · DayDay</title><style>'+css.replaceAll('/fonts/','fonts/')+
+    '<title>'+esc(provider)+' 試生成 · '+esc(c.label)+' · DayDay</title><style>'+css.replaceAll('/fonts/','fonts/')+
     '.preview-meta{font-size:12px;line-height:1.8;padding:18px 0}.preview-meta code{overflow-wrap:anywhere}.preview-review{font-size:12px;line-height:1.6;padding:16px 0}.preview-review pre{white-space:pre-wrap;overflow-wrap:anywhere}.preview-tabs{display:flex;gap:16px;flex-wrap:wrap;padding:16px 0}.preview-tabs a[aria-current=page]{font-weight:bold}.preview-error{padding:12px;border:1px solid #9a352a;color:#9a352a;overflow-wrap:anywhere}</style><body>'+ 
     `<main class="newspaper ${issue.edition}" style="--paper:${c.paper};--accent:${c.accent}"><nav class="preview-tabs" aria-label="版本比較">`+
     editionKeys.map(e=>`<a href="${e}.html"${e===issue.edition?' aria-current="page"':''}>${esc(editions[e].label)} · ${editions[e].cefr}</a>`).join('')+
-    '</nav><header class="masthead"><div class="masthead-top"><span>THE WORLD, A LITTLE EVERY DAY.</span><span>NVIDIA · DEVELOPER PREVIEW</span></div><h1>'+
+    '</nav><header class="masthead"><div class="masthead-top"><span>THE WORLD, A LITTLE EVERY DAY.</span><span>'+esc(provider)+' · DEVELOPER PREVIEW</span></div><h1>'+
     (issue.edition==='senior'?'DAILY DIGEST':'<span class="masthead-wordmark">DAILY DIGEST</span>')+'<span>by DayDay</span></h1>'+ 
     `<div class="dateline"><span>FICTIONAL SCENARIO / ${issue.issueDate}</span><span>GENERATION PREVIEW</span><span>${esc(c.name.toUpperCase())}</span></div></header>`+
-    `<div class="notice"><b>${label}</b>${provenance}</div>`+
+    `<div class="notice"><b>${label}</b>${esc(provenance)}</div>`+
     `<div class="preview-meta">模型：<code>${esc(report.model)}</code><br>產生時間：${esc(generatedAt)}<br>`+
     `請求 ${report.modelRequestAttempts} 次；取得 usage 的回應 ${report.modelResponsesWithUsage} 次；另有 ${report.usageUnknownAttempts} 次用量未確認。<br>`+
     `已回報 tokens：輸入 ${report.inputTokens}／輸出 ${report.outputTokens}；成本狀態：${esc(report.costStatus)}（${report.estimatedUsd===null?'金額未確認':esc(report.estimatedUsd)+' USD 估計'}）。<br>`+
@@ -96,7 +96,7 @@ export async function writePreviewReaders(directory:string,issues:PreviewEdition
     await copyFile(resolve('public/fonts',file),resolve(directory,'fonts',file));
   }
   for(const issue of issues)await writeFile(resolve(directory,issue.edition+'.html'),previewHtml(issue,report,css));
-  await writeFile(resolve(directory,'index.html'),'<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=elementary.html"><a href="elementary.html">開啟 NVIDIA 試生成</a>');
+  await writeFile(resolve(directory,'index.html'),'<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=elementary.html"><a href="elementary.html">開啟 API 試生成</a>');
 }
 
 export function previewError(error:unknown){

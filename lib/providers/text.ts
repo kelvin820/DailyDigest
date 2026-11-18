@@ -22,6 +22,7 @@ export class FixtureProvider implements TextModelProvider {
 }
 export type InvalidStructuredReply = {task:Task;model:string;attempt:number;content:string;validation:unknown};
 type ProviderOptions = { responseFormat?: 'json_object' | 'prompt'; disableThinking?: boolean;
+  reasoningEffort?:'low';
   onInvalidReply?:(reply:InvalidStructuredReply)=>Promise<void> };
 export class CompatibleProvider implements TextModelProvider {
   readonly cacheIdentity: string;
@@ -52,6 +53,7 @@ export class CompatibleProvider implements TextModelProvider {
             stream: false, temperature: 0,
             ...(this.options.responseFormat === 'json_object' ? { response_format: { type: 'json_object' } } : {}),
             ...(this.options.disableThinking ? { chat_template_kwargs: { enable_thinking: false } } : {}),
+            ...(this.options.reasoningEffort?{reasoning_effort:this.options.reasoningEffort}:{}),
             max_tokens: input.maxOutputTokens,
           }),
         });
