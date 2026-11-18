@@ -1,5 +1,7 @@
 # 實作狀態 — 2026-11-18（台北）
 
+最新圖片接續：私人 DEMO 的 `/images/` 提供同一篇三版生成稿的水彩 AI 插畫／CC0 資料照／原創分類圖示比較，27 組響應版面與 12 份兩頁圖片 PDF 驗證通過。水彩圖由 ChatGPT 圖片工具實際生成；NVIDIA 圖片 API 三次試驗尚無可用圖（含一次 HTTP 200 全黑圖，已否決並加上拒收）。未接自動圖片排程／私有 Storage，未出刊；見 IMAGE_PREVIEW_RESULT.md。
+
 從使用者提供的 M1 原始碼、public 與 output 接續；原始交付另存於工作區供比對。下表區分「程式／離線證據」與「外部服務實測」，不是 M0–M5 全部完成。
 
 2026-11-18 已將原始碼推送備份至 https://github.com/kelvin820/DailyDigest 的 main 分支。此備份不代表部署或真實出刊完成；output 樣刊與驗證產物仍保留在獨立 review archive。

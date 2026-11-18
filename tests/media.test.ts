@@ -67,3 +67,13 @@ test('NVIDIA image adapter issues one fixed-endpoint request, accepts one raster
   assert.equal(calls,2);
   await assert.rejects(generateNvidiaImage('test-key',{fetcher:async()=>new Response(JSON.stringify({artifacts:[{base64:'PHN2Zy8+'}]}))}),/IMAGE_MIME_REJECTED/);
 });
+
+test('HTTP 200 with a provider error is rejected; response diagnostics exclude content and credentials',async()=>{
+  const diagnostics:unknown[]=[];
+  await assert.rejects(generateNvidiaImage('private-key',{
+    fetcher:async()=>new Response(JSON.stringify({error:{description:'private-key sensitive provider text'}})),
+    onDiagnostic:value=>diagnostics.push(value),
+  }),/^Error: IMAGE_PROVIDER_REJECTED$/);
+  assert.deepEqual(diagnostics,[{httpStatus:200,hasArtifacts:false,artifactCount:0,hasProviderError:true}]);
+  assert.doesNotMatch(JSON.stringify(diagnostics),/private-key|sensitive/);
+});

@@ -1,5 +1,7 @@
 # 集中設定清單
 
+圖片測試現況：私人 DEMO 已有實際工具生成的插畫與授權資料照，不需要先新增金鑰即可試閱。現有 NVIDIA Secret 已實測圖片端點，尚未取得可用輸出，詳見 IMAGE_PREVIEW_RESULT.md；不要為此重貼 key 或誤以為單純缺憑證。`IMAGE_PROVIDER`／`IMAGE_API_KEY`／`IMAGE_MODEL` 的正式自動化設定、每日兩張跨 runner 額度及私有 Storage 驗證仍待後續接線，目前保持關閉。
+
 使用者已決定先用 NVIDIA Nemotron。以下項目仍需設定；金鑰勿貼聊天。
 
 已取得 Supabase Project URL：https://bqoqzxharmatphcqwldo.supabase.co 。使用者已回報 14 份 migration 初始化成功，期刊與成員皆為 0、review 模式、live_enabled=false。使用者要求先看模型生成，家長登入暫緩；下一步按 NVIDIA_PREVIEW.md 進行不依賴帳號的 API 試生成。

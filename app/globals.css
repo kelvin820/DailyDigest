@@ -34,3 +34,5 @@
 .print-article .asset-visual img{width:100%;height:27mm;display:block;object-fit:cover}
 .print-edition.junior .print-article .asset-visual img,.print-edition.senior .print-article .asset-visual img{width:36mm;height:18mm}
 .print-article .asset-visual{overflow:hidden}
+
+.print-edition.mode-ink .asset-visual img{filter:grayscale(1)}

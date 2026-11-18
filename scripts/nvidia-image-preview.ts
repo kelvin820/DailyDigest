@@ -6,12 +6,13 @@ const directory='output/nvidia-image-preview';
 await mkdir(directory,{recursive:true});
 const report={status:'not_started',model:NVIDIA_IMAGE_MODEL,generatedAt:new Date().toISOString(),
   requestAttempts:0,imageResponseReceived:false,imagesGenerated:0,estimatedUsd:null,costStatus:'cost_unknown',
-  automaticDailyBudgetVerified:false,databaseWritten:false,published:false,errorCode:null as string|null};
+  automaticDailyBudgetVerified:false,databaseWritten:false,published:false,errorCode:null as string|null,
+  responseDiagnostic:null as unknown};
 try{
   const key=process.env.LLM_API_KEY||process.env.NVIDIA_API_KEY||'';
   if(!key.trim())throw Error('IMAGE_KEY_MISSING');
   report.requestAttempts=1;
-  const result=await generateNvidiaImage(key);
+  const result=await generateNvidiaImage(key,{onDiagnostic:diagnostic=>{report.responseDiagnostic=diagnostic;}});
   report.imageResponseReceived=true;
   const prepared=await prepareAsset(result.bytes,result.mime,{kind:'generated_illustration',
     alt:'Watercolor sketchbook showing ideas for a possible community park.',
