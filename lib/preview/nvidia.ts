@@ -15,7 +15,7 @@ type Step={status:string;output:unknown;outputHash:string};
 export type PreviewReport={status:string;generatedAt:string;model:string;modelRequestAttempts:number;
   modelResponsesWithUsage:number;usageUnknownAttempts:number;inputTokens:number;outputTokens:number;
   costStatus:string;estimatedUsd:number|null;errorCode:string|null;pdfVerified:boolean;published:false;
-  developerNotes?:string[];comparisonChecks?:unknown[];providerName?:string};
+  developerNotes?:string[];comparisonChecks?:unknown[];providerName?:string;reusedModelSteps?:number;sourceRunId?:string|null};
 
 export function previewFacts(input:unknown):PreviewFact[]{
   const rows=z.array(z.array(z.string()).length(11)).length(8).parse(input);
@@ -61,8 +61,11 @@ export function partialPreview(records:Record<string,unknown>,facts:PreviewFact[
 
 export function previewHtml(issue:PreviewEdition,report:PreviewReport,css:string){
   const c=editions[issue.edition],provider=report.providerName||'NVIDIA';
-  const label=report.modelResponsesWithUsage===0?'API 尚未取得生成回應':report.status==='comparison_drafts'?'API 單篇三版比較 · DEMO':report.status==='generated_demo'?'API 試生成 · DEMO':'API 草稿 · 尚未通過全部驗證';
-  const provenance=report.modelResponsesWithUsage===0?'尚未取得可用的 '+provider+' 生成回應；不會以預設樣刊代替模型結果。':'自有虛構底稿，由 '+provider+' API 試寫；不是真實新聞，尚未出刊。';
+  const reused=(report.reusedModelSteps||0)>0,hasResponse=report.modelResponsesWithUsage>0||reused;
+  const label=!hasResponse?'API 尚未取得生成回應':report.status==='comparison_drafts'?'API 單篇三版比較 · DEMO':report.status==='generated_demo'?'API 試生成 · DEMO':'API 草稿 · 尚未通過全部驗證';
+  const provenance=!hasResponse?'尚未取得可用的 '+provider+' 生成回應；不會以預設樣刊代替模型結果。':
+    reused&&report.modelRequestAttempts===0?'重用先前的實際 '+provider+' API 回應；本輪沒有新增文字生成。底稿為虛構情境，尚未出刊。':
+      '自有虛構底稿，由 '+provider+' API 試寫；不是真實新聞，尚未出刊。';
   const generatedAt=new Intl.DateTimeFormat('zh-TW',{timeZone:'Asia/Taipei',dateStyle:'short',timeStyle:'medium'}).format(new Date(report.generatedAt))+'（台北）';
   const pdf=report.pdfVerified?['color','ink'].map(mode=>`<a href="DD_${issue.issueDate}_${issue.edition}_r1_${mode}.pdf">${mode==='color'?'彩色 PDF':'省墨 PDF'}</a>`).join(' · '):report.status==='comparison_drafts'?'單篇比較（未製作整期 PDF）':'PDF 尚未通過驗證';
   return '<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+
@@ -76,6 +79,7 @@ export function previewHtml(issue:PreviewEdition,report:PreviewReport,css:string
     `<div class="notice"><b>${label}</b>${esc(provenance)}</div>`+
     `<div class="preview-meta">模型：<code>${esc(report.model)}</code><br>產生時間：${esc(generatedAt)}<br>`+
     `請求 ${report.modelRequestAttempts} 次；取得 usage 的回應 ${report.modelResponsesWithUsage} 次；另有 ${report.usageUnknownAttempts} 次用量未確認。<br>`+
+    (reused?`已重用 ${esc(report.reusedModelSteps)} 個通過完整性檢查的模型步驟；用量數字僅計本輪新請求。<br>`:'')+
     `已回報 tokens：輸入 ${report.inputTokens}／輸出 ${report.outputTokens}；成本狀態：${esc(report.costStatus)}（${report.estimatedUsd===null?'金額未確認':esc(report.estimatedUsd)+' USD 估計'}）。<br>`+
     `${pdf} · <a href="report.json">驗證與用量</a> · <a href="checkpoints.json">實際寫稿／複核回應</a></div>`+
     (report.developerNotes?.length?'<div class="preview-error">'+report.developerNotes.map(note=>'<p>'+esc(note)+'</p>').join('')+'</div>':'')+

@@ -1,0 +1,83 @@
+name: NVIDIA Issue Preview
+on:
+  workflow_dispatch:
+    inputs:
+      resume_run_id:
+        description: 'Optional completed NVIDIA Issue Preview run to resume without regenerating matching steps'
+        type: string
+        default: ''
+      image_run_id:
+        description: 'Existing successful park image run; reuses assets, never generates another image'
+        type: string
+        default: '44325343817'
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: dayday-nvidia-issue-preview
+  cancel-in-progress: false
+jobs:
+  preview:
+    if: github.ref_name == github.event.repository.default_branch
+    timeout-minutes: 45
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Check credential availability
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY || secrets.NVIDIA_API_KEY }}
+        run: node -e "if(!process.env.LLM_API_KEY?.trim()){console.error('NVIDIA Repository Secret is missing');process.exit(1)}"
+      - uses: pnpm/action-setup@v4
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements-pdf.txt fonttools
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Import only completed same-repo default-branch preview artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RESUME_RUN_ID: ${{ inputs.resume_run_id }}
+          IMAGE_RUN_ID: ${{ inputs.image_run_id }}
+        run: |
+          set -euo pipefail
+          for kind in resume image; do
+            if [ "$kind" = resume ]; then run_id="$RESUME_RUN_ID"; expected='NVIDIA Issue Preview'; artifact='nvidia-issue-preview'; destination='output/previous-issue'; else run_id="$IMAGE_RUN_ID"; expected='NVIDIA Image Preview'; artifact='nvidia-image-preview'; destination='output/previous-image'; fi
+            if [ -z "$run_id" ]; then continue; fi
+            [[ "$run_id" =~ ^[0-9]+$ ]] || { echo 'Invalid run ID'; exit 1; }
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run_id" > /tmp/dayday-source-run.json
+            EXPECTED_NAME="$expected" node --input-type=module <<'JS'
+          import {readFileSync} from 'node:fs';
+          const run=JSON.parse(readFileSync('/tmp/dayday-source-run.json','utf8'));
+          if(run.name!==process.env.EXPECTED_NAME||run.repository.full_name!==process.env.GITHUB_REPOSITORY||run.head_branch!==process.env.GITHUB_REF_NAME||run.status!=='completed')throw Error('UNTRUSTED_RESUME_RUN');
+          JS
+            if [ "$kind" = image ]; then
+              gh run download "$run_id" --repo "$GITHUB_REPOSITORY" -n "$artifact" -D "$destination" || echo 'Cached image unavailable; validated photo/icon fallback will be used.'
+            else
+              gh run download "$run_id" --repo "$GITHUB_REPOSITORY" -n "$artifact" -D "$destination"
+            fi
+          done
+      - name: Produce, review, select images and verify six two-page DEMO PDFs
+        run: node --import tsx scripts/nvidia-issue-preview.ts
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY || secrets.NVIDIA_API_KEY }}
+          PREVIEW_RESUME_DIR: ${{ inputs.resume_run_id != '' && 'output/previous-issue' || '' }}
+          PREVIEW_SOURCE_RUN_ID: ${{ inputs.resume_run_id }}
+          PREVIEW_IMAGE_DIR: output/previous-image
+          LIVE_GENERATION_ENABLED: 'false'
+          DEMO_MODE: 'true'
+      - name: Subset preview font copies
+        if: always()
+        run: test ! -d output/nvidia-issue-preview/fonts || python scripts/subset-preview-fonts.py output/nvidia-issue-preview
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nvidia-issue-preview
+          path: output/nvidia-issue-preview/
+          if-no-files-found: ignore
+          retention-days: 7
