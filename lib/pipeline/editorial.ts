@@ -65,7 +65,7 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
           review.publish_recommendation !== 'revise' && !review.issues.some(issue => issue.severity !== 'minor')) {
           articles.push(article); reviews.push({ ...review, storyId: fact.story_id, edition }); accepted = true; break;
         }
-        feedback = { review, statistics: s, wordLimits: c };
+        feedback = { previous_article:data,review, statistics: s, wordLimits: c };
       }
       if (!accepted) throw Error(`NEEDS_REVIEW:${fact.story_id}:${edition}`);
     }

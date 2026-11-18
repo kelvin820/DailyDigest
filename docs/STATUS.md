@@ -25,7 +25,7 @@
 
 ## 尚未發生的事情
 
-沒有真實 NVIDIA API 回應、真實生成費用、真實 Supabase 儲存／發布、Vercel URL，或家庭試用紀錄。所有樣刊仍是 DEMO；測試資料庫中的「published」只存在於銷毀式合成測試，不算 A18。
+已有 NVIDIA 實際 API 比較稿；尚無已確認費率／真實計費金額、真實新聞的 Supabase 儲存／發布、Vercel URL，或家庭試用紀錄。所有樣刊仍是 DEMO；測試資料庫中的「published」只存在於銷毀式合成測試，不算 A18。
 
 使用者已指定先用 NVIDIA Nemotron；不再等待供應商選擇。待設定項目集中於 SETUP.md。沒有建立其他網站或購買方案。
 
@@ -38,3 +38,5 @@ Supabase 接續：已取得 https://bqoqzxharmatphcqwldo.supabase.co ，未帶�
 使用者已回報 Supabase schema_initialized（14 migrations、0 issues、0 members、review、live_enabled=false）。家長帳號暫緩；先用新 NVIDIA Preview 手動流程驗證 Nemotron 三版生成，不依賴 Supabase／登入，不寫庫、不發布。使用者已回報設定 GitHub Secret LLM_API_KEY；實際模型回應、用量與產物仍須以該次 API run 為準。
 
 NVIDIA 首次實際 API 試驗：run 44306426113 已讀到 Secret，但舊 Nano 型號回傳 MODEL_HTTP_410，尚未生成稿件。已依官方即時 catalog 與現行 model page 改為 Nemotron 3.5 Lightning 30B-A3B，保留失敗 report；新的生成結果另行驗證。
+
+NVIDIA 實際比較已完成：run 44309609059，Nemotron 3.5 Lightning，A1/A2/B1 為 41／61／111 字，7 次模型回應，10300 input／1090 output tokens，cost_unknown。三版皆通過該次機械檢查及模型複核；開發檢視另發現國中詞義「蠔粉」誤譯，已在展示稿校正為「蠟筆」並保留原始回應及修訂紀錄。這是單篇虛構比較稿，沒有整期 PDF、不寫資料庫、不出刊。詳見 NVIDIA_PREVIEW_RESULT.md。

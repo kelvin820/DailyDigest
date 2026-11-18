@@ -9,3 +9,5 @@
 測試入口：pnpm typecheck/lint/test/build、node scripts/test-db.mjs、node scripts/qa-offline.cjs、node scripts/qa-print-failures.mjs、node scripts/qa-app.mjs。證據保存在 output；GitHub 初次備份的兩次 CI 均已通過並上傳 artifact。表頭字型試作見 MASTHEADS.md。
 
 已知尚待工程／live 決策：來源個別權利與供稿多樣性、分類配額例外 UI、真正照片／private image transport、Supabase 服務層角色測試、NVIDIA 真實 JSON 與 CEFR 校準、價格與執行時間、部署 URL、三期家庭觀察。現有嚴格門檻會在這些條件不足時停稿，不假造成功。
+
+最新優先順序：使用者目前僅開發者一人，家長帳號／密碼延後。已實際完成 NVIDIA 單篇三版比較；先看 NVIDIA_PREVIEW_RESULT.md 與 /nemotron/ 預覽，再逐步處理完整八則、真實來源、服務層權限與正式 Vercel。Key 已在 GitHub Secret，不需再次詢問或要求貼出。

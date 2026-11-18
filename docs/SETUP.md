@@ -4,12 +4,13 @@
 
 已取得 Supabase Project URL：https://bqoqzxharmatphcqwldo.supabase.co 。使用者已回報 14 份 migration 初始化成功，期刊與成員皆為 0、review 模式、live_enabled=false。使用者要求先看模型生成，家長登入暫緩；下一步按 NVIDIA_PREVIEW.md 進行不依賴帳號的 API 試生成。
 
+NVIDIA key 已設定在 GitHub repository Secret `LLM_API_KEY`，且已取得實際 API 回應與三版比較稿；家長登入仍延後。結果見 NVIDIA_PREVIEW_RESULT.md。
+
 GitHub 原始碼已備份至 https://github.com/kelvin820/DailyDigest ，遠端主分支為 main；runner secrets／variables 與正式出刊設定仍待完成。
 
 | 設定 | 放置位置 | 目的 |
 |---|---|---|
-| NVIDIA API key → LLM_API_KEY | GitHub production environment secret；本機用忽略的 .env.local | 模型生成／複核 |
-| writer/reviewer 模型 | runner variables；初始均為 nvidia/nemotron-3.5-lightning-30b-a3b | 可分別調整；目前僅 mock 合約通過 |
+| writer/reviewer 模型 | runner variables；初始均為 nvidia/nemotron-3.5-lightning-30b-a3b | 可分別調整；已完成單篇三版 API 比較，仍需人工校準 |
 | Supabase publishable key、管理者 email | Vercel；在 Supabase 邀請家長並設定 site_members | 私人登入與 reader/admin；Project URL 已取得 |
 | SUPABASE_SERVICE_ROLE_KEY | 只放 runner secret | 背景 DB／private Storage；讀者網站不需要它 |
 | Vercel 專案、實際 HTTPS APP_URL | 各平台與 runner variables | 部署及 PDF 本期網址 |
