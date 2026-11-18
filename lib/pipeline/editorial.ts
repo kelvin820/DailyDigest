@@ -6,7 +6,7 @@ import { factSchema, writerResponseSchema, reviewSchema } from '../schemas/edito
 import type { TextModelProvider } from '../providers/text';
 import { stats } from '../content/metrics';
 import { containsTerm } from '../content/core.mjs';
-import { cachedStep } from './state.mjs';
+import { cachedStep,hash } from './state.mjs';
 import {learningTermKey} from '../content/vocabulary.mjs';
 import {supportedStoryCounts} from '../../config/issue-settings.mjs';
 
@@ -25,6 +25,12 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
     const c = editions[edition], articles: ArticleView[] = [];
     for (const [index, fact] of facts.entries()) {
       const previousLevelTerms=payloads.flatMap(p=>p.articles.filter(a=>a.storyId===fact.story_id).flatMap(a=>a.vocabulary.map(v=>v.term)));
+      const acceptedInput={fact,edition,config:c,writer,reviewPrompt,writerModel,reviewerModel,previousLevelTerms,provider:provider.cacheIdentity,policy:'tiered-v1'};
+      const acceptedKey=`${fact.story_id}:${edition}:accepted:0`;
+      const prior=await store.get(acceptedKey) as {status?:string;inputHash?:string;output?:{article:unknown;review:unknown};outputHash?:string}|undefined;
+      if(prior?.status==='success'&&prior.inputHash===hash(acceptedInput)&&prior.output&&prior.outputHash===hash(prior.output)){
+        articles.push(articleSchema.parse(prior.output.article));reviews.push({...reviewSchema.parse(prior.output.review),storyId:fact.story_id,edition});continue;
+      }
       let feedback: unknown = null, accepted = false;
       for (let attempt = 0; attempt <= 2; attempt++) {
         let system = writer.replaceAll('{{edition}}', edition).replaceAll('{{target_cefr}}', c.cefr)
@@ -44,9 +50,9 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
         const mustShorten=attempt>0&&previousStats&&previousStats.count>c.max;
         const writingFact=mustShorten?{...fact,claims:fact.claims.filter(claim=>claim.must_keep),
           sources:fact.sources.map(source=>({source_id:source.source_id,publisher:source.publisher,url:source.url,published_at:source.published_at}))}:fact;
-        const revisionFeedback=feedback&&typeof feedback==='object'?Object.fromEntries(Object.entries(feedback).filter(([key])=>key!=='previous_article')):feedback;
+        const revisionFeedback=mustShorten&&feedback&&typeof feedback==='object'?Object.fromEntries(Object.entries(feedback).filter(([key])=>key!=='previous_article')):feedback;
         if(mustShorten)system+='\nSHORTENING POLICY: Optional claims have been removed from this writing input. Cover only the supplied core claims; omit optional examples and lists. Do not add details from earlier drafts. Aim for '+Math.round((c.min+c.max)/2)+' body words.';
-        const input = { fact, feedback, previousLevelTerms, ...(attempt?{revisionPolicy:'selected-claims-v1'}:{}),system, model: writerModel, promptVersion: 'writer.v1', edition, attempt, provider: provider.cacheIdentity };
+        const input = { fact, feedback, previousLevelTerms, ...(mustShorten?{revisionPolicy:'selected-claims-v1'}:{}),system, model: writerModel, promptVersion: 'writer.v1', edition, attempt, provider: provider.cacheIdentity };
         const result = await cachedStep(store, `${fact.story_id}:${edition}:write:${attempt}`, input,
           () => provider.generateStructured({ task: attempt ? 'revise' : 'write', system, data: { fact:writingFact, feedback:revisionFeedback, previousLevelTerms },
             schema: writerResponseSchema, model: writerModel, timeoutMs: 60_000, maxOutputTokens: 1800 }));
@@ -82,6 +88,7 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
         if (review.issues.some(issue => issue.claim_ids.some(id => !ids.has(id)))) throw Error('REVIEW_CLAIM_ALLOWLIST_FAILED');
         if (review.factual_status === 'pass' && review.level_fit === 'suitable' &&
           review.publish_recommendation !== 'revise' && !review.issues.some(issue => issue.severity !== 'minor')) {
+          await store.set(acceptedKey,{status:'success',inputHash:hash(acceptedInput),output:{article,review},outputHash:hash({article,review})});
           articles.push(article); reviews.push({ ...review, storyId: fact.story_id, edition }); accepted = true; break;
         }
         feedback = { previous_article:data,review, statistics: s, wordLimits: c };
