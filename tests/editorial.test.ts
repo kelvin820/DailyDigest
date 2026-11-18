@@ -1,3 +1,5 @@
+import {readFile} from 'node:fs/promises';
+import {recoverReviewedArticle} from '../lib/pipeline/recover-reviewed';
 import {learningTermKey} from '../lib/content/vocabulary.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -50,6 +52,13 @@ test('three writers use the same facts; 24 reviews; repeat run reuses success; D
   assert.equal(content.reviews.length, 24); assert.equal(seen.length, 24);
   for (let i = 0; i < 24; i++) assert.strictEqual(seen[i], facts[i % 8]);
   assert.ok(content.editions.every(p => p.isDemo));
+  const candidate={writer:await store.get('demo-1:elementary:write:0'),review:await store.get('demo-1:elementary:review:0'),
+    fact:facts[0],index:0,config:editions.elementary,previousLevelTerms:[],reviewerModel:options.reviewerModel,
+    reviewPrompt:await readFile('prompts/reviewer.v1.txt','utf8'),provider:undefined};
+  assert.deepEqual(recoverReviewedArticle(candidate)?.article,content.editions[0].articles[0]);
+  assert.equal(recoverReviewedArticle({...candidate,fact:{...facts[0],event_key:'different-facts'}}),undefined);
+  assert.equal(recoverReviewedArticle({...candidate,previousLevelTerms:content.editions[0].articles[0].vocabulary.map(v=>v.term)}),undefined);
+
   await produceEditions({ ...options, provider, store }); assert.equal(seen.length, 24);
   const files = content.editions.flatMap(p => ['color', 'ink'].map(mode => ({ edition: p.edition, mode,
     pages: 2, noOverflow: true, textVerified: true, fontsEmbedded: true,
