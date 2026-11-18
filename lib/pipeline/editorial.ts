@@ -40,9 +40,15 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
             (s?'The previous body has '+s.count+' words. '+(s.count>c.max?'SHORTEN it; omit optional details. ':s.count<c.min?'EXPAND using supported details only. ':''):'')+
             'The previous longest sentence has '+(s?.max??'unknown')+' words; average '+(s?.average??'unknown')+'. Rewrite and split long sentences: EVERY sentence must have at most '+c.sentenceMax+' words, with an average at most '+c.avg+'. Keep all must_keep facts but do not copy their sentence structure. Then choose two useful, level-appropriate terms occurring in the revised body; avoid previousLevelTerms.';
         }
-        const input = { fact, feedback, previousLevelTerms, system, model: writerModel, promptVersion: 'writer.v1', edition, attempt, provider: provider.cacheIdentity };
+        const previousStats=(feedback as {statistics?:{count:number}}|null)?.statistics;
+        const mustShorten=attempt>0&&previousStats&&previousStats.count>c.max;
+        const writingFact=mustShorten?{...fact,claims:fact.claims.filter(claim=>claim.must_keep),
+          sources:fact.sources.map(source=>({source_id:source.source_id,publisher:source.publisher,url:source.url,published_at:source.published_at}))}:fact;
+        const revisionFeedback=feedback&&typeof feedback==='object'?Object.fromEntries(Object.entries(feedback).filter(([key])=>key!=='previous_article')):feedback;
+        if(mustShorten)system+='\nSHORTENING POLICY: Optional claims have been removed from this writing input. Cover only the supplied core claims; omit optional examples and lists. Do not add details from earlier drafts. Aim for '+Math.round((c.min+c.max)/2)+' body words.';
+        const input = { fact, feedback, previousLevelTerms, ...(attempt?{revisionPolicy:'selected-claims-v1'}:{}),system, model: writerModel, promptVersion: 'writer.v1', edition, attempt, provider: provider.cacheIdentity };
         const result = await cachedStep(store, `${fact.story_id}:${edition}:write:${attempt}`, input,
-          () => provider.generateStructured({ task: attempt ? 'revise' : 'write', system, data: { fact, feedback, previousLevelTerms },
+          () => provider.generateStructured({ task: attempt ? 'revise' : 'write', system, data: { fact:writingFact, feedback:revisionFeedback, previousLevelTerms },
             schema: writerResponseSchema, model: writerModel, timeoutMs: 60_000, maxOutputTokens: 1800 }));
         const data = writerResponseSchema.parse(result.data);
         if ('failure' in data) throw Error('WRITER_' + data.failure.code.toUpperCase());
