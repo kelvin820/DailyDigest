@@ -125,3 +125,18 @@ test('provider waits for durable reservation, accounts timeout, and never calls 
   await assert.rejects(refused.generateStructured(request), /BUDGET_EXCEEDED/);
   assert.equal(requests, 1);
 });
+
+test('repeated glossary terms across levels trigger revision instead of silently reusing the beginner glossary',async()=>{
+  let juniorWrites=0;
+  const provider:TextModelProvider={async generateStructured(input){
+    if(input.task==='review')return{data:input.schema.parse(goodReview),usage:{input_tokens:0,output_tokens:0}};
+    const {fact,previousLevelTerms}=input.data as {fact:typeof facts[number];previousLevelTerms:string[]};
+    const edition=input.system.match(/Audience edition: (elementary|junior|senior)/)?.[1] as 'elementary'|'junior'|'senior';
+    const a=demoIssue(edition).articles.find(a=>a.storyId===fact.story_id)!;
+    if(edition==='junior'){juniorWrites++;assert.equal(previousLevelTerms.length,2);assert.match(input.system,/Choose different terms/);}
+    return{data:input.schema.parse({headline:a.headline,body_paragraphs:a.bodyParagraphs,vocabulary:a.vocabulary,
+      used_claim_ids:['core'],omitted_optional_claim_ids:[],editorial_flags:[]}),usage:{input_tokens:0,output_tokens:0}};
+  }};
+  await assert.rejects(produceEditions({...options,facts:facts.slice(0,4),provider,store:memoryStore()}),/NEEDS_REVIEW:demo-1:junior/);
+  assert.equal(juniorWrites,3);
+});

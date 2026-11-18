@@ -64,4 +64,5 @@ for file in manifest:
 manifest_path.write_text(json.dumps(manifest, indent=2), encoding='utf-8')
 proof_path = manifest_path.parent.parent / 'pdf-verification.json'
 proof_path.write_text(json.dumps(proofs, indent=2), encoding='utf-8')
+(manifest_path.parent / 'pdf-verification.json').write_text(json.dumps(proofs, indent=2), encoding='utf-8')
 print('PASS: six two-page PDFs; all headlines, bodies and vocabulary; embedded fonts; minimum body sizes.')

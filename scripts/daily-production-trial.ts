@@ -27,15 +27,15 @@ const context={contract:'real-source-four-story-trial-v1',planHash:hash(plan),mo
 const records:Record<string,unknown>=Object.create(null),initial=new Set<string>(),read=new Set<string>(),written=new Set<string>();
 const budget=new Budget({usd:2,maxCalls:70,maxTokens:150000,inputRate:undefined,outputRate:undefined});
 let facts:z.infer<typeof factSchema>[]=[],issues:EditionView[]=[],reviews:unknown[]=[],errorCode:string|null=null,pdfVerified=false;
-let priorModelCalls=0,priorTokens=0;let sourceReads=0,imageAttempts=0;const imageReservations:string[]=[];let media:unknown=null;
+let resumedFacts=false;let priorModelCalls=0,priorTokens=0;let sourceReads=0,imageAttempts=0;const imageReservations:string[]=[];let media:unknown=null;
 try{
   if(process.env.TRIAL_RESUME_DIR){
     const previous=resolve(process.env.TRIAL_RESUME_DIR);
     if(hash(JSON.parse(await readFile(resolve(previous,'context.json'),'utf8')))!==hash(context))throw Error('TRIAL_CONTEXT_MISMATCH');
     const imported=validatedPreviewCheckpoints(JSON.parse(await readFile(resolve(previous,'checkpoints.json'),'utf8')));
     for(const [k,v]of Object.entries(imported)){records[k]=v;initial.add(k);}
-    facts=z.array(factSchema).length(4).parse(JSON.parse(await readFile(resolve(previous,'facts.json'),'utf8')));
     const prior=JSON.parse(await readFile(resolve(previous,'report.json'),'utf8'));
+    try{facts=z.array(factSchema).length(4).parse(JSON.parse(await readFile(resolve(previous,'facts.json'),'utf8')));resumedFacts=true;}catch(error){if(prior.modelRequestAttempts!==0||prior.totalModelCalls!==0||Object.keys(imported).length)throw error;}
     if(prior.ledger?.some((l:{status:string})=>l.status==='usage_unknown'))throw Error('USAGE_RECONCILIATION_REQUIRED');
     priorModelCalls=prior.totalModelCalls??prior.modelRequestAttempts;priorTokens=prior.totalTokens??0;
     budget.maxCalls=70-priorModelCalls;budget.maxTokens=150000-priorTokens;
@@ -49,9 +49,9 @@ try{
   for(const s of plan.stories){
     const response=await safeFetch(s.url,[new URL(s.url).hostname],{timeoutMs:30000});
     const $=load(response.text);$('script,style,nav,header,footer').remove();const text=$('body').text().replace(/\s+/g,' ');
-    if(s.quotes.some((q:string)=>!text.includes(q)))throw Error('SOURCE_EVIDENCE_CHANGED_'+s.id);
+    if(s.quotes.some((q:string)=>!text.includes(q))){await save('source-diagnostic.json',{storyId:s.id,title:$('title').text(),textLength:text.length,missingQuotes:s.quotes.filter((q:string)=>!text.includes(q)),excerpt:text.slice(0,1800)});throw Error('SOURCE_EVIDENCE_CHANGED_'+s.id);}
     sourceReads++;evidence.push({storyId:'trial-'+s.id,url:response.url,readAt:new Date().toISOString(),sha256:hash(response.text),verifiedQuotes:s.quotes});
-    if(!process.env.TRIAL_RESUME_DIR){
+    if(!resumedFacts){
       const now=new Date().toISOString(),sourceId='source-'+s.id,published=s.date+'T00:00:00Z';
       facts.push(factSchema.parse({story_id:'trial-'+s.id,event_key:'official-'+s.id+'-'+s.date,
         primary_category:s.category,content_kind:'news',published_at:published,published_at_precision:'date',
