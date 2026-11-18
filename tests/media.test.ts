@@ -54,7 +54,8 @@ test('NVIDIA image adapter issues one fixed-endpoint request, accepts one raster
   let calls=0;
   const fetcher:typeof fetch=async(url,options)=>{
     calls++;assert.equal(url,'https://ai.api.nvidia.com/v1/genai/black-forest-labs/flux.1-schnell');
-    const body=JSON.parse(String(options?.body));assert.equal(body.samples,1);assert.equal(body.steps,4);
+    const body=JSON.parse(String(options?.body));assert.equal(body.steps,4);
+    assert.deepEqual(Object.keys(body).sort(),['height','prompt','steps','width']);
     return new Response(JSON.stringify({artifacts:[{base64:png.toString('base64')}]}));
   };
   assert.equal((await generateNvidiaImage('test-key',{fetcher})).mime,'image/png');assert.equal(calls,1);

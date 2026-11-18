@@ -16,7 +16,7 @@ try{
     alt:'Watercolor sketchbook showing ideas for a possible community park.',
     caption:'公園規劃概念，非真實事件照片。',author:'DayDay / NVIDIA FLUX.1-schnell',publisher:'DayDay',
     credit:'DayDay · NVIDIA FLUX.1-schnell',licenseCode:'GENERATED',rightsConfirmed:true,photographedAt:null,
-    generation:{provider:'nvidia',model:result.model,prompt:result.prompt,seed:result.seed,generatedAt:report.generatedAt}},directory);
+    generation:{provider:'nvidia',model:result.model,prompt:result.prompt,generatedAt:report.generatedAt}},directory);
   await writeFile(directory+'/image.json',JSON.stringify(prepared.image,null,2));
   report.imagesGenerated=1;report.status='generated';
 }catch(error){

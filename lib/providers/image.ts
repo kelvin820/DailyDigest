@@ -7,7 +7,9 @@ export async function generateNvidiaImage(key:string,{fetcher=fetch,prompt=PARK_
   const response=await fetcher('https://ai.api.nvidia.com/v1/genai/'+NVIDIA_IMAGE_MODEL,{
     method:'POST',redirect:'error',signal:AbortSignal.timeout(180_000),
     headers:{Authorization:'Bearer '+key,'Content-Type':'application/json',Accept:'application/json'},
-    body:JSON.stringify({prompt,mode:'base',width:1024,height:1024,seed:18,steps:4,samples:1,cfg_scale:0}),
+    // Hosted endpoint's current sample accepts prompt, dimensions and steps only.
+    // Its reference schema also lists fields that the hosted gateway rejects (422).
+    body:JSON.stringify({prompt,width:1216,height:832,steps:4}),
   });
   // Never include response bodies, headers or API credentials in an error/log.
   if(!response.ok){await response.body?.cancel();throw Error('IMAGE_HTTP_'+response.status);}
@@ -26,5 +28,5 @@ export async function generateNvidiaImage(key:string,{fetcher=fetch,prompt=PARK_
   const mime=bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10]))?'image/png':
     bytes[0]===255&&bytes[1]===216?'image/jpeg':null;
   if(!mime)throw Error('IMAGE_MIME_REJECTED');
-  return {bytes,mime,model:NVIDIA_IMAGE_MODEL,seed:18,prompt};
+  return {bytes,mime,model:NVIDIA_IMAGE_MODEL,prompt};
 }
