@@ -38,10 +38,13 @@ jobs:
       - uses: pnpm/action-setup@v4
       - run: pnpm install --frozen-lockfile
       - uses: actions/setup-python@v5
+        if: inputs.mode == 'full'
         with:
           python-version: '3.12'
       - run: pip install -r requirements-pdf.txt
+        if: inputs.mode == 'full'
       - run: pnpm exec playwright install --with-deps chromium
+        if: inputs.mode == 'full'
       - name: Generate and review three DEMO editions with NVIDIA
         run: node --import tsx scripts/nvidia-preview.ts
         env:
