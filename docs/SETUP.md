@@ -19,7 +19,7 @@
 | Vercel 專案及 HTTPS `APP_URL` | 在 Vercel 匯入 kelvin820/DailyDigest，再設定 Vercel／runner 的實際網址 | 目前連接的 CKM team 建專案回 403，尚無 Vercel 部署；私人 Sites 預覽不受影響 |
 | `WRITER_MODEL`／`REVIEWER_MODEL` | runner Variables；未設定時使用 Ultra 預設；若仍留 Lightning override 請更新 | 保持與本輪驗證模型一致 |
 | 單價與額度 | `LLM_INPUT_USD_PER_MILLION`／`LLM_OUTPUT_USD_PER_MILLION`、`DAILY_BUDGET_USD`／`MAX_MODEL_CALLS`／`MAX_MODEL_TOKENS` | 預設 2／100／200000；未知價格只提供 calls/tokens 上限，不是實測美元保證 |
-| 來源政策、私有圖片與 PDF Storage | 核准 config/sources.json 的真實來源；完成私有上傳、讀取與角色測試 | 目前完整試產採人工核對底稿；正式來源 intake、圖片傳輸仍需驗收 |
+| 來源政策、私有圖片與 PDF Storage | 核准 config/sources.json 的真實來源；完成私有上傳、讀取與角色測試 | 目前完整試產採開發代理核對的底稿；正式來源 intake、圖片傳輸仍需驗收 |
 | `GITHUB_DISPATCH_TOKEN`（可選） | Vercel server Secret，限此 repo Actions write | 網頁編輯室派送；沒有它仍可用 GitHub 手動操作 |
 
 增量 SQL 可離線產生，內含十四份來源 checksum、review 模式、無執行中工作與防止重跑的交易守衛：

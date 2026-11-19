@@ -131,7 +131,7 @@ const complete=!errorCode&&pdfVerified&&issues.length===3&&issues.every(i=>i.art
 const editorialReviewHolds=(reviews as {storyId:string;edition:string;publish_recommendation:string;issues:unknown[]}[]).filter(r=>r.publish_recommendation==='revise');
 const report={editorialReviewRequired:editorialReviewHolds.length>0,editorialReviewHolds,status:complete?'review_copy_ready':'needs_review',issueDate:plan.issueDate,generatedAt:new Date().toISOString(),storyCount:4,
   generatedArticles:issues.reduce((n,i)=>n+i.articles.length,0),reviewRecords:reviews.length,sourcePagesRead:sourceReads,sourceSnapshotsUsed,
-  model:TRIAL_TEXT_MODEL,editorCorrectionsApplied:appliedCorrections.length,editorCorrectionRecord:appliedCorrections.length?'editor-corrections.json':null,modelRequestAttempts:budget.calls,reusedModelSteps:[...read].filter(k=>initial.has(k)&&!written.has(k)).length,
+  model:TRIAL_TEXT_MODEL,editorCorrectionActor:'codex_development_agent',editorCorrectionsApplied:appliedCorrections.length,editorCorrectionRecord:appliedCorrections.length?'editor-corrections.json':null,modelRequestAttempts:budget.calls,reusedModelSteps:[...read].filter(k=>initial.has(k)&&!written.has(k)).length,
   totalModelCalls:priorModelCalls+budget.calls,totalTokens:priorTokens+budget.tokens,
   costStatus:'cost_unknown',estimatedUsd:null,ledger:budget.ledger,imageAttempts,pdfVerified,media,errorCode,
   databaseWritten:false,published:false,automaticScheduleEnabled:false,sourceSelection:plan.sourceSelection,
