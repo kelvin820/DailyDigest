@@ -27,8 +27,8 @@ let priorCalls=0,priorTokens=0,imageAttempts=0;
 const budget=new Budget({usd:2,maxCalls:70,maxTokens:150000,inputRate:undefined,outputRate:undefined});
 if(process.env.EDITION_RESUME_DIR){
  const previous=resolve(process.env.EDITION_RESUME_DIR),old=JSON.parse(await readFile(resolve(previous,'context.json'),'utf8'));
- if(hash(old)!==hash(context))throw Error('RESUME_CONTEXT_CHANGED');
  const report=JSON.parse(await readFile(resolve(previous,'report.json'),'utf8'));
+ if(hash(old)!==hash(context)&&(report.totalModelCalls!==0||report.imageAttempts!==0))throw Error('RESUME_CONTEXT_CHANGED');
  if(report.ledger?.some((e:{status:string})=>e.status==='usage_unknown'))throw Error('USAGE_RECONCILIATION_REQUIRED');
  Object.assign(records,validatedPreviewCheckpoints(JSON.parse(await readFile(resolve(previous,'checkpoints.json'),'utf8'))));
  priorCalls=report.totalModelCalls;priorTokens=report.totalTokens;imageAttempts=report.imageAttempts;
@@ -47,7 +47,7 @@ try{
   if(!text.trim()&&s.approvedSnapshot){const snap=s.approvedSnapshot;if(snap.sourceUrl!==s.url||Date.now()-Date.parse(snap.capturedAt)>86400000)throw Error('SOURCE_SNAPSHOT_INVALID');text=snap.evidence;mode='developer_reviewed_snapshot';}
   if(s.quotes.some((q:string)=>!text.includes(q)))throw Error('SOURCE_EVIDENCE_CHANGED:'+s.id);
   const now=new Date().toISOString(),sourceId='source-'+s.id,published=s.date+'T00:00:00Z';
-  evidence.push({storyId:s.id,url:s.url,readAt:now,evidenceMode:mode,bodyHash,verifiedQuotes:s.quotes});
+  evidence.push({storyId:s.id,url:s.url,readAt:now,evidenceMode:mode,bodyHash,snapshotCapturedAt:mode==='developer_reviewed_snapshot'?s.approvedSnapshot.capturedAt:null,verifiedQuotes:s.quotes});
   facts.push(factSchema.parse({story_id:s.id,event_key:s.id+'-'+s.date,primary_category:s.category,content_kind:'news',published_at:published,published_at_precision:'date',event_date:s.eventDate,is_demo:false,sensitivity:'low',uncertainties:s.uncertainties,
    sources:[{source_id:sourceId,url:s.url,publisher:s.publisher,published_at:published,published_at_precision:'date',retrieved_at:now,read_at:now,rights_reviewed:true,independence_group:s.publisher,evidence:s.quotes.join('\n')}],claims:s.claims.map(([text,must_keep,status]:[string,boolean,string],i:number)=>({claim_id:'claim-'+(i+1),text,must_keep,status,supporting_source_ids:[sourceId],evidence_ref:sourceId}))}));
  }

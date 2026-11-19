@@ -37,7 +37,13 @@
       ],
       "image": "photo",
       "date": "2026-11-19",
-      "eventDate": null
+      "eventDate": null,
+      "approvedSnapshot": {
+        "sourceUrl": "https://science.nasa.gov/earth/earth-observatory/el-nino-rains-paint-the-atacama/",
+        "capturedAt": "2026-11-19T12:13:05.110782Z",
+        "evidence": "The rain woke seeds lying dormant in the soil\nThe OLI (Operational Land Imager) on Landsat 8 acquired the September images, and the OLI on Landsat 9 acquired the October images.\nParts of the Atacama Desert in northern Chile",
+        "reason": "Developer read and checked the official source directly today; runner connection resets may require these exact evidence excerpts."
+      }
     },
     {
       "id": "horsehead",
@@ -71,7 +77,13 @@
       ],
       "image": "icon",
       "date": "2026-11-19",
-      "eventDate": null
+      "eventDate": null,
+      "approvedSnapshot": {
+        "sourceUrl": "https://science.nasa.gov/image-article/apod-2026-november-19-the-horsehead-and-flame-nebulas/",
+        "capturedAt": "2026-11-19T12:13:05.110782Z",
+        "evidence": "The instantly recognizable shape of a dark horse's head at the center is the aptly named Horsehead Nebula.\nIt is about five light-years tall and lies approximately 1,500 light-years away.\nIt is made of dust and gas",
+        "reason": "Developer read and checked the official source directly today; runner connection resets may require these exact evidence excerpts."
+      }
     },
     {
       "id": "philosophy",
@@ -149,7 +161,13 @@
       "image": "generate",
       "concept": "A teacher and students looking at picture cards of fish and ocean litter beside a simple laptop, a conceptual learning activity about sorting pictures, no readable text on cards or screen.",
       "date": "2026-11-19",
-      "eventDate": "2026-11-19"
+      "eventDate": "2026-11-19",
+      "approvedSnapshot": {
+        "sourceUrl": "https://www.unesco.org/en/articles/online-workshop-teachers-dive-ai-hands-experience-learn-about-artificial-intelligence-and-bring-it",
+        "capturedAt": "2026-11-19T12:13:05.110782Z",
+        "evidence": "on Thursday, 19 November 2026\nAI for Oceans\nclassification of images of fish and marine waste\nwithout requiring any prior programming knowledge\nerrors and biases",
+        "reason": "Developer read and checked the official source directly today; runner connection resets may require these exact evidence excerpts."
+      }
     }
   ]
 }
