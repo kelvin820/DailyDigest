@@ -105,5 +105,49 @@
         "meaningZhHant": "光纖"
       }
     ]
+  },
+  {
+    "storyId": "trial-climate",
+    "edition": "senior",
+    "writerOutputHash": "6cbd046047ac4d8e6dfb549c2c2f700f4907de11e954908a60aacaef5ed5a345",
+    "reason": "Developer copy edit: retain the measured anomaly and reference-period context, omit the optional record claim not fully covered in the frozen excerpt, and select distinct B1 terms used in the corrected body.",
+    "headline": "NOAA Compares October Temperatures With a Twentieth-Century Reference",
+    "used_claim_ids": [
+      "claim-1",
+      "claim-3"
+    ],
+    "omitted_optional_claim_ids": [
+      "claim-2"
+    ],
+    "replacements": [
+      {
+        "from": "NOAA reports that October 2026 was the warmest October on record.",
+        "to": "NOAA reports that October 2026 was warmer than the twentieth-century average."
+      },
+      {
+        "from": "This marks the highest monthly temperature departure since records began in 1850.",
+        "to": "These measurements use a specific reference period to make the temperature comparison."
+      },
+      {
+        "from": "Scientists note this is a global average, not local weather everywhere.",
+        "to": "NOAA's figures describe a global average, not identical conditions in every location."
+      },
+      {
+        "from": "These findings continue a clear pattern of rising global temperatures.",
+        "to": "The report places October's temperature in context by comparing it with a long-term reference."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "reference period",
+        "definitionEn": "a set period used as a standard for comparison",
+        "meaningZhHant": "參考時段；比較基準期"
+      },
+      {
+        "term": "preindustrial",
+        "definitionEn": "describing the period before large-scale industrial development",
+        "meaningZhHant": "工業化前的"
+      }
+    ]
   }
 ]
