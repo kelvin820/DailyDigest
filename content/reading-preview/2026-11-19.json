@@ -1,0 +1,617 @@
+[
+  {
+    "schemaVersion": "1.0",
+    "issueDate": "2026-11-19",
+    "revision": 1,
+    "edition": "elementary",
+    "targetCefr": "A1",
+    "templateVersion": "1.0",
+    "publishedAt": null,
+    "isDemo": false,
+    "vocabularyPolicy": "tiered-v1",
+    "storyCount": 4,
+    "readingRules": {
+      "min": 40,
+      "max": 60,
+      "avg": 10,
+      "maxSentence": 15
+    },
+    "articles": [
+      {
+        "storyId": "trial-nicer",
+        "order": 1,
+        "category": "science",
+        "contentKind": "news",
+        "headline": "NASA Telescope on Space Station Ends Science Work",
+        "bodyParagraphs": [
+          "NASA says the NICER telescope on the space station has stopped its science work. It launched in 2017. It studied neutron stars with X-rays. Engineers think a motor inside failed. They plan to finish the data archive. They will remove the telescope later."
+        ],
+        "wordCount": 43,
+        "vocabulary": [
+          {
+            "term": "telescope",
+            "definitionEn": "a tool that looks at far away things in space",
+            "meaningZhHant": "望遠鏡"
+          },
+          {
+            "term": "neutron stars",
+            "definitionEn": "very small, heavy stars made mostly of neutrons",
+            "meaningZhHant": "中子星"
+          }
+        ],
+        "image": {
+          "assetId": "3a2066179e93da141e5632ccb2940a823b3fba8665415d37a6964748a2048d2d",
+          "alt": "elementary audience: AI-generated watercolor concept illustration, not a photograph of the news event.",
+          "caption": "AI 概念插畫 · 小學版，非事件照片。",
+          "kind": "generated_illustration",
+          "credit": "DayDay · NVIDIA black-forest-labs/flux-3-image-klein",
+          "rendition": {
+            "webPath": "/preview-issues/2026-11-19/assets/3a2066179e93da141e5632ccb2940a823b3fba8665415d37a6964748a2048d2d-web.webp",
+            "printPath": "/preview-issues/2026-11-19/assets/3a2066179e93da141e5632ccb2940a823b3fba8665415d37a6964748a2048d2d-print.jpg",
+            "width": 1200,
+            "height": 821
+          },
+          "focalPoint": {
+            "x": 50,
+            "y": 50
+          }
+        },
+        "sources": [
+          {
+            "publisher": "NASA",
+            "url": "https://www.nasa.gov/missions/station/nicer-status-updates/",
+            "publishedAt": "2026-11-17T00:00:00Z"
+          }
+        ],
+        "eventDate": null
+      },
+      {
+        "storyId": "trial-quantum",
+        "order": 2,
+        "category": "technology",
+        "contentKind": "news",
+        "headline": "Scientists Use Light to Check Location",
+        "bodyParagraphs": [
+          "NIST researchers showed a new method in a lab. They use light particles to check a distant party's location. The team uses linked light particles and optical fibers. This method could help protect private information in future networks. Real-world use may be a decade or more away. This is not an available security product yet."
+        ],
+        "wordCount": 55,
+        "vocabulary": [
+          {
+            "term": "particles",
+            "definitionEn": "very small pieces of matter",
+            "meaningZhHant": "粒子"
+          },
+          {
+            "term": "networks",
+            "definitionEn": "connected computers or systems",
+            "meaningZhHant": "網路"
+          }
+        ],
+        "image": {
+          "assetId": "f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce",
+          "alt": "Two NIST researchers with safety glasses working beside laser equipment.",
+          "caption": "NIST researchers in the laboratory. Photo: Riley Wilson/NIST.",
+          "kind": "event_photo",
+          "credit": "Riley Wilson/NIST · image resized; original at source",
+          "licenseUrl": "https://www.nist.gov/open/license",
+          "sourcePage": "https://www.nist.gov/news-events/news/2026/11/quantum-physics-can-verify-persons-location-nist-researchers-show",
+          "rendition": {
+            "webPath": "/preview-issues/2026-11-19/assets/f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce-web.webp",
+            "printPath": "/preview-issues/2026-11-19/assets/f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce-print.jpg",
+            "width": 960,
+            "height": 641
+          },
+          "focalPoint": {
+            "x": 50,
+            "y": 50
+          }
+        },
+        "sources": [
+          {
+            "publisher": "NIST",
+            "url": "https://www.nist.gov/news-events/news/2026/11/quantum-physics-can-verify-persons-location-nist-researchers-show",
+            "publishedAt": "2026-11-18T00:00:00Z"
+          }
+        ],
+        "eventDate": null
+      },
+      {
+        "storyId": "trial-voices",
+        "order": 3,
+        "category": "culture",
+        "contentKind": "news",
+        "headline": "Library of Congress Plans New Exhibition",
+        "bodyParagraphs": [
+          "The Library of Congress plans a new exhibition. Opening is planned for November 19, 2026. The show is in the Thomas Jefferson Building. The exhibition is called Voices of the Early Americas. It explores Indigenous histories and cultures. Over 200 objects will be on display. Contemporary poetry will also be included. Indigenous traditions continue today."
+        ],
+        "wordCount": 55,
+        "vocabulary": [
+          {
+            "term": "exhibition",
+            "definitionEn": "a public show of art or objects",
+            "meaningZhHant": "展覽"
+          },
+          {
+            "term": "Indigenous",
+            "definitionEn": "relating to the original people of a place",
+            "meaningZhHant": "原住民的"
+          }
+        ],
+        "image": {
+          "assetId": "177fcc1bfdcbd9858f223c46bd56a726bb61c68dfc2b47907b94923c0084ac8d",
+          "alt": "elementary audience: AI-generated watercolor concept illustration, not a photograph of the news event.",
+          "caption": "AI 概念插畫 · 小學版，非事件照片。",
+          "kind": "generated_illustration",
+          "credit": "DayDay · NVIDIA black-forest-labs/flux-3-image-klein",
+          "rendition": {
+            "webPath": "/preview-issues/2026-11-19/assets/177fcc1bfdcbd9858f223c46bd56a726bb61c68dfc2b47907b94923c0084ac8d-web.webp",
+            "printPath": "/preview-issues/2026-11-19/assets/177fcc1bfdcbd9858f223c46bd56a726bb61c68dfc2b47907b94923c0084ac8d-print.jpg",
+            "width": 1200,
+            "height": 821
+          },
+          "focalPoint": {
+            "x": 50,
+            "y": 50
+          }
+        },
+        "sources": [
+          {
+            "publisher": "Library of Congress",
+            "url": "https://newsroom.loc.gov/news/library-of-congress-to-unveil--voices-of-the-early-americas---featuring-rare-artifacts--maps-and-ind/s/5c73564c-f9f9-4270-ba24-355c36cca6bc",
+            "publishedAt": "2026-11-16T00:00:00Z"
+          }
+        ],
+        "eventDate": null
+      },
+      {
+        "storyId": "trial-climate",
+        "order": 4,
+        "category": "nature",
+        "contentKind": "news",
+        "headline": "NOAA: October 2026 Was Very Warm",
+        "bodyParagraphs": [
+          "NOAA says October 2026 was very warm. The global surface temperature was 1.43 degrees Celsius above the twentieth-century average. This is the highest monthly departure in the 1850 to 2026 record. It is a global average, not every local place. All ten of the warmest Octobers have happened since 2015."
+        ],
+        "wordCount": 50,
+        "vocabulary": [
+          {
+            "term": "global average",
+            "definitionEn": "a number that represents the whole world together",
+            "meaningZhHant": "全球平均值"
+          },
+          {
+            "term": "departure",
+            "definitionEn": "the amount something is different from the usual level",
+            "meaningZhHant": "偏差"
+          }
+        ],
+        "image": {
+          "assetId": "nature",
+          "alt": "nature original category icon",
+          "caption": "Original category icon",
+          "kind": "icon",
+          "credit": "DayDay original artwork"
+        },
+        "sources": [
+          {
+            "publisher": "NOAA NCEI",
+            "url": "https://www.ncei.noaa.gov/news/global-climate-202610",
+            "publishedAt": "2026-11-12T00:00:00Z"
+          }
+        ],
+        "eventDate": null
+      }
+    ],
+    "reviewCopy": true
+  },
+  {
+    "schemaVersion": "1.0",
+    "issueDate": "2026-11-19",
+    "revision": 1,
+    "edition": "junior",
+    "targetCefr": "A2",
+    "templateVersion": "1.0",
+    "publishedAt": null,
+    "isDemo": false,
+    "vocabularyPolicy": "tiered-v1",
+    "storyCount": 4,
+    "readingRules": {
+      "min": 60,
+      "max": 90,
+      "avg": 14,
+      "maxSentence": 22
+    },
+    "articles": [
+      {
+        "storyId": "trial-nicer",
+        "order": 1,
+        "category": "science",
+        "contentKind": "news",
+        "headline": "NASA Ends NICER Telescope Science Work on Space Station",
+        "bodyParagraphs": [
+          "NASA says the NICER telescope on the International Space Station has stopped its science work. The instrument launched in 2017 to study neutron stars using X-ray light. Engineers believe an internal motor has failed. They plan to finish the data archive and later remove the telescope from the station. The mission lasted much longer than the first eighteen-month plan. Scientists will still use the collected data for new research."
+        ],
+        "wordCount": 69,
+        "vocabulary": [
+          {
+            "term": "internal motor",
+            "definitionEn": "a small engine inside a machine that makes parts move",
+            "meaningZhHant": "內部馬達"
+          },
+          {
+            "term": "data archive",
+            "definitionEn": "a stored collection of scientific information for future use",
+            "meaningZhHant": "資料檔案庫"
+          }
+        ],
+        "image": {
+          "assetId": "0641e358b72a2e9fe772dfcf06823530920dd0ba39effce0b2049d3389612906",
+          "alt": "junior audience: AI-generated watercolor concept illustration, not a photograph of the news event.",
+          "caption": "AI 概念插畫 · 國中版，非事件照片。",
+          "kind": "generated_illustration",
+          "credit": "DayDay · NVIDIA black-forest-labs/flux-3-image-klein",
+          "rendition": {
+            "webPath": "/preview-issues/2026-11-19/assets/0641e358b72a2e9fe772dfcf06823530920dd0ba39effce0b2049d3389612906-web.webp",
+            "printPath": "/preview-issues/2026-11-19/assets/0641e358b72a2e9fe772dfcf06823530920dd0ba39effce0b2049d3389612906-print.jpg",
+            "width": 1200,
+            "height": 821
+          },
+          "focalPoint": {
+            "x": 50,
+            "y": 50
+          }
+        },
+        "sources": [
+          {
+            "publisher": "NASA",
+            "url": "https://www.nasa.gov/missions/station/nicer-status-updates/",
+            "publishedAt": "2026-11-17T00:00:00Z"
+          }
+        ],
+        "eventDate": null
+      },
+      {
+        "storyId": "trial-quantum",
+        "order": 2,
+        "category": "technology",
+        "contentKind": "news",
+        "headline": "NIST Tests Light Particles to Check Location",
+        "bodyParagraphs": [
+          "NIST researchers showed a new lab method using light particles. They use linked photons to check a distant party's location. The photons travel through optical fibers to verify position. This method could protect private information in future networks. Real-world use may be a decade or more away. This is not an available security product yet. The experiment is a first step toward safer communication."
+        ],
+        "wordCount": 64,
+        "vocabulary": [
+          {
+            "term": "verify",
+            "definitionEn": "to check that something is true or correct",
+            "meaningZhHant": "核實；查證"
+          },
+          {
+            "term": "protect",
+            "definitionEn": "to keep someone or something safe",
+            "meaningZhHant": "保護"
+          }
+        ],
+        "image": {
+          "assetId": "f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce",
+          "alt": "Two NIST researchers with safety glasses working beside laser equipment.",
+          "caption": "NIST researchers in the laboratory. Photo: Riley Wilson/NIST.",
+          "kind": "event_photo",
+          "credit": "Riley Wilson/NIST · image resized; original at source",
+          "licenseUrl": "https://www.nist.gov/open/license",
+          "sourcePage": "https://www.nist.gov/news-events/news/2026/11/quantum-physics-can-verify-persons-location-nist-researchers-show",
+          "rendition": {
+            "webPath": "/preview-issues/2026-11-19/assets/f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce-web.webp",
+            "printPath": "/preview-issues/2026-11-19/assets/f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce-print.jpg",
+            "width": 960,
+            "height": 641
+          },
+          "focalPoint": {
+            "x": 50,
+            "y": 50
+          }
+        },
+        "sources": [
+          {
+            "publisher": "NIST",
+            "url": "https://www.nist.gov/news-events/news/2026/11/quantum-physics-can-verify-persons-location-nist-researchers-show",
+            "publishedAt": "2026-11-18T00:00:00Z"
+          }
+        ],
+        "eventDate": null
+      },
+      {
+        "storyId": "trial-voices",
+        "order": 3,
+        "category": "culture",
+        "contentKind": "news",
+        "headline": "Library of Congress Plans New Indigenous Exhibition",
+        "bodyParagraphs": [
+          "The Library of Congress will open a new exhibition on November 19, 2026. The show is called Voices of the Early Americas. It will be in the Thomas Jefferson Building. The exhibition explores Indigenous histories and cultures. It uses over 200 objects and contemporary poetry. Items include maps, manuscripts, and photographs. A Maya wooden box is also on display. The materials span more than 3,000 years of history."
+        ],
+        "wordCount": 68,
+        "vocabulary": [
+          {
+            "term": "contemporary",
+            "definitionEn": "belonging to the present time; modern",
+            "meaningZhHant": "當代的"
+          },
+          {
+            "term": "manuscripts",
+            "definitionEn": "very old documents written by hand",
+            "meaningZhHant": "手稿"
+          }
+        ],
+        "image": {
+          "assetId": "c6aa9407f3c16fdc06b05d2f7bf53212a8cbad2bce57d9759560fd654c90509c",
+          "alt": "junior audience: AI-generated watercolor concept illustration, not a photograph of the news event.",
+          "caption": "AI 概念插畫 · 國中版，非事件照片。",
+          "kind": "generated_illustration",
+          "credit": "DayDay · NVIDIA black-forest-labs/flux-3-image-klein",
+          "rendition": {
+            "webPath": "/preview-issues/2026-11-19/assets/c6aa9407f3c16fdc06b05d2f7bf53212a8cbad2bce57d9759560fd654c90509c-web.webp",
+            "printPath": "/preview-issues/2026-11-19/assets/c6aa9407f3c16fdc06b05d2f7bf53212a8cbad2bce57d9759560fd654c90509c-print.jpg",
+            "width": 1200,
+            "height": 821
+          },
+          "focalPoint": {
+            "x": 50,
+            "y": 50
+          }
+        },
+        "sources": [
+          {
+            "publisher": "Library of Congress",
+            "url": "https://newsroom.loc.gov/news/library-of-congress-to-unveil--voices-of-the-early-americas---featuring-rare-artifacts--maps-and-ind/s/5c73564c-f9f9-4270-ba24-355c36cca6bc",
+            "publishedAt": "2026-11-16T00:00:00Z"
+          }
+        ],
+        "eventDate": null
+      },
+      {
+        "storyId": "trial-climate",
+        "order": 4,
+        "category": "nature",
+        "contentKind": "news",
+        "headline": "NOAA Reports a Very Warm October",
+        "bodyParagraphs": [
+          "NOAA reports that October 2026 was warmer than the twentieth-century average. The global surface temperature reached 1.43 degrees Celsius above the twentieth-century average. This number is a worldwide average, so local weather was different in many places. All ten of the warmest Octobers have happened since 2015. This comparison uses the twentieth-century average as a baseline. These figures describe the planet as a whole."
+        ],
+        "wordCount": 64,
+        "vocabulary": [
+          {
+            "term": "baseline",
+            "definitionEn": "a reference level used to compare other measurements",
+            "meaningZhHant": "基準值"
+          },
+          {
+            "term": "comparison",
+            "definitionEn": "checking how things are alike or different",
+            "meaningZhHant": "比較"
+          }
+        ],
+        "image": {
+          "assetId": "nature",
+          "alt": "nature original category icon",
+          "caption": "Original category icon",
+          "kind": "icon",
+          "credit": "DayDay original artwork"
+        },
+        "sources": [
+          {
+            "publisher": "NOAA NCEI",
+            "url": "https://www.ncei.noaa.gov/news/global-climate-202610",
+            "publishedAt": "2026-11-12T00:00:00Z"
+          }
+        ],
+        "eventDate": null
+      }
+    ],
+    "reviewCopy": true
+  },
+  {
+    "schemaVersion": "1.0",
+    "issueDate": "2026-11-19",
+    "revision": 1,
+    "edition": "senior",
+    "targetCefr": "B1",
+    "templateVersion": "1.0",
+    "publishedAt": null,
+    "isDemo": false,
+    "vocabularyPolicy": "tiered-v1",
+    "storyCount": 4,
+    "readingRules": {
+      "min": 90,
+      "max": 120,
+      "avg": 18,
+      "maxSentence": 28
+    },
+    "articles": [
+      {
+        "storyId": "trial-nicer",
+        "order": 1,
+        "category": "science",
+        "contentKind": "news",
+        "headline": "NASA Ends NICER Telescope Science Work on Space Station",
+        "bodyParagraphs": [
+          "NASA reports that the NICER telescope on the International Space Station has ended its science work. The instrument launched in 2017 and studied neutron stars using X-ray light. Engineers believe an internal motor failed inside the device. They are now planning to finish the data archive and remove the telescope from the station. The motor problem is still an assessment and not a confirmed diagnosis. Removal is a future plan and has not happened yet. NICER completed its main mission and gave scientists valuable information about dense stars. The telescope operated for several years beyond its original schedule."
+        ],
+        "wordCount": 98,
+        "vocabulary": [
+          {
+            "term": "assessment",
+            "definitionEn": "a careful judgement based on available information",
+            "meaningZhHant": "評估"
+          },
+          {
+            "term": "diagnosis",
+            "definitionEn": "identifying the nature or cause of a problem",
+            "meaningZhHant": "診斷；故障判定"
+          }
+        ],
+        "image": {
+          "assetId": "b86154a177a483a9503fbe1c320b28b19a7c4609de7f828f2dba67e45e5236da",
+          "alt": "senior audience: AI-generated watercolor concept illustration, not a photograph of the news event.",
+          "caption": "AI 概念插畫 · 高中版，非事件照片。",
+          "kind": "generated_illustration",
+          "credit": "DayDay · NVIDIA black-forest-labs/flux-3-image-klein",
+          "rendition": {
+            "webPath": "/preview-issues/2026-11-19/assets/b86154a177a483a9503fbe1c320b28b19a7c4609de7f828f2dba67e45e5236da-web.webp",
+            "printPath": "/preview-issues/2026-11-19/assets/b86154a177a483a9503fbe1c320b28b19a7c4609de7f828f2dba67e45e5236da-print.jpg",
+            "width": 1200,
+            "height": 821
+          },
+          "focalPoint": {
+            "x": 50,
+            "y": 50
+          }
+        },
+        "sources": [
+          {
+            "publisher": "NASA",
+            "url": "https://www.nasa.gov/missions/station/nicer-status-updates/",
+            "publishedAt": "2026-11-17T00:00:00Z"
+          }
+        ],
+        "eventDate": null
+      },
+      {
+        "storyId": "trial-quantum",
+        "order": 2,
+        "category": "technology",
+        "contentKind": "news",
+        "headline": "NIST Lab Test Uses Light Particles to Check a Distant Location",
+        "bodyParagraphs": [
+          "NIST researchers demonstrated a laboratory method that uses light particles to check a distant party's location. The team sends entangled photons, or linked light particles, through optical fibers to measure position securely. Researchers developed this new protocol in a laboratory. Scientists say the approach could help protect private information in future networks. However, real-world use may be a decade or more away. The experiment remains in a controlled lab setting. It is not an available security product for consumers today. The result shows a laboratory possibility, rather than a service people can buy."
+        ],
+        "wordCount": 93,
+        "vocabulary": [
+          {
+            "term": "entangled photons",
+            "definitionEn": "light particles with strongly linked measurement results",
+            "meaningZhHant": "糾纏光子"
+          },
+          {
+            "term": "optical fibers",
+            "definitionEn": "very thin glass threads that guide light signals",
+            "meaningZhHant": "光纖"
+          }
+        ],
+        "image": {
+          "assetId": "f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce",
+          "alt": "Two NIST researchers with safety glasses working beside laser equipment.",
+          "caption": "NIST researchers in the laboratory. Photo: Riley Wilson/NIST.",
+          "kind": "event_photo",
+          "credit": "Riley Wilson/NIST · image resized; original at source",
+          "licenseUrl": "https://www.nist.gov/open/license",
+          "sourcePage": "https://www.nist.gov/news-events/news/2026/11/quantum-physics-can-verify-persons-location-nist-researchers-show",
+          "rendition": {
+            "webPath": "/preview-issues/2026-11-19/assets/f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce-web.webp",
+            "printPath": "/preview-issues/2026-11-19/assets/f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce-print.jpg",
+            "width": 960,
+            "height": 641
+          },
+          "focalPoint": {
+            "x": 50,
+            "y": 50
+          }
+        },
+        "sources": [
+          {
+            "publisher": "NIST",
+            "url": "https://www.nist.gov/news-events/news/2026/11/quantum-physics-can-verify-persons-location-nist-researchers-show",
+            "publishedAt": "2026-11-18T00:00:00Z"
+          }
+        ],
+        "eventDate": null
+      },
+      {
+        "storyId": "trial-voices",
+        "order": 3,
+        "category": "culture",
+        "contentKind": "news",
+        "headline": "Library of Congress Plans New Exhibition on Indigenous History",
+        "bodyParagraphs": [
+          "The Library of Congress plans to open a new permanent exhibition on November 19, 2026. The display is called Voices of the Early Americas and will be located in the Thomas Jefferson Building. It explores Indigenous histories, cultures, and enduring traditions through over 200 objects. The materials span more than 3,000 years and include maps, manuscripts, photographs, and a Maya wooden box. Contemporary poetry is also featured to show living traditions. The exhibition uses rare artifacts to tell a long story of the Americas. Visitors can see how Indigenous peoples have shaped the continent for millennia."
+        ],
+        "wordCount": 96,
+        "vocabulary": [
+          {
+            "term": "enduring",
+            "definitionEn": "lasting for a long time; continuing to exist",
+            "meaningZhHant": "持久的；長久的"
+          },
+          {
+            "term": "millennia",
+            "definitionEn": "periods of one thousand years each",
+            "meaningZhHant": "千年；數千年"
+          }
+        ],
+        "image": {
+          "assetId": "5893051dab2eb8dbd269c2c940eb689d46740dd559026c951a713a4a03afb16e",
+          "alt": "senior audience: AI-generated watercolor concept illustration, not a photograph of the news event.",
+          "caption": "AI 概念插畫 · 高中版，非事件照片。",
+          "kind": "generated_illustration",
+          "credit": "DayDay · NVIDIA black-forest-labs/flux-3-image-klein",
+          "rendition": {
+            "webPath": "/preview-issues/2026-11-19/assets/5893051dab2eb8dbd269c2c940eb689d46740dd559026c951a713a4a03afb16e-web.webp",
+            "printPath": "/preview-issues/2026-11-19/assets/5893051dab2eb8dbd269c2c940eb689d46740dd559026c951a713a4a03afb16e-print.jpg",
+            "width": 1200,
+            "height": 821
+          },
+          "focalPoint": {
+            "x": 50,
+            "y": 50
+          }
+        },
+        "sources": [
+          {
+            "publisher": "Library of Congress",
+            "url": "https://newsroom.loc.gov/news/library-of-congress-to-unveil--voices-of-the-early-americas---featuring-rare-artifacts--maps-and-ind/s/5c73564c-f9f9-4270-ba24-355c36cca6bc",
+            "publishedAt": "2026-11-16T00:00:00Z"
+          }
+        ],
+        "eventDate": null
+      },
+      {
+        "storyId": "trial-climate",
+        "order": 4,
+        "category": "nature",
+        "contentKind": "news",
+        "headline": "NOAA Compares October Temperatures With a Twentieth-Century Reference",
+        "bodyParagraphs": [
+          "NOAA reports that October 2026 was warmer than the twentieth-century average. The global surface temperature reached 1.43 degrees Celsius above the twentieth-century average. These measurements use a specific reference period to make the temperature comparison. The data comes from NOAA's National Centers for Environmental Information. All ten of the warmest Octobers have occurred since 2015. NOAA's figures describe a global average, not identical conditions in every location. The baseline used is the twentieth-century average, not preindustrial levels. The report places October's temperature in context by comparing it with a long-term reference."
+        ],
+        "wordCount": 91,
+        "vocabulary": [
+          {
+            "term": "reference period",
+            "definitionEn": "a set period used as a standard for comparison",
+            "meaningZhHant": "參考時段；比較基準期"
+          },
+          {
+            "term": "preindustrial",
+            "definitionEn": "describing the period before large-scale industrial development",
+            "meaningZhHant": "工業化前的"
+          }
+        ],
+        "image": {
+          "assetId": "nature",
+          "alt": "nature original category icon",
+          "caption": "Original category icon",
+          "kind": "icon",
+          "credit": "DayDay original artwork"
+        },
+        "sources": [
+          {
+            "publisher": "NOAA NCEI",
+            "url": "https://www.ncei.noaa.gov/news/global-climate-202610",
+            "publishedAt": "2026-11-12T00:00:00Z"
+          }
+        ],
+        "eventDate": null
+      }
+    ],
+    "reviewCopy": true
+  }
+]

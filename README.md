@@ -1,22 +1,24 @@
 # DayDay Daily Digest
 Four stories. Every day. Your level.
 
-[查看四篇制真實來源待審稿與三版比較](https://dayday-digest-demo.kelvin820.chatgpt.site/daily-trial/compare.html) · [本輪結果與驗證](docs/FOUR_STORY_TRIAL_RESULT.md)。這是含編輯校稿的試產稿，尚未正式出刊。
+Vercel：<https://daily-digest-wine-two.vercel.app/>。預設直接閱讀四則真實來源試閱故事，可切換小學／國中／高中三版、記錄已讀及下載六份兩頁 PDF。**目前不需要登入或任何 API key；試閱刊尚未正式發布。**
 
-接續原 M1 成果開發，保留已選定的三版表頭與舊八篇虛構樣刊。新刊改為每日四篇，三版依程度另選學習單字，生成插畫採分齡風格。NVIDIA 文字／圖片已有實際 API 測試，四篇真實來源試產以 Actions artifact 的 report 為準；**試產不代表正式發布，也未完成 Vercel／Supabase Storage 的出刊驗收。** 四篇試產操作見 [FOUR_STORY_TRIAL](docs/FOUR_STORY_TRIAL.md)。完整進度見 [STATUS](docs/STATUS.md)，設定需求集中在 [SETUP](docs/SETUP.md)。
+三版表頭維持使用者已選的字體；單字依程度另選，AI 插畫依讀者年齡調整。當前資料來自已完成的 NVIDIA 試產，沒有在開啟網頁時重新生成或寫入資料庫。原始模型回覆與審閱紀錄保留在私有 artifact；僅將可閱讀的定稿、核准圖片與 PDF 隨網站部署。來源及待審狀態見 [reading preview](content/reading-preview/README.md)，製作結果見 [FOUR_STORY_TRIAL_RESULT](docs/FOUR_STORY_TRIAL_RESULT.md)。
 
 ## 本機閱讀
-本輪分為 source、review 兩個 ZIP；在同一位置解壓，便會同時具有程式與 output/preview 的六份樣刊 PDF。只從 Git 取得原始碼時，先依下面的 PDF 步驟生成樣刊，下載按鈕才有檔案可讀。
 
-Node 24、pnpm 11.25.0（packageManager 已固定）：
+Node 24、pnpm 11.25.0：
+
 ```sh
 pnpm install --frozen-lockfile
-cp .env.example .env.local
 pnpm build
 pnpm start
 # http://127.0.0.1:3000
 ```
-Windows 使用 `Copy-Item .env.example .env.local`。預設 DEMO_MODE=true、LIVE_GENERATION_ENABLED=false；fixture 日期不會冒充當天。
+
+不設定環境變數時，直接載入四篇唯讀試閱刊。圖片與 PDF 已包含在 repo，無須另外生成。需要自訂時可複製 `.env.example`；`READING_MODE=preview`、`DEMO_MODE=false`，不啟用生成或發布。家長帳號延後，`/login` 會回到閱讀頁。Supabase 與每日正式出刊的設定集中在 [SETUP](docs/SETUP.md)。
+
+以下為歷史八篇虛構樣刊的離線工具，與目前四篇試閱入口分開：
 
 不安裝 Next.js 也能生成離線閱讀預覽：
 ```sh
@@ -31,6 +33,7 @@ public/fonts 必須與原始碼放在一起；預覽腳本會複製字體。PDF 
 pnpm typecheck
 pnpm lint
 pnpm test
+pnpm test:preview               # 先 pnpm build；四篇、無登入的閱讀／API／圖片／PDF／寫入拒絕
 pnpm test:db                    # Docker；自建 network=none 的臨時 PostgreSQL，結束自動移除
 pip install -r requirements-pdf.txt
 pnpm exec playwright install chromium

@@ -29,6 +29,7 @@ jobs:
       - run: python scripts/verify-pdfs.py
       - run: node scripts/qa-print-failures.mjs
       - run: node scripts/qa-app.mjs
+      - run: pnpm test:preview
       - run: node scripts/test-db.mjs
       - uses: actions/upload-artifact@v4
         with:

@@ -1,6 +1,6 @@
 # 集中設定清單
 
-目前先使用 NVIDIA，家長帳號與會員流程延後。四篇 × 三版的真實來源待審稿、六份兩頁 PDF 與分齡插畫已完成，詳見 [本輪結果](FOUR_STORY_TRIAL_RESULT.md)。私人預覽不依賴家長登入，沒有寫入正式資料庫或正式出刊。
+目前先使用 NVIDIA，家長帳號與會員流程延後。四篇 × 三版的真實來源待審稿、六份兩頁 PDF 與分齡插畫已完成，詳見 [本輪結果](FOUR_STORY_TRIAL_RESULT.md)。Vercel 四篇唯讀閱讀預設不需登入或任何 key，沒有寫入正式資料庫或正式出刊。以下憑證只用於後續資料庫／每日生產整合，不是打開目前網站的前置條件。
 
 ## 已有設定
 
@@ -16,7 +16,7 @@
 | 第十五份增量 migration | 在原 Supabase 專案升級，保留原資料；不要重跑新專案初始化 SQL | 四篇刊物／舊八篇共存、十二份 review 與六份 PDF 的 DB 檢查 |
 | `SUPABASE_SERVICE_ROLE_KEY` | GitHub runner Secret，勿放 `NEXT_PUBLIC_*` 或聊天 | 後台 DB 與 private Storage；現有 LLM Secret 不需搬動 |
 | `NEXT_PUBLIC_SUPABASE_URL`、`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Vercel 環境設定；正式編輯室先只建立你自己的管理員身分 | 真實 Auth／PostgREST／RLS 驗收；不先邀請家長 |
-| Vercel 專案及 HTTPS `APP_URL` | 在 Vercel 匯入 kelvin820/DailyDigest，再設定 Vercel／runner 的實際網址 | 目前連接的 CKM team 建專案回 403，尚無 Vercel 部署；私人 Sites 預覽不受影響 |
+| Vercel 專案及 HTTPS `APP_URL` | 在 Vercel 匯入 kelvin820/DailyDigest，再設定 Vercel／runner 的實際網址 | 使用者已匯入 https://daily-digest-wine-two.vercel.app/；目前連接的 CKM team 查不到這個專案，先透過 Git 自動部署驗收 |
 | `WRITER_MODEL`／`REVIEWER_MODEL` | runner Variables；未設定時使用 Ultra 預設；若仍留 Lightning override 請更新 | 保持與本輪驗證模型一致 |
 | 單價與額度 | `LLM_INPUT_USD_PER_MILLION`／`LLM_OUTPUT_USD_PER_MILLION`、`DAILY_BUDGET_USD`／`MAX_MODEL_CALLS`／`MAX_MODEL_TOKENS` | 預設 2／100／200000；未知價格只提供 calls/tokens 上限，不是實測美元保證 |
 | 來源政策、私有圖片與 PDF Storage | 核准 config/sources.json 的真實來源；完成私有上傳、讀取與角色測試 | 目前完整試產採開發代理核對的底稿；正式來源 intake、圖片傳輸仍需驗收 |

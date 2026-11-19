@@ -3,8 +3,10 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 import { redirect } from "next/navigation";
 import { cache } from 'react';
+import {readingMode} from '../reader/mode.mjs';
 
-export const demoMode = () => process.env.DEMO_MODE === "true";
+export const demoMode = () => readingMode() === 'demo';
+export const previewMode = () => readingMode() === 'preview';
 
 export async function supabase() {
   const jar = await cookies();
@@ -26,6 +28,7 @@ export async function supabase() {
 }
 
 export const membership = cache(async (admin = false) => {
+  if (previewMode()) throw Error('PREVIEW_READ_ONLY');
   const db = await supabase();
   const { data: { user }, error } = await db.auth.getUser();
   if (error || !user) throw Error("UNAUTHORIZED");
@@ -39,6 +42,10 @@ export const membership = cache(async (admin = false) => {
 
 export async function pageMember(admin = false) {
   if (demoMode()) return { scope: "demo", role: "demo" as const };
+  if (previewMode()) {
+    if (admin) redirect('/');
+    return {scope:'preview',role:'preview' as const};
+  }
   try {
     const member = await membership(admin);
     return { scope: member.user.id, role: member.role };
