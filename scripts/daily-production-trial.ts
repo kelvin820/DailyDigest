@@ -44,7 +44,7 @@ try{
     const state=JSON.parse(await readFile(resolve(previous,'image-reservations.json'),'utf8'));
     if(!Array.isArray(state)||state.length>6||new Set(state).size!==state.length||state.some(id=>!editionKeys.some(e=>plan.stories.some((s:{id:string})=>e+':trial-'+s.id===id))))throw Error('TRIAL_IMAGE_STATE_INVALID');
     imageReservations.push(...state);
-    for(const file of ['assets','selected-images.json','editor-corrections.json'])try{await cp(resolve(previous,file),resolve(directory,file),{recursive:true});}catch{/* optional unfinished media */}
+    for(const file of ['assets','selected-images.json','editor-corrections.json','editor-correction-history.json'])try{await cp(resolve(previous,file),resolve(directory,file),{recursive:true});}catch{/* optional unfinished media */}
   }
   await save('context.json',context);await save('image-reservations.json',imageReservations);
   const evidence=[];
@@ -72,7 +72,10 @@ try{
   const historical=process.env.TRIAL_REVIEW_RECOVERY_DIR?validatedPreviewCheckpoints(JSON.parse(await readFile(resolve(process.env.TRIAL_REVIEW_RECOVERY_DIR,'checkpoints.json'),'utf8'))):{};
   const store={reviewedCandidates:async(storyId:string,edition:string)=>[0,1,2].map(attempt=>({writer:historical[`${storyId}:${edition}:write:${attempt}`],review:historical[`${storyId}:${edition}:review:${attempt}`]})),get:async(k:string)=>{read.add(k);return records[k];},set:async(k:string,value:unknown)=>{records[k]=value;written.add(k);await save('checkpoints.json',records);console.log('Checkpoint:',k);}};
   const corrections=JSON.parse(await readFile('config/trial-editor-corrections.json','utf8')) as {storyId:string;edition:string;writerOutputHash:string;reason:string;replacements:{from:string;to:string}[];headline?:string;used_claim_ids?:string[];omitted_optional_claim_ids?:string[];vocabulary?:{term:string;definitionEn:string;meaningZhHant:string}[]}[];
-  try{const prior=JSON.parse(await readFile(resolve(directory,'editor-corrections.json'),'utf8'));if(!Array.isArray(prior)||prior.some(p=>!corrections.some(c=>hash(c)===hash(p))))throw Error('EDITOR_CORRECTION_STATE_INVALID');appliedCorrections.push(...prior);}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
+  try{const prior=JSON.parse(await readFile(resolve(directory,'editor-corrections.json'),'utf8'));if(!Array.isArray(prior)||prior.some(p=>!corrections.some(c=>c.storyId===p.storyId&&c.edition===p.edition&&c.writerOutputHash===p.writerOutputHash)))throw Error('EDITOR_CORRECTION_STATE_INVALID');
+    appliedCorrections.push(...prior.filter(p=>corrections.some(c=>hash(c)===hash(p))));
+    const superseded=prior.filter(p=>!corrections.some(c=>hash(c)===hash(p)));if(superseded.length)await save('editor-correction-history.json',{supersededAt:new Date().toISOString(),corrections:superseded});
+  }catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
   const generated=await produceEditions({editorPolicyHash:hash(corrections),editDraft:async input=>{
     const correction=corrections.find(c=>c.storyId===input.storyId&&c.edition===input.edition&&c.writerOutputHash===input.outputHash);
     if(!correction)return input.data;const data=structuredClone(input.data);
