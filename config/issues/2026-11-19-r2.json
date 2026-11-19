@@ -1,0 +1,155 @@
+{
+  "packetId": "2026-11-19-r2",
+  "issueDate": "2026-11-19",
+  "revision": 2,
+  "storyCount": 4,
+  "sourceSelection": "Four developer-checked official items dated November 19; scheduled events remain plans.",
+  "stories": [
+    {
+      "id": "atacama",
+      "category": "nature",
+      "publisher": "NASA Earth Observatory",
+      "url": "https://science.nasa.gov/earth/earth-observatory/el-nino-rains-paint-the-atacama/",
+      "quotes": [
+        "The rain woke seeds lying dormant in the soil",
+        "The OLI (Operational Land Imager) on Landsat 8 acquired the September images, and the OLI on Landsat 9 acquired the October images.",
+        "Parts of the Atacama Desert in northern Chile"
+      ],
+      "claims": [
+        [
+          "NASA reports that rain helped dormant seeds grow and flowers bloom in Chile’s Atacama Desert in spring 2026.",
+          true,
+          "reported"
+        ],
+        [
+          "Landsat satellites recorded the desert in September and October 2026.",
+          false,
+          "reported"
+        ],
+        [
+          "The desert is normally one of the driest places on Earth.",
+          false,
+          "reported"
+        ]
+      ],
+      "uncertainties": [
+        "The report is dated November 19; the pictured flowering happened earlier in spring 2026. Do not say it first happened today."
+      ],
+      "image": "photo",
+      "date": "2026-11-19",
+      "eventDate": null
+    },
+    {
+      "id": "horsehead",
+      "category": "science",
+      "publisher": "NASA APOD",
+      "url": "https://science.nasa.gov/image-article/apod-2026-november-19-the-horsehead-and-flame-nebulas/",
+      "quotes": [
+        "The instantly recognizable shape of a dark horse's head at the center is the aptly named Horsehead Nebula.",
+        "It is about five light-years tall and lies approximately 1,500 light-years away.",
+        "It is made of dust and gas"
+      ],
+      "claims": [
+        [
+          "NASA’s astronomy feature for November 19 presents the Horsehead and Flame Nebulas.",
+          true,
+          "reported"
+        ],
+        [
+          "The Horsehead is a cloud of dust and gas whose shape looks like a horse’s head.",
+          true,
+          "reported"
+        ],
+        [
+          "It is approximately 1,500 light-years away.",
+          false,
+          "reported"
+        ]
+      ],
+      "uncertainties": [
+        "This is today’s astronomy feature, not a newly discovered nebula. The astrophotographer owns the featured image; do not republish that image."
+      ],
+      "image": "icon",
+      "date": "2026-11-19",
+      "eventDate": null
+    },
+    {
+      "id": "philosophy",
+      "category": "culture",
+      "publisher": "UNESCO",
+      "url": "https://www.unesco.org/en/articles/world-philosophy-day-2026?hub=66761",
+      "quotes": [
+        "On World Philosophy Day, UNESCO will bring together thinkers and decision-makers at its Headquarters in Paris on 19 November 2026 for a lecture by philosopher Souleymane Bachir Diagne.",
+        "A round-table discussion will follow the lecture",
+        "with the voices of three students"
+      ],
+      "claims": [
+        [
+          "UNESCO lists a World Philosophy Day lecture and discussion in Paris on November 19, 2026.",
+          true,
+          "reported_plan"
+        ],
+        [
+          "The lecture is titled Living the Earth Together.",
+          true,
+          "reported_plan"
+        ],
+        [
+          "Three students are scheduled to share views on issues including climate and artificial intelligence.",
+          false,
+          "reported_plan"
+        ]
+      ],
+      "uncertainties": [
+        "The source describes a scheduled event. Do not claim the lecture or discussion has already happened or report its results."
+      ],
+      "image": "generate",
+      "concept": "A small diverse group of students sitting in a circle beside a globe, listening to each other thoughtfully in a welcoming library.",
+      "date": "2026-11-19",
+      "eventDate": "2026-11-19",
+      "approvedSnapshot": {
+        "sourceUrl": "https://www.unesco.org/en/articles/world-philosophy-day-2026?hub=66761",
+        "capturedAt": "2026-11-19T12:04:18.755731Z",
+        "evidence": "On World Philosophy Day, UNESCO will bring together thinkers and decision-makers at its Headquarters in Paris on 19 November 2026 for a lecture by philosopher Souleymane Bachir Diagne. Entitled “Living the Earth Together”, the lecture will explore the concept of the Universal Human. A round-table discussion will follow the lecture, centered on thinking and acting together, with the voices of three students. Selected themes include Climate, AI, Migrations and Health.",
+        "reason": "Developer read the official page through the web source reader; direct runner may return 503. Scheduled event only."
+      }
+    },
+    {
+      "id": "teachers-ai",
+      "category": "technology",
+      "publisher": "UNESCO",
+      "url": "https://www.unesco.org/en/articles/online-workshop-teachers-dive-ai-hands-experience-learn-about-artificial-intelligence-and-bring-it",
+      "quotes": [
+        "on Thursday, 19 November 2026",
+        "AI for Oceans",
+        "classification of images of fish and marine waste",
+        "without requiring any prior programming knowledge",
+        "errors and biases"
+      ],
+      "claims": [
+        [
+          "UNESCO and CodeAI plan an online workshop for teachers on November 19, 2026.",
+          true,
+          "reported_plan"
+        ],
+        [
+          "Teachers are to use pictures of fish and marine waste to explore how AI learns from data.",
+          true,
+          "reported_plan"
+        ],
+        [
+          "The activity helps teachers notice possible errors and biases; no previous programming knowledge is required.",
+          false,
+          "reported_plan"
+        ]
+      ],
+      "uncertainties": [
+        "This is a planned online educational exercise. It does not describe a robot cleaning the ocean or claim the workshop has finished."
+      ],
+      "image": "generate",
+      "concept": "A teacher and students looking at picture cards of fish and ocean litter beside a simple laptop, a conceptual learning activity about sorting pictures, no readable text on cards or screen.",
+      "date": "2026-11-19",
+      "eventDate": "2026-11-19"
+    }
+  ]
+}
