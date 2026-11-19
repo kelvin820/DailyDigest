@@ -4,6 +4,7 @@ import { readFile, readdir, mkdir, writeFile } from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import { randomUUID } from 'node:crypto';
 import { setTimeout } from 'node:timers/promises';
+import {buildSupabaseUpgrade} from './build-supabase-upgrade.mjs';
 import { makeDemo } from '../lib/content/core.mjs';
 
 // Disposable, network-isolated database; never reads a user's DB URL or secrets.
@@ -37,8 +38,7 @@ try {
       sql('create schema dayday_private; create table dayday_private.schema_migrations(version text primary key,name text not null,sha256 text not null); alter table dayday_private.schema_migrations enable row level security;');
       const previous=(await readdir('supabase/migrations')).filter(f=>f.endsWith('.sql')&&f<file).sort();
       for(const name of previous){const digest=createHash('sha256').update(await readFile('supabase/migrations/'+name)).digest('hex');sql(`insert into dayday_private.schema_migrations values('${name.split('_')[0]}','synthetic-history','${digest}');`);}
-      execFileSync(process.execPath,['scripts/build-supabase-upgrade.mjs','https://abcdefghijklmnopqrst.supabase.co'],{stdio:'pipe'});
-      const upgrade=await readFile('output/supabase-upgrade-15.sql','utf8');
+      const upgrade=await buildSupabaseUpgrade('https://abcdefghijklmnopqrst.supabase.co');
       const first=previous[0].split('_')[0],digest=createHash('sha256').update(await readFile('supabase/migrations/'+previous[0])).digest('hex');
       sql(`update dayday_private.schema_migrations set sha256='tampered' where version='${first}';`);
       assert.throws(()=>sql(upgrade),/DAYDAY_MIGRATION_HISTORY_MISMATCH/);
