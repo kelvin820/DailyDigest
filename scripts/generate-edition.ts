@@ -56,7 +56,7 @@ try{
  const invalid:unknown[]=[];
  const provider=new NvidiaProvider(key,budget,async reply=>{invalid.push(reply);await save('invalid-responses.json',invalid);});
  const store={get:async(k:string)=>records[k],set:async(k:string,v:unknown)=>{records[k]=v;await save('checkpoints.json',records);console.log('Checkpoint:',k);}};
- if(process.env.EDITION_RESUME_DIR){const frozen=z.array(factSchema).length(4).parse(JSON.parse(await readFile(resolve(process.env.EDITION_RESUME_DIR,'facts.json'),'utf8')));if(frozen.some((f,i)=>f.story_id!==facts[i].story_id||hash(f.claims)!==hash(facts[i].claims)))throw Error('FROZEN_FACTS_CHANGED');facts.splice(0,facts.length,...frozen);await save('facts.json',facts);}
+ if(process.env.EDITION_RESUME_DIR&&priorCalls>0){const frozen=z.array(factSchema).length(4).parse(JSON.parse(await readFile(resolve(process.env.EDITION_RESUME_DIR,'facts.json'),'utf8')));if(frozen.some((f,i)=>f.story_id!==facts[i].story_id||hash(f.claims)!==hash(facts[i].claims)))throw Error('FROZEN_FACTS_CHANGED');facts.splice(0,facts.length,...frozen);await save('facts.json',facts);}
  const result=await produceEditions({facts,issueDate:plan.issueDate,revision:plan.revision,provider,store,writerModel:model,reviewerModel:model,allowMinorReviewHolds:true});
  issues=result.editions.map(i=>({...i,reviewCopy:true}));reviews=result.reviews;await save('reviews.json',reviews);
  const selected:Record<string,unknown>=Object.create(null);
@@ -81,6 +81,6 @@ try{
  const css=(await readFile('app/globals.css','utf8')).replaceAll('/fonts/','fonts/');
  for(const issue of issues)await writeFile(resolve(directory,issue.edition+'.html'),renderReviewReader(issue,{css,pdfAvailable:true}));
  await cp('public/media-fallback.js',resolve(directory,'media-fallback.js'));
-}catch(error){const message=error instanceof Error?error.message:'';errorCode=/^[A-Za-z0-9_:\-]{1,200}$/.test(message)?message:'EDITION_GENERATION_FAILED';}
+}catch(error){await save('failure.json',error instanceof z.ZodError?{kind:'validation',issues:error.issues.map(i=>({path:i.path,code:i.code,message:i.message}))}:{kind:error instanceof Error?error.name:'unknown',message:error instanceof Error?error.message.replaceAll(key||'__no_key__','[redacted]').slice(0,1500):'unknown'});const message=error instanceof Error?error.message:'';errorCode=/^[A-Za-z0-9_:\-]{1,200}$/.test(message)?message:'EDITION_GENERATION_FAILED';}
 await save('report.json',{packetId:id,issueDate:plan.issueDate,revision:plan.revision,status:!errorCode&&pdfVerified?'review_ready':'needs_review',model,generatedAt:new Date().toISOString(),totalModelCalls:priorCalls+budget.calls,totalTokens:priorTokens+budget.tokens,ledger:budget.ledger,costStatus:'cost_unknown',estimatedUsd:null,imageAttempts,pdfVerified,reviewRecords:reviews.length,generatedArticles:issues.reduce((n,i)=>n+i.articles.length,0),errorCode,databaseWritten:false,published:false,sourceSelection:plan.sourceSelection});
 console.log(JSON.stringify({packetId:id,errorCode,pdfVerified,modelCalls:budget.calls}));if(errorCode)process.exitCode=1;
