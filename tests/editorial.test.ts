@@ -156,3 +156,20 @@ test('repeated glossary terms across levels trigger revision instead of silently
   await assert.rejects(produceEditions({...options,facts:facts.slice(0,4),provider,store:memoryStore()}),/NEEDS_REVIEW:demo-1:junior/);
   assert.equal(juniorWrites,3);
 });
+
+test('manual trial can retain minor-only review holds, while major issues and publication remain blocked',async()=>{
+ const makeProvider=(major=false):TextModelProvider=>({async generateStructured(input){
+  if(input.task==='review')return{data:input.schema.parse({...goodReview,publish_recommendation:'revise',issues:[{severity:major?'major':'minor',span:'synthetic',reason:'Test-only review suggestion',claim_ids:[],suggested_action:'Human review'}]}),usage:{input_tokens:0,output_tokens:0}};
+  const {fact,previousLevelTerms=[]}=input.data as{fact:typeof facts[number];previousLevelTerms:string[]};
+  const edition=input.system.match(/Audience edition: (elementary|junior|senior)/)?.[1] as 'elementary'|'junior'|'senior';
+  const a=demoIssue(edition).articles.find(a=>a.storyId===fact.story_id)!;
+  const vocabulary=[...new Set(a.bodyParagraphs.join(' ').match(/[A-Za-z]{4,}/g))].filter(t=>!previousLevelTerms.some(p=>learningTermKey(p)===learningTermKey(t))).slice(0,2).map(term=>({term,definitionEn:'Synthetic definition',meaningZhHant:'測試詞義'}));
+  return{data:input.schema.parse({headline:a.headline,body_paragraphs:a.bodyParagraphs,vocabulary,used_claim_ids:['core'],omitted_optional_claim_ids:[],editorial_flags:[]}),usage:{input_tokens:0,output_tokens:0}};
+ }});
+ const four={...options,facts:facts.slice(0,4)};
+ await assert.rejects(produceEditions({...four,provider:makeProvider(),store:memoryStore()}),/NEEDS_REVIEW/);
+ const content=await produceEditions({...four,provider:makeProvider(),store:memoryStore(),allowMinorReviewHolds:true});
+ assert.equal(content.reviews.length,12);assert.ok(content.reviews.every(r=>r.publish_recommendation==='revise'));
+ assert.ok(publishGate({...content,facts:four.facts,files:[],live:false}).errors.includes('Review not passed'));
+ await assert.rejects(produceEditions({...four,provider:makeProvider(true),store:memoryStore(),allowMinorReviewHolds:true}),/NEEDS_REVIEW/);
+});
