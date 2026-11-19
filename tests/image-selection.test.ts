@@ -1,6 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {selectIssueImages,shareSelectedImages,type ImageStory,type ImageCandidate} from '../lib/media/select';
+import {selectIssueImages,shareSelectedImages,applyAudienceImages,type ImageStory,type ImageCandidate} from '../lib/media/select';
+import {articleSchema} from '../lib/schemas/edition';
 import {demoIssue} from '../fixtures/issue';
 
 const photo={kind:'file_photo',alt:'Park bench',caption:'資料照，非現場',author:'Test',publisher:'Test',
@@ -8,7 +9,7 @@ const photo={kind:'file_photo',alt:'Park bench',caption:'資料照，非現場',
   sourcePage:'https://example.org/bench',originalUrl:'https://example.org/bench.jpg',rightsConfirmed:true,photographedAt:null};
 const generated={...photo,kind:'generated_illustration',credit:'Test AI',licenseCode:'GENERATED',
   generation:{provider:'fixture-test-only',model:'fixture-test-only',prompt:'Conceptual park',generatedAt:'2026-11-18T00:00:00Z'}};
-const image=(record:typeof photo|typeof generated)=>({assetId:'a'.repeat(64),alt:record.alt,caption:record.caption,
+const image=(record:typeof photo|typeof generated)=>articleSchema.shape.image.parse({assetId:'a'.repeat(64),alt:record.alt,caption:record.caption,
   kind:record.kind,credit:record.credit,licenseUrl:record.licenseUrl,sourcePage:record.sourcePage,
   rendition:{webPath:'assets/'+'a'.repeat(64)+'-web.webp',printPath:'assets/'+'a'.repeat(64)+'-print.jpg',width:1200,height:800}});
 const candidate=(id:string,record:unknown):ImageCandidate=>({id,relevant:true,matchesEvent:true,record});
@@ -58,4 +59,16 @@ test('missing shared budget disables new generation; one selected image is reuse
   assert.ok(editions.every(e=>e.articles[0].image.kind==='file_photo'));
   assert.deepEqual(editions.map(e=>e.articles.map(a=>a.bodyParagraphs)),original.map(e=>e.articles.map(a=>a.bodyParagraphs)));
   editions[0].articles[0].image.caption='Different crop note';assert.notEqual(editions[1].articles[0].image.caption,'Different crop note');
+});
+
+
+test('three audiences receive distinct illustrations while shared photos and all article text stay intact',()=>{
+ const issues=['elementary','junior','senior'].map(e=>demoIssue(e as 'elementary'|'junior'|'senior'));
+ const selections=Object.fromEntries(issues.map(issue=>[issue.edition,issue.articles.map((a,i)=>({storyId:a.storyId,
+  image:i===0?{...image(generated),assetId:issue.edition}:i===1?image(photo):a.image,reason:'synthetic-test',generationAttempted:false,notes:[]}))]));
+ const updated=applyAudienceImages(issues,selections);
+ assert.equal(new Set(updated.map(i=>i.articles[0].image.assetId)).size,3);
+ assert.equal(new Set(updated.map(i=>i.articles[1].image.assetId)).size,1);
+ assert.deepEqual(updated.map(i=>i.articles.map(a=>a.bodyParagraphs)),issues.map(i=>i.articles.map(a=>a.bodyParagraphs)));
+ assert.throws(()=>applyAudienceImages(issues,{elementary:selections.elementary}),/AUDIENCE_IMAGE_SELECTION_REQUIRED/);
 });

@@ -26,7 +26,7 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
     const c = editions[edition], articles: ArticleView[] = [];
     for (const [index, fact] of facts.entries()) {
       const previousLevelTerms=payloads.flatMap(p=>p.articles.filter(a=>a.storyId===fact.story_id).flatMap(a=>a.vocabulary.map(v=>v.term)));
-      const acceptedInput={fact,edition,order:index+1,config:c,writer,reviewPrompt,writerModel,reviewerModel,previousLevelTerms,provider:provider.cacheIdentity,policy:'tiered-v1',editorPolicyHash,allowMinorReviewHolds};
+      const acceptedInput={fact,edition,order:index+1,config:c,writer,reviewPrompt,writerModel,reviewerModel,previousLevelTerms,provider:provider.cacheIdentity,policy:'tiered-v1',editorPolicyHash,allowMinorReviewHolds,reviewHoldPolicy:'final-attempt-v1'};
       const acceptedKey=`${fact.story_id}:${edition}:accepted:0`;
       const prior=await store.get(acceptedKey) as {status?:string;inputHash?:string;output?:{article:unknown;review:unknown};outputHash?:string}|undefined;
       if(prior?.status==='success'&&prior.inputHash===hash(acceptedInput)&&prior.output&&prior.outputHash===hash(prior.output)){
@@ -94,7 +94,7 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
             model: reviewerModel, timeoutMs: 60_000, maxOutputTokens: 2200 }));
         const review = reviewSchema.parse(reviewed.data);
         if (review.issues.some(issue => issue.claim_ids.some(id => !ids.has(id)))) throw Error('REVIEW_CLAIM_ALLOWLIST_FAILED');
-        const minorHold=allowMinorReviewHolds&&review.publish_recommendation==='revise'&&review.suitability==='pass'&&review.issues.length>0&&review.issues.every(issue=>issue.severity==='minor');
+        const minorHold=allowMinorReviewHolds&&attempt===2&&review.publish_recommendation==='revise'&&review.suitability==='pass'&&review.issues.length>0&&review.issues.every(issue=>issue.severity==='minor');
         if (review.factual_status === 'pass' && review.level_fit === 'suitable' &&
           (review.publish_recommendation !== 'revise'||minorHold) && !review.issues.some(issue => issue.severity !== 'minor')) {
           await store.set(acceptedKey,{status:'success',inputHash:hash(acceptedInput),output:{article,review},outputHash:hash({article,review})});

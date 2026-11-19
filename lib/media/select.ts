@@ -83,3 +83,16 @@ export function shareSelectedImages<T extends {edition:string;articles:ArticleVi
   return editions.map(issue=>({...issue,articles:issue.articles.map(article=>({...article,
     image:structuredClone(byStory.get(article.storyId)!)}))}));
 }
+
+/** Apply a separate reviewed image selection per audience, preserving article text and photo provenance. */
+export function applyAudienceImages<T extends {edition:string;articles:ArticleView[]}>(issues:T[],selections:Partial<Record<string,ImageSelection[]>>):T[]{
+  if(issues.length!==3||new Set(issues.map(i=>i.edition)).size!==3)throw Error('THREE_IMAGE_EDITIONS_REQUIRED');
+  const order=issues[0].articles.map(a=>a.storyId);
+  return issues.map(issue=>{
+    if(JSON.stringify(issue.articles.map(a=>a.storyId))!==JSON.stringify(order))throw Error('IMAGE_STORY_SET_MISMATCH');
+    const selected=selections[issue.edition];if(!selected)throw Error('AUDIENCE_IMAGE_SELECTION_REQUIRED');
+    const byStory=new Map(selected.map(s=>[s.storyId,articleSchema.shape.image.parse(s.image)]));
+    if(selected.length!==order.length||byStory.size!==order.length||order.some(id=>!byStory.has(id)))throw Error('IMAGE_STORY_SET_MISMATCH');
+    return{...issue,articles:issue.articles.map(a=>({...a,image:structuredClone(byStory.get(a.storyId)!)}))};
+  });
+}

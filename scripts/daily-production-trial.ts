@@ -11,7 +11,7 @@ import {generateNvidiaImage} from '../lib/providers/image';
 import {produceEditions} from '../lib/pipeline/editorial';
 import {validatedPreviewCheckpoints} from '../lib/preview/checkpoints';
 import {downloadAsset,prepareAsset,type AssetRecord} from '../lib/media/prepare';
-import {selectIssueImages,shareSelectedImages} from '../lib/media/select';
+import {selectIssueImages,applyAudienceImages,type ImageSelection} from '../lib/media/select';
 import {audienceConceptPrompt} from '../lib/media/audience';
 import {renderArticle,esc} from '../lib/render.mjs';
 import {editionKeys,editions} from '../config/editions';
@@ -99,7 +99,7 @@ try{
     const {createHash}=await import('node:crypto');if(createHash('sha256').update(bytes).digest('hex')!==manifest.print.sha256)throw Error('TRIAL_ASSET_HASH_MISMATCH');const cacheKey=entry.edition+':'+entry.storyId;cached.set(cacheKey,image);cachedRecords.set(cacheKey,Object.fromEntries(Object.entries(manifest).filter(([k])=>['kind','alt','caption','author','publisher','credit','licenseCode','licenseUrl','sourcePage','originalUrl','rightsConfirmed','photographedAt','generation'].includes(k))) as AssetRecord);
   }}}catch{/* no completed media checkpoint */}
   const prompts:Record<string,string>={'trial-nicer':'A watercolor concept illustration of stars and a telescope, without technical equipment details.','trial-voices':'A watercolor illustration of an open book and a folded map on a wooden reading table.'};
-  const selections:({edition:string}&Record<string,unknown>)[]=[],withImages:EditionView[]=[];
+  const selections:({edition:string}&Record<string,unknown>)[]=[];const byEdition:Partial<Record<string,ImageSelection[]>>={};
   let sharedPhoto:unknown;
   for(const issue of issues){
     const selected=await selectIssueImages({stories:issue.articles.map(a=>{const cacheKey=issue.edition+':'+a.storyId;return{storyId:a.storyId,category:a.category,illustrationUseful:!!prompts[a.storyId],conceptSafe:!!prompts[a.storyId],
@@ -111,9 +111,9 @@ try{
           generation:{provider:'nvidia',model:result.model,prompt:result.prompt,generatedAt:new Date().toISOString()}};
         const prepared=await prepareAsset(result.bytes,result.mime,record,directory);return{record,image:prepared.image};},maxGeneratedImages:2});
     selections.push(...selected.map(selection=>({...selection,edition:issue.edition})));
-    await save('selected-images.json',selections);withImages.push(...shareSelectedImages([issue],selected));
+    await save('selected-images.json',selections);byEdition[issue.edition]=selected;
   }
-  issues=withImages;
+  issues=applyAudienceImages(issues,byEdition);
   media={selections,newImageApiCalls:imageAttempts,reservedImageCalls:imageReservations.length,policy:'photo-first; separate elementary/junior/senior concept illustrations; two concept stories, at most six dated-trial image attempts; original icons on failure'};
   await save('editions.json',issues);await renderIssues(issues,directory);pdfVerified=true;
 }catch(error){
