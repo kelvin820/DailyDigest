@@ -24,6 +24,7 @@ export async function renderIssues(issues: EditionView[], outDir: string) {
     'InstrumentSerif-OFL.txt', 'LibreCaslonText-OFL.txt', 'oldstandardtt-OFL.txt', 'playfairdisplay-OFL.txt']) {
     await copyFile(resolve('public/fonts', license), resolve(outDir, 'fonts', license));
   }
+  await promisify(execFile)(process.env.DD_PYTHON || 'python', ['scripts/prepare-print-font.py',resolve(outDir,'fonts')],{timeout:60_000});
   const css = (await readFile('app/globals.css', 'utf8')).replaceAll('/fonts/', 'fonts/');
   const server = await localServer(outDir);
   const browser = await chromium.launch({ headless: true, executablePath: process.env.DD_CHROME || undefined });

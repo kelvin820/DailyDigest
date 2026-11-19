@@ -23,6 +23,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install -r requirements-pdf.txt
+      - run: node scripts/qa-font-unicode.mjs
       - run: node scripts/offline.mjs
       - run: node scripts/qa-offline.cjs
       - run: python scripts/verify-pdfs.py

@@ -1,0 +1,10 @@
+[
+  {
+    "edition":"junior",
+    "storyId":"trial-voices",
+    "rejectedAssetId":"c017de3e4aa7bcf98176be07710930ceacd94c19dcf85cc7f652aea7f644ce74",
+    "replacementKey":"junior:trial-voices:visual-r2",
+    "reason":"Visual inspection rejected an unexpected Junior high Readers heading inside the illustration. Preserve the rejected asset and regenerate clean conceptual artwork.",
+    "concept":"A clean watercolor illustration of an open blank book and a folded map on a wooden table. The book pages are blank, without writing. Soft blue and green colors, light background and moderate detail."
+  }
+]

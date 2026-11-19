@@ -149,5 +149,32 @@
         "meaningZhHant": "工業化前的"
       }
     ]
+  },
+  {
+    "storyId": "trial-nicer",
+    "edition": "senior",
+    "writerOutputHash": "ed5b7354a89a7b0c1063c7ab6e865bbae4d853651ff1a229b440adbeaabaf3e1",
+    "reason": "Developer B1 vocabulary calibration: select transferable assessment and diagnosis vocabulary already in the actual article, rather than transparent astronomy word combinations.",
+    "replacements": [],
+    "vocabulary": [
+      {
+        "term": "assessment",
+        "definitionEn": "a careful judgement based on available information",
+        "meaningZhHant": "評估"
+      },
+      {
+        "term": "diagnosis",
+        "definitionEn": "identifying the nature or cause of a problem",
+        "meaningZhHant": "診斷；故障判定"
+      }
+    ]
+  },
+  {
+    "storyId": "trial-voices",
+    "edition": "senior",
+    "writerOutputHash": "db5309bd8b359558c3e3178f53bbd4dc6947371db62b0ddd6b65c0f9249f17bd",
+    "reason": "Developer headline copy edit: preserve the announced exhibition opening as a plan.",
+    "headline": "Library of Congress Plans New Exhibition on Indigenous History",
+    "replacements": []
   }
 ]
