@@ -1,0 +1,16 @@
+[
+  {
+    "reportId": "regen-44536523639",
+    "round": 1,
+    "storyId": "sierra-snow",
+    "edition": "junior",
+    "actor": "codex_development_agent",
+    "sourceUrl": "https://science.nasa.gov/earth/earth-observatory/sierra-snow-season-spins-up/",
+    "quote": "Nearly 12 inches (30 centimeters) of snow fell at Donner Pass, northwest of Lake Tahoe, on November 13, according to the Central Sierra Snow Laboratory.",
+    "notes": [
+      "模型複核誤讀日期：來源的 30 公分降雪發生於 11 月 13 日，11 月 18–20 日是後續冬季風暴預報。不要照模型建議把已觀測降雪改到預報日期。",
+      "正文仍有需審閱之處：來源說 one of the first major snowfalls（早期幾場大雪之一），原稿 first big snowfall（第一場大雪）的表述較強，應核對修訂。這次未改動原稿，也未把人工核對回填成模型通過。",
+      "模型對 fresh snow 的 A1 判斷只是模型意見，未使用外部 CEFR 詞庫，不能當成單字等級認證。"
+    ]
+  }
+]
