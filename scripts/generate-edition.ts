@@ -4,7 +4,11 @@ import {load} from 'cheerio';
 import {z} from 'zod';
 import {safeFetch} from '../lib/content/safe-fetch.mjs';
 import {factSchema} from '../lib/schemas/editorial';
-import {Budget,hash} from '../lib/pipeline/state.mjs';
+import {vocabularySchema} from '../lib/schemas/edition';
+import {containsTerm} from '../lib/content/core.mjs';
+import {learningTermKey} from '../lib/content/vocabulary.mjs';
+import {editions as editionConfig} from '../config/editions';
+import {Budget,hash,cachedStep} from '../lib/pipeline/state.mjs';
 import {NvidiaProvider} from '../lib/providers/text';
 import {produceEditions} from '../lib/pipeline/editorial';
 import {validatedPreviewCheckpoints} from '../lib/preview/checkpoints';
@@ -57,7 +61,18 @@ try{
  const provider=new NvidiaProvider(key,budget,async reply=>{invalid.push(reply);await save('invalid-responses.json',invalid);});
  const store={get:async(k:string)=>records[k],set:async(k:string,v:unknown)=>{records[k]=v;await save('checkpoints.json',records);console.log('Checkpoint:',k);}};
  if(process.env.EDITION_RESUME_DIR&&priorCalls>0){const frozen=z.array(factSchema).length(4).parse(JSON.parse(await readFile(resolve(process.env.EDITION_RESUME_DIR,'facts.json'),'utf8')));if(frozen.some((f,i)=>f.story_id!==facts[i].story_id||hash(f.claims)!==hash(facts[i].claims)))throw Error('FROZEN_FACTS_CHANGED');facts.splice(0,facts.length,...frozen);await save('facts.json',facts);}
- const result=await produceEditions({facts,issueDate:plan.issueDate,revision:plan.revision,provider,store,writerModel:model,reviewerModel:model,allowMinorReviewHolds:true});
+ const corrections=JSON.parse(await readFile(`config/issues/${id}.edits.json`,'utf8').catch(()=>'[]')) as {storyId:string;edition:string;writerOutputHash:string;bodyParagraphs:string[];vocabulary:z.infer<typeof vocabularySchema>[];reason:string}[];
+ const applied:unknown[]=[];
+ const result=await produceEditions({editorPolicyHash:hash({policy:'literal-glossary-repair-v1',corrections}),editDraft:async input=>{
+  const data=structuredClone(input.data),edit=corrections.find(c=>c.storyId===input.storyId&&c.edition===input.edition&&c.writerOutputHash===input.outputHash);
+  if(edit){data.body_paragraphs=edit.bodyParagraphs;data.vocabulary=edit.vocabulary;applied.push({actor:'codex_development_agent',...edit});await save('editor-corrections.json',applied);}
+  const body=data.body_paragraphs.join(' ');
+  if(data.vocabulary.some(v=>!containsTerm(body,v.term)||input.previousLevelTerms.some(t=>learningTermKey(t)===learningTermKey(v.term)))){
+   const repaired=await cachedStep(store,`${input.storyId}:${input.edition}:vocabulary:${input.attempt}`,{body,vocabulary:data.vocabulary,previous:input.previousLevelTerms,model,target:editionConfig[input.edition as keyof typeof editionConfig].cefr},()=>provider.generateStructured({task:'revise',model,timeoutMs:60000,maxOutputTokens:500,schema:z.object({vocabulary:z.array(vocabularySchema).length(2)}).strict(),system:'You are a glossary editor. Return ONLY the vocabulary object in the schema. Choose two useful learning words or short phrases for CEFR '+editionConfig[input.edition as keyof typeof editionConfig].cefr+'. Copy each term EXACTLY as it appears in the supplied body, including endings. Do not choose any previous-level term or simple plural variant. Use natural Traditional Chinese meanings for Taiwan. Do not rewrite the body or add facts.',data:{body,previousLevelTerms:input.previousLevelTerms,rejectedVocabulary:data.vocabulary}}));
+   data.vocabulary=repaired.data.vocabulary;
+  }
+  return data;
+ },facts,issueDate:plan.issueDate,revision:plan.revision,provider,store,writerModel:model,reviewerModel:model,allowMinorReviewHolds:true});
  issues=result.editions.map(i=>({...i,reviewCopy:true}));reviews=result.reviews;await save('reviews.json',reviews);
  const selected:Record<string,unknown>=Object.create(null);
  try{Object.assign(selected,JSON.parse(await readFile(resolve(directory,'selected-images.json'),'utf8')));}catch{/* new issue */}

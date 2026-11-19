@@ -14,7 +14,7 @@ import {supportedStoryCounts} from '../../config/issue-settings.mjs';
 export type Store = { get: (key: string) => Promise<unknown>; set: (key: string, value: unknown) => Promise<void>; reviewedCandidates?:(storyId:string,edition:string)=>Promise<{writer:unknown;review:unknown}[]> };
 export async function produceEditions({ facts, issueDate, revision, provider, store, writerModel, reviewerModel,editDraft,editorPolicyHash,allowMinorReviewHolds=false,storyCount=facts.length }: {
   facts: z.infer<typeof factSchema>[]; issueDate: string; revision: number; provider: TextModelProvider;
-  store: Store; writerModel: string; reviewerModel: string;storyCount?:number;allowMinorReviewHolds?:boolean;editorPolicyHash?:string;editDraft?:(input:{storyId:string;edition:string;outputHash:string;data:z.infer<typeof writerSchema>})=>Promise<z.infer<typeof writerSchema>>;
+  store: Store; writerModel: string; reviewerModel: string;storyCount?:number;allowMinorReviewHolds?:boolean;editorPolicyHash?:string;editDraft?:(input:{storyId:string;edition:string;outputHash:string;attempt:number;previousLevelTerms:string[];data:z.infer<typeof writerSchema>})=>Promise<z.infer<typeof writerSchema>>;
 }) {
   if(!supportedStoryCounts.includes(storyCount)||facts.length!==storyCount||
     new Set(facts.map(f=>f.story_id)).size!==storyCount)throw Error('DISTINCT_EVENTS_REQUIRED');
@@ -65,7 +65,7 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
             schema: writerResponseSchema, model: writerModel, timeoutMs: 60_000, maxOutputTokens: 1800 }));
         let data = writerResponseSchema.parse(result.data);
         if ('failure' in data) throw Error('WRITER_' + data.failure.code.toUpperCase());
-        if(editDraft)data=writerSchema.parse(await editDraft({storyId:fact.story_id,edition,outputHash:hash(result),data}));
+        if(editDraft)data=writerSchema.parse(await editDraft({storyId:fact.story_id,edition,outputHash:hash(result),attempt,previousLevelTerms,data}));
         const ids = new Set(fact.claims.map(claim => claim.claim_id));
         if (data.used_claim_ids.some(id => !ids.has(id)) || data.omitted_optional_claim_ids.some(id => !ids.has(id))) {
           throw Error('CLAIM_ALLOWLIST_FAILED');

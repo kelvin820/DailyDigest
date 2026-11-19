@@ -1,0 +1,23 @@
+[
+  {
+    "storyId": "atacama",
+    "edition": "elementary",
+    "writerOutputHash": "3840df71290145ea97de5069e174d02a1e7dbe5ad42bb1e858630129d9ba5fd4",
+    "reason": "Preserve spring as the flowering season rather than the rain date; select literal, useful A1 glossary terms.",
+    "bodyParagraphs": [
+      "NASA reports flowers in Chile's Atacama Desert. Rain helped seeds wake from their long sleep. Flowers grew across dry land in spring 2026. The desert is usually very dry. Landsat satellites took pictures in September and October. These images show changes in plants and flowers."
+    ],
+    "vocabulary": [
+      {
+        "term": "seeds",
+        "definitionEn": "small parts of plants that can grow into new plants",
+        "meaningZhHant": "種子"
+      },
+      {
+        "term": "desert",
+        "definitionEn": "a large area of land with very little rain",
+        "meaningZhHant": "沙漠"
+      }
+    ]
+  }
+]
