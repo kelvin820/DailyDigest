@@ -1,3 +1,5 @@
+import {publishedPdf,publishedIssues} from '../../../../../lib/publications/catalog';
+import {readingMode} from '../../../../../lib/reader/mode.mjs';
 import {readFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {demoMode,previewMode,membership} from '../../../../../lib/auth/server';
@@ -13,6 +15,7 @@ export async function GET(req:Request,{params}:{params:Promise<{date:string}>}) 
     if(!validDate(date))return json({error:'INVALID_DATE'},400);
     const u=new URL(req.url),edition=editionOf(u.searchParams.get('edition'));
     const mode=u.searchParams.get('mode')==='ink'?'ink':'color';
+    if(readingMode()==='public'){const path=publishedPdf(date,edition,mode);if(path)return new Response(null,{status:303,headers:{Location:path,'Cache-Control':'private, no-store'}});if(publishedIssues().length)return json({error:'NOT_FOUND'},404);}
     if(previewMode()) {
       if(date!==PREVIEW_DATE)return json({error:'NOT_FOUND'},404);
       const issue=previewIssue(edition);

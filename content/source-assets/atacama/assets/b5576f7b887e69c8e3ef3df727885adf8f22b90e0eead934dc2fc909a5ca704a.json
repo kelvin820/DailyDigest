@@ -1,0 +1,30 @@
+{
+  "kind": "event_photo",
+  "alt": "Landsat satellite view of the Atacama Desert during the 2026 flowering season.",
+  "caption": "Satellite view, October 24, 2026; not a photograph taken today.",
+  "author": "Michala Garrison",
+  "publisher": "NASA Earth Observatory",
+  "credit": "NASA Earth Observatory / Michala Garrison · USGS Landsat data",
+  "licenseCode": "PUBLIC_DOMAIN",
+  "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+  "sourcePage": "https://science.nasa.gov/earth/earth-observatory/el-nino-rains-paint-the-atacama/",
+  "originalUrl": "https://assets.science.nasa.gov/dynamicimage/assets/science/esd/eo/images/iotd/2026/el-niño-rains-paint-the-atacama/atacamabloom_oli2_20261024_th.jpg?w=1200",
+  "rightsConfirmed": true,
+  "photographedAt": "2026-10-24",
+  "assetId": "b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a",
+  "sourceSha256": "b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a",
+  "sourceBytes": 184114,
+  "sourceMime": "image/jpeg",
+  "web": {
+    "path": "assets/b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a-web.webp",
+    "width": 1200,
+    "height": 800,
+    "sha256": "d31c14b0e53d72eea50bd7f9fb66ca4bb1afbebbc319549da00139ff7c44d5de"
+  },
+  "print": {
+    "path": "assets/b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a-print.jpg",
+    "width": 1200,
+    "height": 800,
+    "sha256": "434ddf64f1f2a9c51551b58b3327e4262ad29f38e52cfdc7570d3fac9045ac84"
+  }
+}

@@ -8,9 +8,9 @@ import {previewIssue,PREVIEW_DATE} from '../lib/reader/preview';
 import provenance from '../content/reading-preview/provenance.json';
 
 test('reading defaults to account-free preview; published access requires explicit selection',()=>{
-  assert.equal(readingMode({}),'preview');
-  assert.equal(readingMode({READING_MODE:'',DEMO_MODE:'false'}),'preview');
-  assert.equal(readingMode({READING_MODE:'unknown'}),'preview');
+  assert.equal(readingMode({}),'public');
+  assert.equal(readingMode({READING_MODE:'',DEMO_MODE:'false'}),'public');
+  assert.equal(readingMode({READING_MODE:'unknown'}),'public');
   assert.equal(readingMode({READING_MODE:'published'}),'published');
   assert.equal(readingMode({DEMO_MODE:'true',READING_MODE:'published'}),'demo');
 });

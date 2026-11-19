@@ -6,6 +6,6 @@ type PdfProof = { edition: string; mode: string; pages: number; noOverflow: bool
   textVerified: boolean; fontsEmbedded: boolean; revision: number; issueDate: string;
   templateVersion: string; contentHash: string };
 export function publishGate(input: { editions: EditionView[]; facts: z.infer<typeof factSchema>[];
-  reviews: Review[]; files: PdfProof[]; live?: boolean }): {
+  reviews: Review[]; files: PdfProof[]; live?: boolean; verifiedImageAssetIds?: string[] }): {
   pass: boolean; mode: 'live' | 'demo'; needs_human: boolean; errors: string[];
 };

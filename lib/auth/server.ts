@@ -6,7 +6,7 @@ import { cache } from 'react';
 import {readingMode} from '../reader/mode.mjs';
 
 export const demoMode = () => readingMode() === 'demo';
-export const previewMode = () => readingMode() === 'preview';
+export const previewMode = () => ['preview','public'].includes(readingMode());
 
 export async function supabase() {
   const jar = await cookies();

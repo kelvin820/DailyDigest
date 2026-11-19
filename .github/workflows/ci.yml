@@ -15,6 +15,7 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm lint
       - run: pnpm test
+      - run: node --import tsx scripts/check-publications.ts
       - run: pnpm build
         env:
           DEMO_MODE: 'true'
@@ -30,6 +31,7 @@ jobs:
       - run: node scripts/qa-print-failures.mjs
       - run: node scripts/qa-app.mjs
       - run: pnpm test:preview
+      - run: pnpm test:publications
       - run: node scripts/test-db.mjs
       - uses: actions/upload-artifact@v4
         with:

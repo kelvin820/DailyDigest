@@ -13,6 +13,7 @@ import {NvidiaProvider} from '../lib/providers/text';
 import {produceEditions} from '../lib/pipeline/editorial';
 import {validatedPreviewCheckpoints} from '../lib/preview/checkpoints';
 import {prepareAsset,downloadAsset,type AssetRecord} from '../lib/media/prepare';
+import {approvedBundledPhoto} from '../lib/media/bundled';
 import {generateNvidiaImage} from '../lib/providers/image';
 import {audienceConceptPrompt} from '../lib/media/audience';
 import {renderIssues} from './render';
@@ -27,7 +28,7 @@ const key=process.env.LLM_API_KEY?.trim()||'',model='nvidia/nemotron-3-ultra-550
 const save=async(name:string,value:unknown)=>{const text=JSON.stringify(value,null,2);if(key&&text.includes(key))throw Error('SECRET_IN_OUTPUT');await writeFile(resolve(directory,name),text);};
 const context={packetId:id,planHash:hash(plan),model,contract:'edition-review-v1'};
 const records:Record<string,unknown>=Object.create(null),reservations:string[]=[];
-let priorCalls=0,priorTokens=0,imageAttempts=0;
+let priorCalls=0,priorTokens=0,imageAttempts=0;const historyAdjustmentsApplied:number[]=[];let editorCorrectionsApplied=0;
 const budget=new Budget({usd:2,maxCalls:70,maxTokens:150000,inputRate:undefined,outputRate:undefined});
 if(process.env.EDITION_RESUME_DIR){
  const previous=resolve(process.env.EDITION_RESUME_DIR),old=JSON.parse(await readFile(resolve(previous,'context.json'),'utf8'));
@@ -35,12 +36,16 @@ if(process.env.EDITION_RESUME_DIR){
  if(hash(old)!==hash(context)&&(report.totalModelCalls!==0||report.imageAttempts!==0))throw Error('RESUME_CONTEXT_CHANGED');
  if(report.ledger?.some((e:{status:string})=>e.status==='usage_unknown'))throw Error('USAGE_RECONCILIATION_REQUIRED');
  Object.assign(records,validatedPreviewCheckpoints(JSON.parse(await readFile(resolve(previous,'checkpoints.json'),'utf8'))));
+ historyAdjustmentsApplied.push(...(report.historyAdjustmentsApplied||[]));
  priorCalls=report.totalModelCalls;priorTokens=report.totalTokens;imageAttempts=report.imageAttempts;
  budget.maxCalls-=priorCalls;budget.maxTokens-=priorTokens;
  reservations.push(...JSON.parse(await readFile(resolve(previous,'image-reservations.json'),'utf8')));
  await cp(resolve(previous,'assets'),resolve(directory,'assets'),{recursive:true}).catch(()=>{});
  await cp(resolve(previous,'selected-images.json'),resolve(directory,'selected-images.json')).catch(()=>{});
 }
+const adjustments=JSON.parse(await readFile(`config/issues/${id}.usage-adjustments.json`,'utf8').catch(()=>'[]')) as {runId:number;calls:number;tokens:number}[];
+for(const a of adjustments)if(!historyAdjustmentsApplied.includes(a.runId)){priorCalls+=a.calls;priorTokens+=a.tokens;historyAdjustmentsApplied.push(a.runId);}
+budget.maxCalls=70-priorCalls;budget.maxTokens=150000-priorTokens;
 await save('context.json',context);await save('checkpoints.json',records);await save('image-reservations.json',reservations);
 let pdfVerified=false,errorCode:string|null=null,issues:Awaited<ReturnType<typeof produceEditions>>['editions']=[],reviews:unknown[]=[];
 const evidence:unknown[]=[],facts:z.infer<typeof factSchema>[]=[];
@@ -61,11 +66,12 @@ try{
  const provider=new NvidiaProvider(key,budget,async reply=>{invalid.push(reply);await save('invalid-responses.json',invalid);});
  const store={get:async(k:string)=>records[k],set:async(k:string,v:unknown)=>{records[k]=v;await save('checkpoints.json',records);console.log('Checkpoint:',k);}};
  if(process.env.EDITION_RESUME_DIR&&priorCalls>0){const frozen=z.array(factSchema).length(4).parse(JSON.parse(await readFile(resolve(process.env.EDITION_RESUME_DIR,'facts.json'),'utf8')));if(frozen.some((f,i)=>f.story_id!==facts[i].story_id||hash(f.claims)!==hash(facts[i].claims)))throw Error('FROZEN_FACTS_CHANGED');facts.splice(0,facts.length,...frozen);await save('facts.json',facts);}
- const corrections=JSON.parse(await readFile(`config/issues/${id}.edits.json`,'utf8').catch(()=>'[]')) as {storyId:string;edition:string;writerOutputHash:string;bodyParagraphs:string[];vocabulary:z.infer<typeof vocabularySchema>[];reason:string}[];
+ const corrections=JSON.parse(await readFile(`config/issues/${id}.edits.json`,'utf8').catch(()=>'[]')) as {storyId:string;edition:string;writerOutputHash:string;factClaimsHash?:string;usedClaimIds?:string[];bodyParagraphs:string[];vocabulary:z.infer<typeof vocabularySchema>[];reason:string}[];
  const applied:unknown[]=[];
  const result=await produceEditions({editorPolicyHash:hash({policy:'literal-glossary-repair-v1',corrections}),editDraft:async input=>{
-  const data=structuredClone(input.data),edit=corrections.find(c=>c.storyId===input.storyId&&c.edition===input.edition&&c.writerOutputHash===input.outputHash);
-  if(edit){data.body_paragraphs=edit.bodyParagraphs;data.vocabulary=edit.vocabulary;applied.push({actor:'codex_development_agent',...edit});await save('editor-corrections.json',applied);}
+  const data=structuredClone(input.data),edit=corrections.find(c=>c.storyId===input.storyId&&c.edition===input.edition&&(c.writerOutputHash===input.outputHash||c.factClaimsHash===hash(facts.find(f=>f.story_id===input.storyId)?.claims)));
+  if(edit){editorCorrectionsApplied++;data.body_paragraphs=edit.bodyParagraphs;data.vocabulary=edit.vocabulary;if(edit.usedClaimIds){data.used_claim_ids=edit.usedClaimIds;data.omitted_optional_claim_ids=facts.find(f=>f.story_id===input.storyId)!.claims.filter(c=>!c.must_keep&&!edit.usedClaimIds!.includes(c.claim_id)).map(c=>c.claim_id);}
+  applied.push({actor:'codex_development_agent',...edit,actualWriterOutputHash:input.outputHash});await save('editor-corrections.json',applied);}
   const body=data.body_paragraphs.join(' ');
   if(data.vocabulary.some(v=>!containsTerm(body,v.term)||input.previousLevelTerms.some(t=>learningTermKey(t)===learningTermKey(v.term)))){
    const repaired=await cachedStep(store,`${input.storyId}:${input.edition}:vocabulary:${input.attempt}`,{body,vocabulary:data.vocabulary,previous:input.previousLevelTerms,model,target:editionConfig[input.edition as keyof typeof editionConfig].cefr},()=>provider.generateStructured({task:'revise',model,timeoutMs:60000,maxOutputTokens:500,schema:z.object({vocabulary:z.array(vocabularySchema).length(2)}).strict(),system:'You are a glossary editor. Return ONLY the vocabulary object in the schema. Choose two useful learning words or short phrases for CEFR '+editionConfig[input.edition as keyof typeof editionConfig].cefr+'. Copy each term EXACTLY as it appears in the supplied body, including endings. Do not choose any previous-level term or simple plural variant. Use natural Traditional Chinese meanings for Taiwan. Do not rewrite the body or add facts.',data:{body,previousLevelTerms:input.previousLevelTerms,rejectedVocabulary:data.vocabulary}}));
@@ -81,7 +87,7 @@ try{
   if(selected[cacheKey]){a.image=selected[cacheKey] as typeof a.image;continue;}
   if(story.image==='photo'){
    const record:AssetRecord={kind:'event_photo',alt:'Landsat satellite view of the Atacama Desert during the 2026 flowering season.',caption:'Satellite view, October 24, 2026; not a photograph taken today.',author:'Michala Garrison',publisher:'NASA Earth Observatory',credit:'NASA Earth Observatory / Michala Garrison · USGS Landsat data',licenseCode:'PUBLIC_DOMAIN',licenseUrl:'https://www.nasa.gov/nasa-brand-center/images-and-media/',sourcePage:story.url,originalUrl:'https://assets.science.nasa.gov/dynamicimage/assets/science/esd/eo/images/iotd/2026/el-niño-rains-paint-the-atacama/atacamabloom_oli2_20261024_th.jpg?w=1200',rightsConfirmed:true,photographedAt:'2026-10-24'};
-   a.image=(await downloadAsset(record,['assets.science.nasa.gov'],directory)).image;
+   a.image=await approvedBundledPhoto(resolve('content/source-assets',story.id),record,directory)||(await downloadAsset(record,['assets.science.nasa.gov'],directory)).image;
   }else if(story.image==='generate'){
    if(reservations.includes(cacheKey))throw Error('IMAGE_RESERVATION_UNRESOLVED');
    if(reservations.length>=6)throw Error('IMAGE_LIMIT');reservations.push(cacheKey);imageAttempts++;await save('image-reservations.json',reservations);
@@ -97,5 +103,5 @@ try{
  for(const issue of issues)await writeFile(resolve(directory,issue.edition+'.html'),renderReviewReader(issue,{css,pdfAvailable:true}));
  await cp('public/media-fallback.js',resolve(directory,'media-fallback.js'));
 }catch(error){await save('failure.json',error instanceof z.ZodError?{kind:'validation',issues:error.issues.map(i=>({path:i.path,code:i.code,message:i.message}))}:{kind:error instanceof Error?error.name:'unknown',message:error instanceof Error?error.message.replaceAll(key||'__no_key__','[redacted]').slice(0,1500):'unknown'});const message=error instanceof Error?error.message:'';errorCode=/^[A-Za-z0-9_:\-]{1,200}$/.test(message)?message:'EDITION_GENERATION_FAILED';}
-await save('report.json',{packetId:id,issueDate:plan.issueDate,revision:plan.revision,status:!errorCode&&pdfVerified?'review_ready':'needs_review',model,generatedAt:new Date().toISOString(),totalModelCalls:priorCalls+budget.calls,totalTokens:priorTokens+budget.tokens,ledger:budget.ledger,costStatus:'cost_unknown',estimatedUsd:null,imageAttempts,pdfVerified,reviewRecords:reviews.length,generatedArticles:issues.reduce((n,i)=>n+i.articles.length,0),errorCode,databaseWritten:false,published:false,sourceSelection:plan.sourceSelection});
+await save('report.json',{packetId:id,issueDate:plan.issueDate,revision:plan.revision,status:!errorCode&&pdfVerified?'review_ready':'needs_review',model,editorCorrectionsApplied,historyAdjustmentsApplied,sourceSnapshotsUsed:evidence.filter(e=>(e as {evidenceMode:string}).evidenceMode==='developer_reviewed_snapshot').length,generatedAt:new Date().toISOString(),totalModelCalls:priorCalls+budget.calls,totalTokens:priorTokens+budget.tokens,ledger:budget.ledger,costStatus:'cost_unknown',estimatedUsd:null,imageAttempts,pdfVerified,reviewRecords:reviews.length,generatedArticles:issues.reduce((n,i)=>n+i.articles.length,0),errorCode,databaseWritten:false,published:false,sourceSelection:plan.sourceSelection});
 console.log(JSON.stringify({packetId:id,errorCode,pdfVerified,modelCalls:budget.calls}));if(errorCode)process.exitCode=1;

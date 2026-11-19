@@ -8,10 +8,10 @@ on:
         default: '2026-11-19-r2'
         required: true
 permissions:
-  contents: read
+  contents: write
   actions: read
 concurrency:
-  group: dayday-edition-generation
+  group: dayday-file-publication
   cancel-in-progress: false
 jobs:
   generate:
@@ -22,8 +22,6 @@ jobs:
       PACKET_ID: ${{ inputs.packet_id }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -44,12 +42,24 @@ jobs:
           set -euo pipefail
           node --input-type=module -e 'if(!/^\d{4}-\d{2}-\d{2}-r[1-9]\d*$/.test(process.env.PACKET_ID))throw Error("INVALID_PACKET_ID")'
           gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?name=edition-$PACKET_ID&per_page=20" > /tmp/dayday-edition-artifacts.json
-          previous_run=$(node --input-type=module -e 'import{readFileSync}from"node:fs";const a=JSON.parse(readFileSync("/tmp/dayday-edition-artifacts.json")).artifacts.find(a=>a.workflow_run.id!==Number(process.env.GITHUB_RUN_ID));if(a?.expired)throw Error("RESUME_ARTIFACT_EXPIRED");if(a)process.stdout.write(String(a.workflow_run.id))')
+          previous_run=$(node --input-type=module -e 'import{readFileSync}from"node:fs";const a=JSON.parse(readFileSync("/tmp/dayday-edition-artifacts.json")).artifacts.sort((a,b)=>Date.parse(b.created_at)-Date.parse(a.created_at)).find(a=>a.workflow_run.id!==Number(process.env.GITHUB_RUN_ID));if(a?.expired)throw Error("RESUME_ARTIFACT_EXPIRED");if(a)process.stdout.write(String(a.workflow_run.id))')
           if [ -n "$previous_run" ]; then gh run download "$previous_run" -n "edition-$PACKET_ID" -D output/previous-edition; echo 'EDITION_RESUME_DIR=output/previous-edition' >> "$GITHUB_ENV"; fi
       - name: Generate, model-review and render six PDFs
         run: node --import tsx scripts/generate-edition.ts
         env:
           LLM_API_KEY: ${{ secrets.LLM_API_KEY || secrets.NVIDIA_API_KEY }}
+      - name: Stage the public review packet while keeping the current issue
+        run: node --import tsx scripts/import-edition.ts output/generated-edition
+        env:
+          SOURCE_RUN_ID: ${{ github.run_id }}
+      - run: node --import tsx scripts/check-publications.ts && pnpm typecheck && pnpm test && pnpm build
+      - name: Deploy the new review page through Git
+        run: |
+          set -euo pipefail
+          git add content/publications/catalog.json public/preview-issues
+          if git diff --cached --quiet; then exit 0; fi
+          git -c user.name="$GITHUB_ACTOR" -c user.email="$GITHUB_ACTOR@users.noreply.github.com" commit -m 'Stage generated edition for editorial review'
+          git push origin "HEAD:$GITHUB_REF_NAME"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

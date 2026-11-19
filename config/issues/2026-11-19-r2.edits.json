@@ -19,5 +19,140 @@
         "meaningZhHant": "沙漠"
       }
     ]
+  },
+  {
+    "storyId": "atacama",
+    "edition": "elementary",
+    "writerOutputHash": "4b9460044b8f048c6568407636e169a54a3b729ac8780db85e1658c032d59aeb",
+    "reason": "Correct the rain/flowering chronology and replace absent glossary roots with useful literal terms.",
+    "bodyParagraphs": [
+      "NASA reports flowers in Chile's Atacama Desert. Rain helped seeds wake from their long sleep. Flowers grew across dry land in spring 2026. The desert is usually very dry. Landsat satellites took pictures in September and October. These images show changes in plants and flowers."
+    ],
+    "vocabulary": [
+      {
+        "term": "seeds",
+        "definitionEn": "small parts of plants that can grow into new plants",
+        "meaningZhHant": "種子"
+      },
+      {
+        "term": "desert",
+        "definitionEn": "a large area of land with very little rain",
+        "meaningZhHant": "沙漠"
+      }
+    ],
+    "factClaimsHash": "b1cc8c4dac5776783184cbbfd63ef6ad3451bb2085580448b39cfa8484a6e237",
+    "usedClaimIds": [
+      "claim-1",
+      "claim-2",
+      "claim-3"
+    ]
+  },
+  {
+    "storyId": "atacama",
+    "edition": "junior",
+    "writerOutputHash": "3f7d7213b327c3eb63df5abbfc17be4eb7ed0870dd7ec83119d8a1859957e980",
+    "reason": "Correct the rain/flowering chronology and select A2 learning terms distinct from A1.",
+    "bodyParagraphs": [
+      "NASA reports that flowers bloomed in Chile's Atacama Desert in spring 2026. The desert is normally one of the driest places on Earth. Earlier rain woke up seeds that had slept in the soil for a long time. Soon, colorful flowers began to bloom across the sand. Landsat satellites took pictures of the green desert in September and October. Scientists use these images to study how plants grow after rare rain."
+    ],
+    "vocabulary": [
+      {
+        "term": "bloom",
+        "definitionEn": "to produce flowers",
+        "meaningZhHant": "開花"
+      },
+      {
+        "term": "satellites",
+        "definitionEn": "machines that travel around Earth and send pictures or information",
+        "meaningZhHant": "衛星"
+      }
+    ],
+    "factClaimsHash": "b1cc8c4dac5776783184cbbfd63ef6ad3451bb2085580448b39cfa8484a6e237",
+    "usedClaimIds": [
+      "claim-1",
+      "claim-2",
+      "claim-3"
+    ]
+  },
+  {
+    "storyId": "horsehead",
+    "edition": "elementary",
+    "writerOutputHash": "7f70d2fc44f280a83a6d542b076162cda797d3dcdf01ef89ba568748f976337c",
+    "reason": "Use accessible common vocabulary rather than two proper object names; omit an unnecessary general statement.",
+    "bodyParagraphs": [
+      "NASA shares a picture of the Horsehead and Flame Nebulas today. The Horsehead looks like a dark horse head in space. It is a cloud of dust and gas. The nebula is about five light-years tall. It sits around 1,500 light-years from Earth. The Flame Nebula glows bright near it."
+    ],
+    "vocabulary": [
+      {
+        "term": "cloud",
+        "definitionEn": "a large group of tiny drops, dust, or gas together",
+        "meaningZhHant": "雲團"
+      },
+      {
+        "term": "dust",
+        "definitionEn": "very small dry pieces of matter",
+        "meaningZhHant": "塵埃"
+      }
+    ],
+    "factClaimsHash": "6e3f8730716a3e5ca868f9dd0c3aa39809b93328e619ea7c92b25beefb4465b9",
+    "usedClaimIds": [
+      "claim-1",
+      "claim-2",
+      "claim-3"
+    ]
+  },
+  {
+    "storyId": "horsehead",
+    "edition": "junior",
+    "writerOutputHash": "7b82bf2e2e748478009eee945d28bf3f9855b32ed35dc6a6507ee749642aac91",
+    "reason": "Bring the article into the snapshotted A2 length range using the verified description, without inventing a discovery.",
+    "bodyParagraphs": [
+      "NASA's online astronomy feature for November 19, 2026, presents the Horsehead and Flame Nebulas. These are objects in space. The Horsehead is a cloud of dust and gas. Its dark shape looks like a horse's head. It is about five light-years tall. The nebula lies around 1,500 light-years from Earth. NASA's feature describes the Horsehead and shows the Flame Nebula nearby."
+    ],
+    "vocabulary": [
+      {
+        "term": "nebula",
+        "definitionEn": "a large cloud of dust and gas in space",
+        "meaningZhHant": "星雲"
+      },
+      {
+        "term": "light-years",
+        "definitionEn": "units of distance equal to how far light travels in one year",
+        "meaningZhHant": "光年"
+      }
+    ],
+    "factClaimsHash": "6e3f8730716a3e5ca868f9dd0c3aa39809b93328e619ea7c92b25beefb4465b9",
+    "usedClaimIds": [
+      "claim-1",
+      "claim-2",
+      "claim-3"
+    ]
+  },
+  {
+    "storyId": "teachers-ai",
+    "edition": "elementary",
+    "writerOutputHash": "84554bb97c9be0dfd054534892047d1f9ea3008f4baf06bd7d03f79d2f02de99",
+    "reason": "Choose accessible, useful A1 glossary words; reserve abstract bias terminology for older readers.",
+    "bodyParagraphs": [
+      "UNESCO and CodeAI plan an online workshop for teachers on November 19, 2026. Teachers will use pictures of fish and marine waste. They will explore how AI learns from data. The activity helps teachers notice possible errors and biases. No previous programming knowledge is required."
+    ],
+    "vocabulary": [
+      {
+        "term": "workshop",
+        "definitionEn": "a class where people learn by trying activities",
+        "meaningZhHant": "工作坊"
+      },
+      {
+        "term": "data",
+        "definitionEn": "information, such as pictures, used by a computer",
+        "meaningZhHant": "資料"
+      }
+    ],
+    "factClaimsHash": "13edf2b900c79b5b2c6b269d83964e3c3e5d72d71527eae221aa4e4aece01156",
+    "usedClaimIds": [
+      "claim-1",
+      "claim-2",
+      "claim-3"
+    ]
   }
 ]

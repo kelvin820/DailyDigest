@@ -9,7 +9,7 @@ import {PDFDocument} from 'pdf-lib';
 const port=4318,origin=`http://127.0.0.1:${port}`;
 let logs='',browser;
 const server=spawn(process.execPath,['node_modules/next/dist/bin/next','start','--hostname','127.0.0.1','--port',String(port)],{
-  env:{...process.env,DEMO_MODE:'false',READING_MODE:'',APP_URL:origin,
+  env:{...process.env,DEMO_MODE:'false',READING_MODE:'preview',APP_URL:origin,
     NEXT_PUBLIC_SUPABASE_URL:'https://supabase.invalid',NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:'unused',NEXT_TELEMETRY_DISABLED:'1'},
   stdio:['ignore','pipe','pipe'],
 });

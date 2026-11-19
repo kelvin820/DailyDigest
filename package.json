@@ -22,6 +22,7 @@
     "test:db": "node scripts/test-db.mjs",
     "test:app": "node scripts/qa-app.mjs",
     "test:preview": "node scripts/qa-preview-reader.mjs",
+    "test:publications": "node scripts/qa-publications.mjs",
     "stage:approved": "node --env-file-if-exists=.env.local --import tsx scripts/stage-approved.ts",
     "audit:sources": "node scripts/audit-sources.mjs"
   },

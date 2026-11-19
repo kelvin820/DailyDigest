@@ -1,0 +1,64 @@
+name: Approve and publish edition
+on:
+  workflow_dispatch:
+    inputs:
+      packet_id:
+        description: 'Copy the issue ID from /review'
+        type: string
+        required: true
+      fingerprint:
+        description: 'Copy the full version fingerprint from /review'
+        type: string
+        required: true
+      confirm_review:
+        description: 'I have checked all three editions, images, sources and PDFs'
+        type: boolean
+        default: false
+        required: true
+permissions:
+  contents: write
+concurrency:
+  group: dayday-file-publication
+  cancel-in-progress: false
+jobs:
+  release:
+    if: github.ref_name == github.event.repository.default_branch && inputs.confirm_review
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: pnpm/action-setup@v4
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements-pdf.txt
+      - name: Find browser
+        run: |
+          browser_path=$(command -v google-chrome || command -v chromium || true)
+          if [ -n "$browser_path" ]; then echo "DD_CHROME=$browser_path" >> "$GITHUB_ENV"; else pnpm exec playwright install chromium; fi
+      - name: Verify the reviewed version, render final PDFs and prepare publication
+        run: node --import tsx scripts/release-edition.ts
+        env:
+          PACKET_ID: ${{ inputs.packet_id }}
+          EXPECTED_FINGERPRINT: ${{ inputs.fingerprint }}
+          RELEASE_ACTOR: ${{ github.actor }}
+          RELEASE_METHOD: github_manual
+          CONFIRM_REVIEW: ${{ inputs.confirm_review }}
+      - run: pnpm typecheck && pnpm test && pnpm build
+      - name: Commit the immutable release and let Vercel deploy it
+        run: |
+          set -euo pipefail
+          git add content/publications/catalog.json public/preview-issues
+          if git diff --cached --quiet; then exit 0; fi
+          git -c user.name="$GITHUB_ACTOR" -c user.email="$GITHUB_ACTOR@users.noreply.github.com" commit -m 'Publish reviewed Daily Digest edition'
+          git push origin "HEAD:$GITHUB_REF_NAME"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: publication-proof
+          path: output/release/
+          retention-days: 14
