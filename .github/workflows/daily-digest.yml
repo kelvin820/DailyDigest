@@ -36,8 +36,8 @@ jobs:
       LIVE_GENERATION_ENABLED: 'true'
       LLM_PROVIDER: nvidia
       LLM_BASE_URL: https://integrate.api.nvidia.com/v1
-      WRITER_MODEL: ${{ vars.WRITER_MODEL || 'nvidia/nemotron-3.5-lightning-30b-a3b' }}
-      REVIEWER_MODEL: ${{ vars.REVIEWER_MODEL || 'nvidia/nemotron-3.5-lightning-30b-a3b' }}
+      WRITER_MODEL: ${{ vars.WRITER_MODEL || 'nvidia/nemotron-3-ultra-550b-a55b' }}
+      REVIEWER_MODEL: ${{ vars.REVIEWER_MODEL || 'nvidia/nemotron-3-ultra-550b-a55b' }}
       DAILY_BUDGET_USD: ${{ vars.DAILY_BUDGET_USD || '2' }}
       MAX_MODEL_CALLS: ${{ vars.MAX_MODEL_CALLS || '100' }}
       MAX_MODEL_TOKENS: ${{ vars.MAX_MODEL_TOKENS || '200000' }}

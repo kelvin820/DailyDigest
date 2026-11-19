@@ -1,6 +1,7 @@
 import { execFileSync,spawn } from 'node:child_process';
 import assert from 'node:assert/strict';
 import { readFile, readdir, mkdir, writeFile } from 'node:fs/promises';
+import {createHash} from 'node:crypto';
 import { randomUUID } from 'node:crypto';
 import { setTimeout } from 'node:timers/promises';
 import { makeDemo } from '../lib/content/core.mjs';
@@ -31,7 +32,21 @@ try {
   }
   sql(await readFile('tests/db/bootstrap.sql', 'utf8'));
   for (const file of (await readdir('supabase/migrations')).filter(f => f.endsWith('.sql')).sort()) {
-    sql(await readFile('supabase/migrations/' + file, 'utf8'));
+    const content=await readFile('supabase/migrations/'+file,'utf8');
+    if(file==='202611190015_four_story_issues.sql'){
+      sql('create schema dayday_private; create table dayday_private.schema_migrations(version text primary key,name text not null,sha256 text not null); alter table dayday_private.schema_migrations enable row level security;');
+      const previous=(await readdir('supabase/migrations')).filter(f=>f.endsWith('.sql')&&f<file).sort();
+      for(const name of previous){const digest=createHash('sha256').update(await readFile('supabase/migrations/'+name)).digest('hex');sql(`insert into dayday_private.schema_migrations values('${name.split('_')[0]}','synthetic-history','${digest}');`);}
+      execFileSync(process.execPath,['scripts/build-supabase-upgrade.mjs','https://abcdefghijklmnopqrst.supabase.co'],{stdio:'pipe'});
+      const upgrade=await readFile('output/supabase-upgrade-15.sql','utf8');
+      const first=previous[0].split('_')[0],digest=createHash('sha256').update(await readFile('supabase/migrations/'+previous[0])).digest('hex');
+      sql(`update dayday_private.schema_migrations set sha256='tampered' where version='${first}';`);
+      assert.throws(()=>sql(upgrade),/DAYDAY_MIGRATION_HISTORY_MISMATCH/);
+      sql(`update dayday_private.schema_migrations set sha256='${digest}' where version='${first}';`);
+      sql(upgrade);assert.equal(sql('select count(*) from dayday_private.schema_migrations;').trim(),'15');
+      assert.throws(()=>sql(upgrade),/DAYDAY_UPGRADE_REQUIRES_14_MIGRATIONS/);
+      checks.push({name:'guarded incremental upgrade, tampered-history refusal and repeated-upgrade refusal',status:'passed'});
+    }else sql(content);
     checks.push({ name: file, status: 'passed' });
   }
   const stories = JSON.parse(await readFile('fixtures/stories.json', 'utf8'));

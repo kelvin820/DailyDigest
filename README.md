@@ -1,6 +1,8 @@
 # DayDay Daily Digest
 Four stories. Every day. Your level.
 
+[查看四篇制真實來源待審稿與三版比較](https://dayday-digest-demo.kelvin820.chatgpt.site/daily-trial/compare.html) · [本輪結果與驗證](docs/FOUR_STORY_TRIAL_RESULT.md)。這是含編輯校稿的試產稿，尚未正式出刊。
+
 接續原 M1 成果開發，保留已選定的三版表頭與舊八篇虛構樣刊。新刊改為每日四篇，三版依程度另選學習單字，生成插畫採分齡風格。NVIDIA 文字／圖片已有實際 API 測試，四篇真實來源試產以 Actions artifact 的 report 為準；**試產不代表正式發布，也未完成 Vercel／Supabase Storage 的出刊驗收。** 四篇試產操作見 [FOUR_STORY_TRIAL](docs/FOUR_STORY_TRIAL.md)。完整進度見 [STATUS](docs/STATUS.md)，設定需求集中在 [SETUP](docs/SETUP.md)。
 
 ## 本機閱讀
