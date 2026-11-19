@@ -26,9 +26,10 @@ const budget=new Budget({usd:2,maxCalls:70-calls,maxTokens:150000-tokens,inputRa
 const facts=structuredClone(base.facts),issues=structuredClone(base.editions).map(i=>({...i,revision:plan.revision,reviewCopy:true,publishedAt:null})),reviews=structuredClone(base.reviews);
 await save('context.json',context);await save('checkpoints.json',records);
 try{
- for(const addition of plan.evidenceAdditions||[]){const f=facts.find(f=>f.story_id===addition.storyId);if(!f)throw Error('UNKNOWN_CORRECTION_STORY');f.sources[0].evidence+='\n'+addition.quote;f.claims.push({...addition.claim,supporting_source_ids:[f.sources[0].source_id],evidence_ref:f.sources[0].source_id});factSchema.parse(f);}
+ for(const addition of plan.evidenceAdditions||[]){const f=facts.find(f=>f.story_id===addition.storyId);if(!f)throw Error('UNKNOWN_CORRECTION_STORY');f.sources[0].evidence+='\n'+addition.quote;if(addition.claim)f.claims.push({...addition.claim,supporting_source_ids:[f.sources[0].source_id],evidence_ref:f.sources[0].source_id});factSchema.parse(f);}
  for(const c of plan.corrections){const a=issues.find(i=>i.edition===c.edition)?.articles.find(a=>a.storyId===c.storyId);if(!a)throw Error('UNKNOWN_CORRECTION_ARTICLE');if(c.bodyParagraphs)a.bodyParagraphs=c.bodyParagraphs;if(c.vocabulary)a.vocabulary=z.array(vocabularySchema).length(2).parse(c.vocabulary);if(c.headline)a.headline=c.headline;a.wordCount=stats(a.bodyParagraphs.join(' ')).count;}
  issues.forEach(i=>editionSchema.parse(i));if(vocabularyOverlapErrors(issues).length)throw Error('VOCABULARY_OVERLAP');
+ if(!key)throw Error('NVIDIA_KEY_REQUIRED');
  const provider=new NvidiaProvider(key,budget);const prompt=await readFile('prompts/reviewer.v1.txt','utf8');
  const store={get:async(k:string)=>records[k],set:async(k:string,v:unknown)=>{records[k]=v;await save('checkpoints.json',records);console.log('Review checkpoint:',k);}};
  for(const issue of issues)for(const a of issue.articles){

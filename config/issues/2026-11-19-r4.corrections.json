@@ -1,0 +1,39 @@
+{
+  "packetId": "2026-11-19-r4",
+  "basePacketId": "2026-11-19-r3",
+  "baseFingerprint": "68667ecd0db4de57cfd23b190576ac4f494bb009b0b055b325d7be2894aaa926",
+  "revision": 4,
+  "corrections": [
+    {
+      "storyId": "teachers-ai",
+      "edition": "junior",
+      "reason": "Include the announced regional audience and keep the actual picture-sorting activity.",
+      "bodyParagraphs": [
+        "UNESCO and CodeAI plan an online workshop on November 19, 2026. It is for teachers in Latin America and the Caribbean. Teachers will use pictures of fish and marine waste to explore how AI learns from examples. Sorting these pictures can reveal how a system makes choices. The activity also helps teachers notice errors and biases. No earlier programming knowledge is needed for the exercise."
+      ]
+    },
+    {
+      "storyId": "horsehead",
+      "edition": "senior",
+      "reason": "Choose transferable academic language for interpreting the numerical description; no external word-level CEFR list is used.",
+      "vocabulary": [
+        {
+          "term": "figures",
+          "definitionEn": "numbers that give information",
+          "meaningZhHant": "數值"
+        },
+        {
+          "term": "respectively",
+          "definitionEn": "in the same order as the things just mentioned",
+          "meaningZhHant": "分別地"
+        }
+      ]
+    }
+  ],
+  "evidenceAdditions": [
+    {
+      "storyId": "teachers-ai",
+      "quote": "The UNESCO Regional Office in Santiago, in collaboration with CodeAI"
+    }
+  ]
+}
