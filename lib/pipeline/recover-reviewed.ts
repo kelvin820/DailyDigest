@@ -6,11 +6,11 @@ import {stats} from '../content/metrics';
 import {containsTerm} from '../content/core.mjs';
 import {learningTermKey} from '../content/vocabulary.mjs';
 const step=z.object({status:z.literal('success'),inputHash:z.string(),output:z.object({data:z.unknown()}).passthrough(),outputHash:z.string()}).strict();
-export function recoverReviewedArticle({writer,review,fact,index,config,previousLevelTerms,reviewerModel,reviewPrompt,provider}:{writer:unknown;review:unknown;fact:z.infer<typeof factSchema>;index:number;config:{cefr:string;min:number;max:number;avg:number;sentenceMax:number};previousLevelTerms:string[];reviewerModel:string;reviewPrompt:string;provider:string|undefined}){
+export function recoverReviewedArticle({writer,review,fact,index,config,previousLevelTerms,reviewerModel,reviewPrompt,provider,lengthPolicy='strict'}:{writer:unknown;review:unknown;fact:z.infer<typeof factSchema>;index:number;config:{cefr:string;min:number;max:number;avg:number;sentenceMax:number};previousLevelTerms:string[];reviewerModel:string;reviewPrompt:string;provider:string|undefined;lengthPolicy?:'strict'|'advisory'}){
  try{
   const w=step.parse(writer),r=step.parse(review);if(hash(w.output)!==w.outputHash||hash(r.output)!==r.outputHash)return;
   const data=writerSchema.parse(w.output.data),body=data.body_paragraphs.join(' '),s=stats(body);
-  if(s.count<config.min||s.count>config.max||s.average>config.avg||s.max>config.sentenceMax||
+  if((lengthPolicy!=='advisory'&&(s.count<config.min||s.count>config.max||s.average>config.avg||s.max>config.sentenceMax))||
     fact.claims.some(c=>c.must_keep&&!data.used_claim_ids.includes(c.claim_id))||
     new Set(data.vocabulary.map(v=>learningTermKey(v.term))).size!==2||
     data.vocabulary.some(v=>!containsTerm(body,v.term)||previousLevelTerms.some(p=>learningTermKey(p)===learningTermKey(v.term))))return;

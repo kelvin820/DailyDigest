@@ -32,6 +32,7 @@ export const editionSchema = z.object({
   webUrl: httpsUrl.optional(),
   reviewCopy:z.boolean().optional(),
   vocabularyPolicy:z.literal('tiered-v1').optional(),
+  lengthPolicy:z.enum(['strict','advisory']).optional(),
   storyCount:z.union([z.literal(4),z.literal(8)]).optional(),
   readingRules:z.object({min:z.number().int().positive(),max:z.number().int().positive(),
     avg:z.number().positive(),maxSentence:z.number().int().positive()}).strict().optional(),
@@ -43,8 +44,8 @@ export const editionSchema = z.object({
     ctx.addIssue({code:'custom',message:'Story count snapshot or distinct story set mismatch'});
   payload.articles.forEach((a, i) => {
     const body = a.bodyParagraphs.join(' '), s = stats(body);
-    if (a.order !== i + 1 || s.count !== a.wordCount || s.count < rules.min || s.count > rules.max ||
-      s.average > rules.avg || s.max > rules.maxSentence) ctx.addIssue({ code: 'custom', path: ['articles', i],
+    if (a.order !== i + 1 || s.count !== a.wordCount || (payload.lengthPolicy!=='advisory'&&(s.count < rules.min || s.count > rules.max ||
+      s.average > rules.avg || s.max > rules.maxSentence))) ctx.addIssue({ code: 'custom', path: ['articles', i],
       message: 'Order or word/sentence limits failed: ' + JSON.stringify(s) });
     if (new Set(a.vocabulary.map(v => v.term.toLowerCase())).size !== 2) ctx.addIssue({
       code: 'custom', path: ['articles', i, 'vocabulary'], message: 'Two distinct vocabulary terms required' });

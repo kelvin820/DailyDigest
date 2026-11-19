@@ -26,7 +26,7 @@ if(plan.packetId!==id||plan.stories.length!==4||plan.storyCount!==4)throw Error(
 const directory=resolve('output/generated-edition');await mkdir(directory,{recursive:true});
 const key=process.env.LLM_API_KEY?.trim()||'',model='nvidia/nemotron-3-ultra-550b-a55b';
 const save=async(name:string,value:unknown)=>{const text=JSON.stringify(value,null,2);if(key&&text.includes(key))throw Error('SECRET_IN_OUTPUT');await writeFile(resolve(directory,name),text);};
-const context={packetId:id,planHash:hash(plan),model,contract:'edition-review-v1'};
+const context={packetId:id,planHash:hash(plan),model,contract:'edition-review-v2',lengthPolicy:'advisory'};
 const records:Record<string,unknown>=Object.create(null),reservations:string[]=[];
 let priorCalls=0,priorTokens=0,imageAttempts=0;const historyAdjustmentsApplied:number[]=[];let editorCorrectionsApplied=0;
 const budget=new Budget({usd:2,maxCalls:70,maxTokens:150000,inputRate:undefined,outputRate:undefined});

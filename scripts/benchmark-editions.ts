@@ -11,16 +11,19 @@ import {stats} from '../lib/content/metrics';
 import {containsTerm} from '../lib/content/core.mjs';
 import {learningTermKey} from '../lib/content/vocabulary.mjs';
 import {renderIssues} from './render';
+import {advisoryReviewNote,isLengthReminder} from '../lib/editorial/readability';
+import {benchmarkRuns} from '../lib/editorial/benchmarks';
 import {editorialReviewSchema,editorialReviewPrompt} from '../lib/editorial/quality';
 
 const id=process.env.BENCHMARK_ID||'2026-11-19-new-four';if(!/^[a-z0-9-]{1,80}$/.test(id))throw Error('INVALID_BENCHMARK_ID');
+if(benchmarkRuns.some(r=>r.id===id))throw Error('BENCHMARK_ALREADY_RECORDED');
 const plan=JSON.parse(await readFile(`config/benchmarks/${id}.json`,'utf8'));
 if(plan.rounds!==3||plan.stories.length!==4)throw Error('INVALID_BENCHMARK_PLAN');
 const directory=resolve('output/llm-benchmark');await mkdir(directory,{recursive:true});
 const key=process.env.LLM_API_KEY?.trim()||'';
 const save=async(name:string,value:unknown)=>{const text=JSON.stringify(value,null,2);if(key&&text.includes(key))throw Error('SECRET_IN_OUTPUT');await writeFile(resolve(directory,name),text);};
-const writer=await readFile('prompts/writer.v1.txt','utf8'),reviewer=(await readFile('prompts/reviewer.v1.txt','utf8'))+'\n'+editorialReviewPrompt;
-const context={id,planHash:hash(plan),promptHash:hash({writer,reviewer}),contract:'independent-first-draft-benchmark-v2'};
+const writer=await readFile('prompts/writer.v2.txt','utf8'),reviewer=(await readFile('prompts/reviewer.v1.txt','utf8'))+'\n'+editorialReviewPrompt+'\n'+advisoryReviewNote;
+const context={id,planHash:hash(plan),promptHash:hash({writer,reviewer}),contract:'independent-first-draft-benchmark-v3',lengthPolicy:'advisory'};
 const budget=new Budget({usd:2,maxCalls:100,maxTokens:200000,inputRate:undefined,outputRate:undefined});
 const cache:Record<string,{inputHash:string;outputHash:string;output:Record<string,unknown>}>=Object.create(null);
 let activeKey:string|null=null,inFlight=false;
@@ -37,7 +40,7 @@ async function measured<T>(taskKey:string,input:unknown,run:()=>Promise<Structur
  if(budget.ledger.some((e:{status:string})=>e.status==='usage_unknown'))throw Error('USAGE_RECONCILIATION_REQUIRED');if(output.error==='BUDGET_EXCEEDED')throw Error('BUDGET_EXCEEDED');return output;
 }
 const facts:z.infer<typeof factSchema>[]=plan.stories.map((s:{id:string;category:string;kind:string;publisher:string;url:string;sourceDate:string;precision:string;eventDate:string|null;quotes:string[];claims:[string,boolean,string][];uncertainties:string[]})=>factSchema.parse({story_id:s.id,event_key:s.id+'-'+plan.issueDate,primary_category:s.category,content_kind:s.kind,published_at:s.sourceDate+'T00:00:00Z',published_at_precision:s.precision,event_date:s.eventDate,is_demo:false,sensitivity:'low',uncertainties:s.uncertainties,sources:[{source_id:'source-'+s.id,publisher:s.publisher,url:s.url,published_at:s.sourceDate+'T00:00:00Z',published_at_precision:s.precision,retrieved_at:plan.capturedAt,read_at:plan.capturedAt,rights_reviewed:true,independence_group:s.publisher,evidence:s.quotes.join('\n')}],claims:s.claims.map(([text,must_keep,status],i)=>({claim_id:'claim-'+(i+1),text,must_keep,status,evidence_ref:'source-'+s.id,supporting_source_ids:['source-'+s.id]}))}));
-type Draft={storyId:string;edition:Edition;article:ArticleView|null;writerMs:number;reviewerMs:number;writerCalls:number;reviewerCalls:number;errors:string[];assessment:ReturnType<typeof editorialReviewSchema.parse>|null;firstPass:boolean};
+type Draft={storyId:string;edition:Edition;article:ArticleView|null;writerMs:number;reviewerMs:number;writerCalls:number;reviewerCalls:number;errors:string[];warnings?:string[];assessment:ReturnType<typeof editorialReviewSchema.parse>|null;firstPass:boolean};
 const rounds:{number:number;drafts:Draft[];apiMs:number;firstPass:number;complete:boolean}[]=[];
 let errorCode:string|null=null,pdfRound:number|null=null,pdfFiles:unknown[]=[];
 try{
@@ -58,6 +61,7 @@ try{
    if(data.vocabulary.some(v=>previousLevelTerms.some(t=>learningTermKey(t)===learningTermKey(v.term))))d.errors.push('與較簡單版本重複選字');
    if(new Set(data.vocabulary.map(v=>learningTermKey(v.term))).size!==2)d.errors.push('單字重複');
    if(fact.claims.some(cl=>cl.must_keep&&!data.used_claim_ids.includes(cl.claim_id))||data.used_claim_ids.some(id=>!fact.claims.some(cl=>cl.claim_id===id)))d.errors.push('必要事實或 claim ID 不符');
+   d.warnings=d.errors.filter(isLengthReminder);d.errors=d.errors.filter(e=>!isLengthReminder(e));
    const input={fact,article:d.article,target:c.cefr,stats:s};
    const r=await measured(`r${round}-${fact.story_id}:${edition}:review:0`,{...input,system:reviewer,model:plan.model},()=>provider.generateStructured({task:'review',system:reviewer,data:input,schema:editorialReviewSchema,model:plan.model,timeoutMs:60000,maxOutputTokens:1200}));
    d.reviewerMs=r.elapsedMs;d.reviewerCalls=r.apiCalls;d.assessment=r.reply?.data||null;if(r.error)d.errors.push('模型複核未完成：'+r.error);
@@ -69,8 +73,8 @@ try{
   record.complete=record.drafts.length===12&&record.drafts.every(d=>d.article&&d.assessment);
  }
  const best=[...rounds].filter(r=>r.drafts.length===12&&r.drafts.every(d=>d.article)).sort((a,b)=>b.firstPass-a.firstPass||a.apiMs-b.apiMs)[0];
- if(best){pdfRound=best.number;const issues=editionKeys.map(edition=>{const c=editions[edition];return{schemaVersion:'1.0' as const,issueDate:plan.issueDate,revision:100+best.number,edition,targetCefr:c.cefr,templateVersion:'newspaper-grid-2',storyCount:4 as const,readingRules:{min:c.min,max:c.max,avg:c.avg,maxSentence:c.sentenceMax},publishedAt:null,isDemo:false,reviewCopy:true,vocabularyPolicy:'tiered-v1' as const,articles:best.drafts.filter(d=>d.edition===edition).map(d=>d.article!)};});pdfFiles=await renderIssues(issues,resolve(directory,'pdf'),{allowUncalibratedReviewDraft:true});}
+ if(best){pdfRound=best.number;const issues=editionKeys.map(edition=>{const c=editions[edition];return{schemaVersion:'1.0' as const,issueDate:plan.issueDate,revision:100+best.number,edition,targetCefr:c.cefr,templateVersion:'newspaper-grid-2',storyCount:4 as const,readingRules:{min:c.min,max:c.max,avg:c.avg,maxSentence:c.sentenceMax},publishedAt:null,isDemo:false,reviewCopy:true,vocabularyPolicy:'tiered-v1' as const,lengthPolicy:'advisory' as const,articles:best.drafts.filter(d=>d.edition===edition).map(d=>d.article!)};});pdfFiles=await renderIssues(issues,resolve(directory,'pdf'),{allowUncalibratedReviewDraft:true});}
 }catch(e){const m=e instanceof Error?e.message:'';errorCode=/^[A-Z0-9_]+$/.test(m)?m:'BENCHMARK_FAILED';await save('failure.json',{message:m.replaceAll(key||'__no_key__','[redacted]').slice(0,1200)});}
 for(const record of rounds){record.apiMs=record.drafts.reduce((n,d)=>n+d.writerMs+d.reviewerMs,0);record.firstPass=record.drafts.filter(d=>d.firstPass).length;}
-await save('benchmark.json',{id,issueDate:plan.issueDate,model:plan.model,status:errorCode?'partial':'complete',rounds,facts,sourceMode:plan.sourceMode,sourceLabels:plan.stories.map((s:{id:string;sourceDateLabel?:string})=>({storyId:s.id,label:s.sourceDateLabel||null})),methodology:'Three independent first-draft rounds with identical facts, model and prompts; no cache shared between rounds, no manual copy edits, no semantic retries. API time includes network and schema repairs; PDF/layout time is excluded. Resume uses the original recorded timing.',totalCalls:budget.calls,totalTokens:budget.tokens,costStatus:'cost_unknown',estimatedUsd:null,pdfRound,pdfFiles,errorCode,published:false,databaseWritten:false});
+await save('benchmark.json',{id,lengthPolicy:'advisory',issueDate:plan.issueDate,model:plan.model,status:errorCode?'partial':'complete',rounds,facts,sourceMode:plan.sourceMode,sourceLabels:plan.stories.map((s:{id:string;sourceDateLabel?:string})=>({storyId:s.id,label:s.sourceDateLabel||null})),methodology:'Three independent first-draft rounds with identical facts, model and prompts; no cache shared between rounds, no manual copy edits, no semantic retries. API time includes network and schema repairs; PDF/layout time is excluded. Resume uses the original recorded timing.',totalCalls:budget.calls,totalTokens:budget.tokens,costStatus:'cost_unknown',estimatedUsd:null,pdfRound,pdfFiles,errorCode,published:false,databaseWritten:false});
 console.log(JSON.stringify({status:errorCode?'partial':'complete',totalCalls:budget.calls,pdfRound,errorCode}));if(errorCode)process.exitCode=1;

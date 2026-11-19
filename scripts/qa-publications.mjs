@@ -5,6 +5,7 @@ import {setTimeout} from 'node:timers/promises';
 import {chromium} from 'playwright';
 import {PDFDocument} from 'pdf-lib';
 const catalog=JSON.parse(await readFile('content/publications/catalog.json','utf8'));
+const benchmarks=JSON.parse(await readFile('content/benchmarks/index.json','utf8')).runs;
 const dates=[...new Set(catalog.releases.map(r=>r.editions[0].issueDate))].sort().reverse();
 const current=[...catalog.releases].sort((a,b)=>b.editions[0].issueDate.localeCompare(a.editions[0].issueDate)||b.editions[0].revision-a.editions[0].revision)[0];
 const origin='http://127.0.0.1:4320';let logs='',browser;
@@ -36,6 +37,23 @@ try{
    assert.equal(await page.locator('input[type=password]').count(),0);
    await page.screenshot({path:`output/publication-qa/review-${p.id}-${width}.png`,fullPage:true});
   }
+ }
+ await page.goto(origin+'/review');assert.equal(new URL(page.url()).pathname,'/review');
+ for(const b of benchmarks){
+  for(const width of [375,1440]){
+   await page.setViewportSize({width,height:1000});await page.goto(origin+'/review/benchmarks/'+b.id);
+   assert.equal(await page.locator('.article').count(),4);assert.equal(await page.locator('.review-publish').count(),0);
+   for(const name of ['國中版','高中版','小學版']){await page.getByRole('button',{name:new RegExp(name)}).click();assert.equal(await page.locator('.article').count(),4);}
+   const article=page.locator('.article').first(),control=article.locator('.story-regeneration');await control.locator('summary').first().click();
+   await control.getByLabel('想改善的地方').fill('以有來源的具體細節提升趣味性，保持事實與難度。');
+   await control.getByRole('button',{name:'建立重新生成要求',exact:true}).click();
+   const request=JSON.parse(await control.getByLabel('request_json',{exact:true}).inputValue());assert.equal(request.base.fingerprint,b.fingerprint);assert.equal(request.mode,'rewrite');assert.equal(request.editions.length,3);
+   await control.getByLabel('處理方式').selectOption('replace');await control.getByLabel('新主題類別').selectOption('games');
+   assert.ok(await control.getByText('這個類別目前待補來源。',{exact:false}).isVisible());assert.ok(await control.getByRole('button',{name:'建立重新生成要求',exact:true}).isDisabled());
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+   await page.screenshot({path:`output/publication-qa/benchmark-${b.id}-${width}.png`,fullPage:true});
+  }
+  for(const f of b.pdfFiles){const response=await fetch(origin+f.path);assert.equal(response.status,200);assert.equal((await PDFDocument.load(await response.arrayBuffer())).getPageCount(),f.pages);}
  }
  await page.goto(origin+'/login');assert.equal(await page.locator('input[type=password]').count(),0);
  const blocked=await fetch(origin+'/api/admin/jobs',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:'{}'});assert.equal(blocked.status,409);

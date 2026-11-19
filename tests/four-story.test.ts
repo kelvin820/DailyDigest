@@ -27,6 +27,9 @@ test('four-story publication gate needs twelve actual reviews and at least three
   const files=issues.flatMap(e=>['color','ink'].map(mode=>({edition:e.edition,mode,pages:2,noOverflow:true,textVerified:true,fontsEmbedded:true,revision:e.revision,issueDate:e.issueDate,templateVersion:e.templateVersion,contentHash:hash(e)})));
   const base={editions:issues,facts:facts as unknown as import('zod').z.infer<typeof factSchema>[],reviews,files,live:false};
   assert.deepEqual(publishGate(base).errors,[]);assert.equal(publishGate({...base,reviews:reviews.slice(1)}).pass,false);
+  assert.equal(publishGate({...base,files:files.map((f,i)=>({...f,pages:i%2?3:1}))}).pass,true);
+  assert.equal(publishGate({...base,files:files.map((f,i)=>({...f,qualityValidated:i!==0}))}).pass,false);
+  assert.equal(publishGate({...base,files:files.map(f=>({...f,pages:0}))}).pass,false);
   const mixed=structuredClone(issues);mixed[1].storyCount=8;
   assert.equal(publishGate({...base,editions:mixed}).pass,false);
 });

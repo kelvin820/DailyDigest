@@ -1,9 +1,9 @@
 # DayDay Daily Digest
 Four stories. Every day. Your level.
 
-Vercel：<https://daily-digest-wine-two.vercel.app/>。預設直接閱讀最新已發布的四則新聞，可切換小學／國中／高中三版、記錄已讀及下載六份兩頁 PDF。**一般訪客不需要登入或 API key。新稿先進入審查頁，核准發布成功後才換首頁。**
+Vercel：<https://daily-digest-wine-two.vercel.app/>。預設直接閱讀最新已發布的四則新聞，可切換小學／國中／高中三版、記錄已讀及下載六份 PDF。**一般訪客不需要登入或 API key。新稿先進入審查頁，核准發布成功後才換首頁。**
 
-三版表頭維持使用者已選的字體；單字依程度另選，AI 插畫依讀者年齡調整。當前內容來自 NVIDIA 生成、編輯校稿與模型複核，沒有在開啟網頁時重新生成或寫入資料庫。原始模型回覆與審閱紀錄保留在私有 artifact；僅將可閱讀的定稿、核准圖片與 PDF 隨網站部署。來源及待審狀態見 [reading preview](content/reading-preview/README.md)，製作結果見 [FOUR_STORY_TRIAL_RESULT](docs/FOUR_STORY_TRIAL_RESULT.md)。
+三版表頭維持使用者已選的字體；單字依程度另選，AI 插畫依讀者年齡調整。當前內容來自 NVIDIA 生成、編輯校稿與模型複核，沒有在開啟網頁時重新生成或寫入資料庫。原始模型回覆與審閱紀錄保留在私有 artifact；可閱讀稿件、原始比較稿、核准圖片與 PDF 隨網站部署，狀態明確區分待審與已發布。來源及待審狀態見 [reading preview](content/reading-preview/README.md)，製作結果見 [FOUR_STORY_TRIAL_RESULT](docs/FOUR_STORY_TRIAL_RESULT.md)。
 
 ## 審查與發刊
 

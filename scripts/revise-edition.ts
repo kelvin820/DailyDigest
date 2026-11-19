@@ -23,7 +23,7 @@ let calls=base.production.totalModelCalls,tokens=base.production.totalTokens,pdf
 const records:Record<string,unknown>=Object.create(null);
 if(process.env.EDITION_RESUME_DIR){const previous=resolve(process.env.EDITION_RESUME_DIR);if(hash(JSON.parse(await readFile(resolve(previous,'context.json'),'utf8')))!==hash(context))throw Error('REVISION_CONTEXT_CHANGED');Object.assign(records,validatedPreviewCheckpoints(JSON.parse(await readFile(resolve(previous,'checkpoints.json'),'utf8'))));const report=JSON.parse(await readFile(resolve(previous,'report.json'),'utf8'));if(report.ledger?.some((e:{status:string})=>e.status==='usage_unknown'))throw Error('USAGE_RECONCILIATION_REQUIRED');calls=report.totalModelCalls;tokens=report.totalTokens;}
 const budget=new Budget({usd:2,maxCalls:70-calls,maxTokens:150000-tokens,inputRate:undefined,outputRate:undefined});
-const facts=structuredClone(base.facts),issues=structuredClone(base.editions).map(i=>({...i,revision:plan.revision,reviewCopy:true,publishedAt:null})),reviews=structuredClone(base.reviews);
+const facts=structuredClone(base.facts),issues=structuredClone(base.editions).map(i=>({...i,revision:plan.revision,lengthPolicy:'advisory' as const,reviewCopy:true,publishedAt:null})),reviews=structuredClone(base.reviews);
 await save('context.json',context);await save('checkpoints.json',records);
 try{
  for(const addition of plan.evidenceAdditions||[]){const f=facts.find(f=>f.story_id===addition.storyId);if(!f)throw Error('UNKNOWN_CORRECTION_STORY');f.sources[0].evidence+='\n'+addition.quote;if(addition.claim)f.claims.push({...addition.claim,supporting_source_ids:[f.sources[0].source_id],evidence_ref:f.sources[0].source_id});factSchema.parse(f);}

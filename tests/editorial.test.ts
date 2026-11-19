@@ -90,6 +90,21 @@ test('invalid lengths get at most two revisions and no wasted reviewer call', as
   await assert.rejects(produceEditions({ ...options, provider, store: memoryStore() }), /NEEDS_REVIEW/);
   assert.equal(calls, 3);
 });
+test('new four-story production treats length as guidance and never spends extra calls only for counts',async()=>{
+ let writes=0,reviews=0;
+ const provider:TextModelProvider={async generateStructured(input){
+  if(input.task==='review'){reviews++;return{data:input.schema.parse(goodReview),usage:{input_tokens:0,output_tokens:0}};}
+  writes++;assert.equal(input.task,'write');assert.match(input.system,/soft readability guides/);assert.doesNotMatch(input.system,/TRUSTED REVISION REQUIREMENT|FINAL BODY CHECK/);
+  const {fact,previousLevelTerms=[]}=input.data as {fact:typeof facts[number];previousLevelTerms:string[]};
+  const edition=input.system.match(/Audience edition: (elementary|junior|senior)/)?.[1] as 'elementary'|'junior'|'senior';
+  const a=demoIssue(edition).articles.find(a=>a.storyId===fact.story_id)!,body=Array(3).fill(a.bodyParagraphs.join(' ')).join(' ');
+  const vocabulary=[...new Set(body.match(/[A-Za-z]{4,}/g))].filter(t=>!previousLevelTerms.some(p=>learningTermKey(p)===learningTermKey(t))).slice(0,2).map(term=>({term,definitionEn:'Synthetic test definition',meaningZhHant:'測試詞義'}));
+  return{data:input.schema.parse({headline:a.headline,body_paragraphs:[body],vocabulary,used_claim_ids:['core'],omitted_optional_claim_ids:[],editorial_flags:[]}),usage:{input_tokens:0,output_tokens:0}};
+ }};
+ const content=await produceEditions({...options,facts:facts.slice(0,4),provider,store:memoryStore()});
+ assert.equal(writes,12);assert.equal(reviews,12);
+ for(const i of content.editions){assert.equal(i.lengthPolicy,'advisory');assert.ok(i.articles.every(a=>a.wordCount>i.readingRules!.max));assert.equal(editionSchema.safeParse(i).success,true);}
+});
 test('writer failure and invented claims cannot turn into publication', async () => {
   const provider: TextModelProvider = { async generateStructured(input) {
     return { data: input.schema.parse({ failure: { code: 'insufficient_evidence', reason: 'Test only' } }),

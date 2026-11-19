@@ -1,1 +1,3368 @@
-{"runs":[]}
+{
+  "runs": [
+    {
+      "id": "2026-11-19-new-four",
+      "issueDate": "2026-11-19",
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "status": "complete",
+      "rounds": [
+        {
+          "number": 1,
+          "drafts": [
+            {
+              "storyId": "voyager-signal",
+              "edition": "elementary",
+              "article": {
+                "storyId": "voyager-signal",
+                "order": 1,
+                "category": "science",
+                "contentKind": "news",
+                "headline": "NASA Checks Voyager 1 Signal From Far Away",
+                "bodyParagraphs": [
+                  "NASA says Voyager 1 sends a carrier signal but not science data. Engineers study the problem. They plan to use the signal and path math to check the one-light-day distance on November 19. A radio wave takes 24 hours to reach the probe and 24 hours to come back to Earth."
+                ],
+                "wordCount": 51,
+                "vocabulary": [
+                  {
+                    "term": "carrier signal",
+                    "definitionEn": "a simple radio wave that shows the spacecraft is still working",
+                    "meaningZhHant": "載波訊號；顯示太空船仍在運作的簡單無線電波"
+                  },
+                  {
+                    "term": "trajectory",
+                    "definitionEn": "the path a spacecraft follows through space",
+                    "meaningZhHant": "軌道；太空船在太空中飛行的路徑"
+                  }
+                ],
+                "image": {
+                  "assetId": "science",
+                  "alt": "science original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "NASA",
+                    "url": "https://science.nasa.gov/blogs/voyager/2026/11/18/voyager-1-engineers-analyze-data-issue-ready-to-confirm-light-day/",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 7046,
+              "reviewerMs": 9139,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "句長超過目標",
+                "單字未實際出現在正文"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "path math",
+                    "reason": "The phrase 'path math' is an informal simplification of 'trajectory calculations' and may confuse A1 learners; 'trajectory' is already taught in the glossary.",
+                    "claim_ids": [
+                      "claim-2"
+                    ],
+                    "suggested_action": "Replace 'path math' with 'trajectory calculations' or 'calculations of its path' for consistency with the vocabulary list."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "one-light-day distance",
+                    "reason": "The term 'one-light-day distance' is technical and not explained in the body or glossary; A1 readers may not grasp it.",
+                    "claim_ids": [
+                      "claim-2"
+                    ],
+                    "suggested_action": "Add a brief explanation such as 'the distance light travels in one day' or include 'light-day' in the vocabulary list."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 4,
+                  "reason": "The article covers a real NASA mission with a concrete space fact (24-hour signal travel) that appeals to children's curiosity. It delivers the key claims accurately in very short sentences. The structure is simple, but 'path math' and 'one-light-day distance' assume background knowledge not yet introduced.",
+                  "suggestion": "將 'path math' 改為 'trajectory calculations' 或 '軌道計算'，並補充 'one-light-day distance' 的簡單說明（如「光一天行進的距離」），讓 A1 讀者更易理解。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "sierra-snow",
+              "edition": "elementary",
+              "article": {
+                "storyId": "sierra-snow",
+                "order": 2,
+                "category": "nature",
+                "contentKind": "news",
+                "headline": "Early Snow Falls in California Mountains",
+                "bodyParagraphs": [
+                  "NASA reports an early storm brought snow to the Sierra Nevada on November 13, 2026. The Terra satellite took a picture of fresh snow on November 14. Two days before, the mountains were mostly bare. About 30 centimeters of snow fell at Donner Pass. The National Weather Service warned of more snow from November 18 to 20."
+                ],
+                "wordCount": 57,
+                "vocabulary": [
+                  {
+                    "term": "satellite",
+                    "definitionEn": "a machine that goes around Earth and takes pictures",
+                    "meaningZhHant": "衛星"
+                  },
+                  {
+                    "term": "storm",
+                    "definitionEn": "bad weather with strong wind and rain or snow",
+                    "meaningZhHant": "暴風雪"
+                  }
+                ],
+                "image": {
+                  "assetId": "nature",
+                  "alt": "nature original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "NASA Earth Observatory",
+                    "url": "https://science.nasa.gov/earth/earth-observatory/sierra-snow-season-spins-up/",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": null
+              },
+              "writerMs": 3419,
+              "reviewerMs": 7034,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "句長超過目標"
+              ],
+              "assessment": {
+                "factual_status": "needs_revision",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "major",
+                    "span": "About 30 centimeters of snow fell at Donner Pass.",
+                    "reason": "The source states the 30 cm snowfall occurred from November 18 to 20, not on November 13. The article incorrectly attributes the date.",
+                    "claim_ids": [
+                      "claim-3"
+                    ],
+                    "suggested_action": "Change to: 'About 30 centimeters of snow fell at Donner Pass from November 18 to 20.'"
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "storm",
+                    "reason": "The Chinese meaning '暴風雪' (blizzard) is too specific; the English definition covers wind with rain or snow. A more accurate translation is '暴風雨/雪' or '風暴'.",
+                    "claim_ids": [],
+                    "suggested_action": "Update meaningZhHant to '暴風雨/雪' or '風暴'."
+                  }
+                ],
+                "publish_recommendation": "revise",
+                "readership": {
+                  "interest": 4,
+                  "information": 3,
+                  "readability": 5,
+                  "reason": "The article presents a concrete, timely weather event with a satellite image comparison that is engaging for children. However, the factual error about the snowfall date reduces information accuracy. The structure is simple and clear, with short sentences suitable for A1 readers.",
+                  "suggestion": "修正唐納山口降雪日期為 11 月 18 日至 20 日，並調整「storm」的中文翻譯為「暴風雨/雪」或「風暴」，即可發布。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "safe-toilets",
+              "edition": "elementary",
+              "article": {
+                "storyId": "safe-toilets",
+                "order": 3,
+                "category": "world",
+                "contentKind": "knowledge",
+                "headline": "World Toilet Day 2026: Safe Toilets, Equal Futures",
+                "bodyParagraphs": [
+                  "The United Nations marks World Toilet Day on November 19. The 2026 theme is Safe toilets. Equal futures. It shows how clean toilets help women and girls go to school and work. The UN says 3.4 billion people still do not have safe toilets."
+                ],
+                "wordCount": 44,
+                "vocabulary": [
+                  {
+                    "term": "observe",
+                    "definitionEn": "to celebrate or mark a special day",
+                    "meaningZhHant": "紀念；慶祝"
+                  },
+                  {
+                    "term": "sanitation",
+                    "definitionEn": "systems for clean water and safe toilets",
+                    "meaningZhHant": "環境衛生；公共衛生設施"
+                  }
+                ],
+                "image": {
+                  "assetId": "world",
+                  "alt": "world original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "UN DESA",
+                    "url": "https://desapublications.un.org/un-desa-voice/more-from-undesa/november-2026/world-toilet-day-2026-safe-toilets-equal-futures",
+                    "publishedAt": "2026-11-01T00:00:00Z",
+                    "publishedAtPrecision": "month"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 3979,
+              "reviewerMs": 7960,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "單字未實際出現在正文"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: observe",
+                    "reason": "The definition 'to celebrate or mark a special day' is correct but the example context is a UN observance day, which is more formal than 'celebrate'. For A1 learners, 'mark' or 'hold' might be clearer.",
+                    "claim_ids": [],
+                    "suggested_action": "Consider adjusting definition to 'to officially mark or hold a special day' for better precision at A1 level."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: sanitation",
+                    "reason": "The definition 'systems for clean water and safe toilets' is accurate but slightly advanced for A1. The Chinese meaning '環境衛生；公共衛生設施' is appropriate for Taiwan usage.",
+                    "claim_ids": [],
+                    "suggested_action": "Simplify English definition to 'clean water and toilet systems' for A1 accessibility."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 5,
+                  "readability": 5,
+                  "reason": "The article covers a concrete UN observance day with a clear theme and striking statistic (3.4 billion people lacking safe toilets) that is highly relevant to children's understanding of global inequality. The connection to girls' education makes it personally relatable. The single-paragraph structure with short sentences (avg 8.8 words) is ideal for A1 readers. No background knowledge is assumed beyond basic school/work concepts.",
+                  "suggestion": "文章結構清晰、資訊量適中，適合A1程度學習者。建議保持現有簡潔風格，若未來擴充可加入具體例子（如：某國女孩因無廁所而輟學）增加代入感。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "lincoln-commemoration",
+              "edition": "elementary",
+              "article": {
+                "storyId": "lincoln-commemoration",
+                "order": 4,
+                "category": "culture",
+                "contentKind": "news",
+                "headline": "Gettysburg Plans Free Events for Lincoln Speech Anniversary",
+                "bodyParagraphs": [
+                  "Gettysburg will hold Dedication Day on November 19. The events mark the 163rd anniversary of Abraham Lincoln's famous Gettysburg Address. All activities are free and need no tickets. A historical recreation includes a walk from the David Wills House to the National Cemetery. People can also watch the ceremony online through a live stream."
+                ],
+                "wordCount": 55,
+                "vocabulary": [
+                  {
+                    "term": "anniversary",
+                    "definitionEn": "the date when an event happened in a past year",
+                    "meaningZhHant": "週年紀念日"
+                  },
+                  {
+                    "term": "recreation",
+                    "definitionEn": "an event that copies something from history",
+                    "meaningZhHant": "歷史重現活動"
+                  }
+                ],
+                "image": {
+                  "assetId": "culture",
+                  "alt": "culture original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "US National Park Service",
+                    "url": "https://www.nps.gov/gett/planyourvisit/dedication-day.htm",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 2880,
+              "reviewerMs": 6589,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "句長超過目標"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: recreation",
+                    "reason": "The definition 'an event that copies something from history' is understandable but slightly imprecise; 're-enactment' or 'historical re-enactment' is the more common term for this context. The Chinese translation '歷史重現活動' is appropriate.",
+                    "claim_ids": [],
+                    "suggested_action": "Consider changing the term to 're-enactment' with definition 'a performance that recreates a historical event' and keep the Chinese '歷史重現活動' or '歷史重演'."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 5,
+                  "readability": 5,
+                  "reason": "The article covers a concrete, real-world event (Lincoln's Gettysburg Address anniversary) with a clear free-access angle that is relevant to families. It delivers the key facts (date, cost, activity, streaming) in 55 words with no filler. Sentences are short, vocabulary is controlled, and background knowledge required is minimal.",
+                  "suggestion": "文章已適合 A1 程度發布，建議僅微調 vocabulary 術語為 re-enactment 以更精確對應歷史重現語境，其餘無需修改。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "voyager-signal",
+              "edition": "junior",
+              "article": {
+                "storyId": "voyager-signal",
+                "order": 1,
+                "category": "science",
+                "contentKind": "news",
+                "headline": "NASA Checks Voyager 1 Signal From Far Away",
+                "bodyParagraphs": [
+                  "NASA says Voyager 1 is sending a carrier signal but not its science and engineering data. Engineers are investigating the cause of the problem. The space agency plans to use the signal and trajectory calculations to confirm the one-light-day distance on November 19. A radio wave takes about 24 hours to travel each way between Earth and the spacecraft. The data issue was first noticed on November 14, and fixing it may take weeks or longer."
+                ],
+                "wordCount": 76,
+                "vocabulary": [
+                  {
+                    "term": "carrier signal",
+                    "definitionEn": "a basic radio wave that shows the spacecraft is still working",
+                    "meaningZhHant": "載波訊號；顯示太空船仍在運作的基本無線電波"
+                  },
+                  {
+                    "term": "trajectory",
+                    "definitionEn": "the path that a spacecraft follows through space",
+                    "meaningZhHant": "軌道；太空船在太空中飛行的路徑"
+                  }
+                ],
+                "image": {
+                  "assetId": "science",
+                  "alt": "science original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "NASA",
+                    "url": "https://science.nasa.gov/blogs/voyager/2026/11/18/voyager-1-engineers-analyze-data-issue-ready-to-confirm-light-day/",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 4197,
+              "reviewerMs": 7382,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "句長超過目標",
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: carrier signal",
+                    "reason": "The English definition 'a basic radio wave that shows the spacecraft is still working' is slightly imprecise; a carrier signal is an unmodulated wave used as a reference, not necessarily proof of full operation. The Traditional Chinese meaning '載波訊號；顯示太空船仍在運作的基本無線電波' is acceptable but could note it is unmodulated.",
+                    "claim_ids": [],
+                    "suggested_action": "Refine definition to 'an unmodulated radio wave used to confirm the spacecraft transmitter is on' and adjust Chinese to '載波訊號；未調變的無線電波，用來確認太空船發射機仍在運作'."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: trajectory",
+                    "reason": "The definition and Chinese meaning are accurate. No factual issue; included for completeness.",
+                    "claim_ids": [],
+                    "suggested_action": "No change needed."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 4,
+                  "reason": "The article presents a concrete, real-time space mission update with a clear takeaway: Voyager 1 is alive but not sending science data, and NASA will use its carrier signal to confirm the one-light-day distance. The 76-word length and simple sentence structure suit A2 readers. Background knowledge (what Voyager 1 is, why 24-hour light travel matters) is minimal but helpful; the piece does not assume it.",
+                  "suggestion": "保持現有結構；若想加強 A2 讀者理解，可在開頭補一句『旅行者 1 號是飛行最遠的人造物體』，並將『carrier signal』中文補充說明為『未帶資料的單純電波』，避免誤以為已修復。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "sierra-snow",
+              "edition": "junior",
+              "article": {
+                "storyId": "sierra-snow",
+                "order": 2,
+                "category": "nature",
+                "contentKind": "news",
+                "headline": "Early Snow Falls in California Mountains",
+                "bodyParagraphs": [
+                  "NASA says a storm brought snow to the Sierra Nevada on November 13, 2026. The Terra satellite took a picture of fresh snow on November 14. Two days before, the mountains looked mostly bare. About 30 centimeters of snow fell at Donner Pass on November 13. The National Weather Service warned that more snow would come during November 18 to 20."
+                ],
+                "wordCount": 61,
+                "vocabulary": [
+                  {
+                    "term": "satellite",
+                    "definitionEn": "a machine that orbits Earth and takes pictures or collects data",
+                    "meaningZhHant": "衛星"
+                  },
+                  {
+                    "term": "storm",
+                    "definitionEn": "a period of bad weather with strong wind, rain, or snow",
+                    "meaningZhHant": "暴風雨"
+                  }
+                ],
+                "image": {
+                  "assetId": "nature",
+                  "alt": "nature original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "NASA Earth Observatory",
+                    "url": "https://science.nasa.gov/earth/earth-observatory/sierra-snow-season-spins-up/",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": null
+              },
+              "writerMs": 5145,
+              "reviewerMs": 16782,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "needs_revision",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "major",
+                    "span": "About 30 centimeters of snow fell at Donner Pass on November 13.",
+                    "reason": "The source evidence states 'Nearly 12 inches (30 centimeters) of snow fell at Donner Pass from November 18 to 20', not on November 13. The article misstates the date of this snowfall.",
+                    "claim_ids": [
+                      "claim-3"
+                    ],
+                    "suggested_action": "Correct the date to November 18–20, or remove the specific amount/date if the November 13 snowfall amount is not provided in the source."
+                  },
+                  {
+                    "severity": "major",
+                    "span": "The National Weather Service warned that more snow would come during November 18 to 20.",
+                    "reason": "The source evidence mentions snow falling from November 18 to 20, but does not state that the National Weather Service issued a warning for this period. This attribution is unsupported.",
+                    "claim_ids": [
+                      "claim-4"
+                    ],
+                    "suggested_action": "Remove the attribution to the National Weather Service, or clarify that the forecast/snowfall is reported by NASA Earth Observatory without citing a specific NWS warning."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: storm",
+                    "reason": "The Chinese meaning '暴風雨' implies a violent storm with wind and rain, but the context is a snowstorm. A more precise term would be '暴風雪' or '雪暴'.",
+                    "claim_ids": [],
+                    "suggested_action": "Change meaningZhHant to '暴風雪' or '雪暴' to match the snow context."
+                  }
+                ],
+                "publish_recommendation": "revise",
+                "readership": {
+                  "interest": 4,
+                  "information": 3,
+                  "readability": 4,
+                  "reason": "The article covers a concrete, timely event (early snow in the Sierra Nevada) with satellite imagery, which is engaging for children. However, it contains two significant factual errors (wrong date for snowfall amount, unsupported NWS warning) that reduce information reliability. The structure is simple and clear, with manageable vocabulary for A2.",
+                  "suggestion": "修正唐納山口降雪日期與數據來源，移除未經證實的國家氣象局警告說法。詞彙「storm」的中文翻譯建議改為「暴風雪」以符合降雪情境。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "safe-toilets",
+              "edition": "junior",
+              "article": {
+                "storyId": "safe-toilets",
+                "order": 3,
+                "category": "world",
+                "contentKind": "knowledge",
+                "headline": "World Toilet Day 2026 Focuses on Safe Toilets and Equal Futures",
+                "bodyParagraphs": [
+                  "The United Nations observes World Toilet Day every year on November 19. The 2026 campaign uses the theme Safe toilets. Equal futures. It highlights the link between sanitation and gender equality. The UN says safe toilets help women and girls take part in school, work and society. UN DESA reports that 3.4 billion people still lack safe toilets. UN-Water coordinates the observance, which has been officially observed by the UN since 2013."
+                ],
+                "wordCount": 72,
+                "vocabulary": [
+                  {
+                    "term": "sanitation",
+                    "definitionEn": "systems and services that keep people healthy by removing waste safely",
+                    "meaningZhHant": "環境衛生；公共衛生設施"
+                  },
+                  {
+                    "term": "gender equality",
+                    "definitionEn": "the state where people of all genders have the same rights and opportunities",
+                    "meaningZhHant": "性別平等"
+                  }
+                ],
+                "image": {
+                  "assetId": "world",
+                  "alt": "world original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "UN DESA",
+                    "url": "https://desapublications.un.org/un-desa-voice/more-from-undesa/november-2026/world-toilet-day-2026-safe-toilets-equal-futures",
+                    "publishedAt": "2026-11-01T00:00:00Z",
+                    "publishedAtPrecision": "month"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 3650,
+              "reviewerMs": 11328,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: sanitation",
+                    "reason": "The Traditional Chinese meaning '環境衛生；公共衛生設施' is acceptable but could be more precise for A2 learners by using '環境衛生（處理廢棄物的系統）' to match the English definition's focus on waste removal systems.",
+                    "claim_ids": [],
+                    "suggested_action": "Update meaningZhHant to '環境衛生（處理廢棄物的系統）' for clearer alignment with the English definition."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: gender equality",
+                    "reason": "The term 'gender equality' is a fixed phrase; the Traditional Chinese '性別平等' is correct and standard. No change needed, but note that A2 learners may benefit from seeing it used in a full sentence context.",
+                    "claim_ids": [],
+                    "suggested_action": "Consider adding a short example sentence in the glossary or article body for reinforcement, e.g., 'Gender equality means boys and girls have the same chances.'"
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 5,
+                  "readability": 5,
+                  "reason": "The article presents a clear, concrete global observance with a relatable theme (toilets, school, gender equality) that connects to children's daily life. It delivers five supported facts in 72 words with no filler. Structure is simple, sentences are short, and background assumptions are minimal — ideal for A2 readers.",
+                  "suggestion": "保持現有結構與語氣；若想加強詞彙學習，可在文中或詞彙表加入一句簡單例句說明 sanitation 或 gender equality 的具體情境。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "lincoln-commemoration",
+              "edition": "junior",
+              "article": {
+                "storyId": "lincoln-commemoration",
+                "order": 4,
+                "category": "culture",
+                "contentKind": "news",
+                "headline": "Gettysburg Plans Free Events for Lincoln Speech Anniversary",
+                "bodyParagraphs": [
+                  "Gettysburg will hold Dedication Day on November 19 to mark the 163rd anniversary of Abraham Lincoln's famous Gettysburg Address. The National Park Service says all events are free and no tickets are needed. A historical recreation will show a procession from the David Wills House to the National Cemetery. Community Media plans to stream the ceremony online for people who cannot attend."
+                ],
+                "wordCount": 63,
+                "vocabulary": [
+                  {
+                    "term": "procession",
+                    "definitionEn": "a line of people walking together in a formal way",
+                    "meaningZhHant": "遊行；隊伍"
+                  },
+                  {
+                    "term": "stream",
+                    "definitionEn": "to send video or audio over the internet live",
+                    "meaningZhHant": "串流；直播"
+                  }
+                ],
+                "image": {
+                  "assetId": "culture",
+                  "alt": "culture original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "US National Park Service",
+                    "url": "https://www.nps.gov/gett/planyourvisit/dedication-day.htm",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 2283,
+              "reviewerMs": 6411,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "句長超過目標"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: procession",
+                    "reason": "Traditional Chinese meaning '遊行' commonly implies a protest march or parade; '行列' or '儀仗隊伍' better fits a solemn historical recreation.",
+                    "claim_ids": [],
+                    "suggested_action": "Change meaningZhHant to '行列；儀仗隊伍' for the sense of a formal ceremonial walk."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: stream",
+                    "reason": "Traditional Chinese meaning '串流' is a technical noun; '直播' (live broadcast) matches the article's context of watching the ceremony online.",
+                    "claim_ids": [],
+                    "suggested_action": "Change meaningZhHant to '直播' or '線上直播' to reflect live viewing."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 5,
+                  "reason": "The article gives a concrete, child-relevant event (free, streamed, historical recreation) with a clear takeaway. Structure is simple, sentences are short, and background knowledge needed is minimal.",
+                  "suggestion": "No rewrite needed; only adjust the two Chinese glosses as noted above."
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "voyager-signal",
+              "edition": "senior",
+              "article": {
+                "storyId": "voyager-signal",
+                "order": 1,
+                "category": "science",
+                "contentKind": "news",
+                "headline": "NASA Checks Voyager 1 Signal as Probe Remains Far From Earth",
+                "bodyParagraphs": [
+                  "NASA says Voyager 1 is still sending a carrier signal, but the spacecraft has stopped transmitting its science and engineering data. Engineers are now studying the cause of this problem, which was first noticed on November 14. The team plans to use the carrier signal and trajectory calculations to confirm the one-light-day distance on November 19. A radio wave takes about 24 hours to travel each way between Earth and the distant probe. Because of this long delay, diagnosing the issue may take weeks or longer before any solution can be tested."
+                ],
+                "wordCount": 92,
+                "vocabulary": [
+                  {
+                    "term": "carrier signal",
+                    "definitionEn": "A basic radio wave sent by the spacecraft to show it is still working, without carrying detailed information.",
+                    "meaningZhHant": "載波訊號"
+                  },
+                  {
+                    "term": "trajectory",
+                    "definitionEn": "The calculated path that a spacecraft follows through space.",
+                    "meaningZhHant": "軌跡"
+                  }
+                ],
+                "image": {
+                  "assetId": "science",
+                  "alt": "science original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "NASA",
+                    "url": "https://science.nasa.gov/blogs/voyager/2026/11/18/voyager-1-engineers-analyze-data-issue-ready-to-confirm-light-day/",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 3692,
+              "reviewerMs": 7488,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "句長超過目標",
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "meaningZhHant: \"載波訊號\"",
+                    "reason": "Traditional Chinese term is correct but could include a brief note that it is a technical term used in space communications, to aid learner understanding.",
+                    "claim_ids": [],
+                    "suggested_action": "Add a short parenthetical gloss in the vocabulary entry, e.g., \"載波訊號 (太空通訊專用術語)\"."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "meaningZhHant: \"軌跡\"",
+                    "reason": "The term \"軌跡\" is general; in space context \"飛行軌跡\" or \"軌道\" is more precise. Current translation is acceptable but slightly vague.",
+                    "claim_ids": [],
+                    "suggested_action": "Consider using \"飛行軌跡\" or \"軌道\" for clearer space-context meaning."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 4,
+                  "reason": "The article presents a concrete, real-time space mission update with a clear takeaway: Voyager 1 is still alive but not sending science data, and engineers are using a basic signal to confirm its extreme distance. The 24-hour light-time detail is engaging and relevant to children interested in space. Structure is simple, sentences are short, and background assumptions (what Voyager is, why distance matters) are minimal but sufficient for B1 readers.",
+                  "suggestion": "Keep as is; optionally add one sentence explaining what a carrier signal is in everyday terms (e.g., \"like a heartbeat\") to boost interest and comprehension for younger readers."
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "sierra-snow",
+              "edition": "senior",
+              "article": {
+                "storyId": "sierra-snow",
+                "order": 2,
+                "category": "nature",
+                "contentKind": "news",
+                "headline": "Early Snow Falls in California's Sierra Nevada Mountains",
+                "bodyParagraphs": [
+                  "NASA reported that one of the first major snowfalls of the water year arrived in California's Sierra Nevada on November 13, 2026. The agency's Terra satellite captured fresh snow covering the mountains on the morning of November 14. Just two days earlier, the same peaks appeared mostly bare in satellite images. The MODIS instrument on the Terra spacecraft took these detailed pictures from space. According to the Central Sierra Snow Laboratory, about 30 centimeters of snow fell at Donner Pass during the storm. The National Weather Service also issued a warning for additional mountain snow from November 18 through 20. This early snowfall marks the start of the seasonal snowpack that helps supply water to the region later in the year."
+                ],
+                "wordCount": 121,
+                "vocabulary": [
+                  {
+                    "term": "snowpack",
+                    "definitionEn": "the layers of snow that build up on the ground over winter and melt slowly in spring",
+                    "meaningZhHant": "積雪層"
+                  },
+                  {
+                    "term": "instrument",
+                    "definitionEn": "a tool or device designed for a specific scientific purpose, such as measuring or observing",
+                    "meaningZhHant": "儀器"
+                  }
+                ],
+                "image": {
+                  "assetId": "nature",
+                  "alt": "nature original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "NASA Earth Observatory",
+                    "url": "https://science.nasa.gov/earth/earth-observatory/sierra-snow-season-spins-up/",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": null
+              },
+              "writerMs": 4904,
+              "reviewerMs": 6190,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "字數 121，目標 90–120"
+              ],
+              "assessment": {
+                "factual_status": "needs_revision",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "major",
+                    "span": "About 30 centimeters of snow fell at Donner Pass during the storm.",
+                    "reason": "The source states 30 cm fell from November 18–20, not on November 13. The article conflates the two events.",
+                    "claim_ids": [
+                      "claim-3"
+                    ],
+                    "suggested_action": "Correct the snowfall amount to the November 18–20 period and separate it from the November 13 event."
+                  },
+                  {
+                    "severity": "major",
+                    "span": "The National Weather Service also issued a warning for additional mountain snow from November 18 through 20.",
+                    "reason": "The source says 'from November 18 to 20' (nearly 12 inches fell), not that a warning was issued. The article misrepresents observed snowfall as a forecast warning.",
+                    "claim_ids": [
+                      "claim-4"
+                    ],
+                    "suggested_action": "Replace the warning claim with the observed snowfall amount for November 18–20, or remove if unsupported."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "The MODIS instrument on the Terra spacecraft took these detailed pictures from space.",
+                    "reason": "Claim-5 is optional and not must_keep; the sentence is accurate but could be omitted without loss.",
+                    "claim_ids": [
+                      "claim-5"
+                    ],
+                    "suggested_action": "Optional: keep or remove for conciseness."
+                  }
+                ],
+                "publish_recommendation": "revise",
+                "readership": {
+                  "interest": 4,
+                  "information": 3,
+                  "readability": 4,
+                  "reason": "The article covers a concrete, timely event with satellite imagery that appeals to children. However, factual errors (conflating two snow events, misstating a warning) reduce information quality. Structure and vocabulary are clear for B1.",
+                  "suggestion": "修正雪量日期與來源：將 30 公分降雪歸屬 11 月 18–20 日，並刪除或更正「氣象局發布警告」的敘述。保留衛星影像對比與積雪層概念，適合 B1 學習者。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "safe-toilets",
+              "edition": "senior",
+              "article": {
+                "storyId": "safe-toilets",
+                "order": 3,
+                "category": "world",
+                "contentKind": "knowledge",
+                "headline": "UN Marks World Toilet Day with Focus on Equality",
+                "bodyParagraphs": [
+                  "The United Nations observes World Toilet Day each year on November 19. The 2026 campaign uses the theme Safe toilets. Equal futures. to highlight the link between sanitation and gender equality. UN DESA reports that 3.4 billion people still lack safe toilets. The organization says proper facilities help women and girls attend school, work and take part in society. UN-Water coordinates the event, which the UN has officially marked since 2013."
+                ],
+                "wordCount": 71,
+                "vocabulary": [
+                  {
+                    "term": "sanitation",
+                    "definitionEn": "systems and services that keep communities clean and healthy by managing human waste",
+                    "meaningZhHant": "環境衛生；污水處理系統"
+                  },
+                  {
+                    "term": "gender equality",
+                    "definitionEn": "the state where people of all genders have the same rights, chances and treatment",
+                    "meaningZhHant": "性別平等"
+                  }
+                ],
+                "image": {
+                  "assetId": "world",
+                  "alt": "world original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "UN DESA",
+                    "url": "https://desapublications.un.org/un-desa-voice/more-from-undesa/november-2026/world-toilet-day-2026-safe-toilets-equal-futures",
+                    "publishedAt": "2026-11-01T00:00:00Z",
+                    "publishedAtPrecision": "month"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 6450,
+              "reviewerMs": 4320,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "字數 71，目標 90–120",
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "sanitation",
+                    "reason": "The Traditional Chinese meaning '環境衛生；污水處理系統' is accurate but could be more specific to the article's context of toilet facilities. Consider adding '廁所設施' to better match the content.",
+                    "claim_ids": [],
+                    "suggested_action": "Update meaningZhHant to '環境衛生；廁所設施與污水處理系統' for better contextual fit."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "gender equality",
+                    "reason": "The term 'gender equality' is well-translated as '性別平等'. The English definition is clear and appropriate for B1 learners.",
+                    "claim_ids": [],
+                    "suggested_action": "No change needed; term is well-suited for target level."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 5,
+                  "readability": 5,
+                  "reason": "The article presents a clear, concrete global issue (3.4 billion without safe toilets) with a relatable human angle (girls' education). The UN observance framework gives it authority and structure. Vocabulary choices are purposeful and transferable.",
+                  "suggestion": "文章結構清晰、資訊量足、詞彙適合B1程度。建議維持現有版本發布，僅微調 sanitation 的中文釋義以貼近文本語境。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "lincoln-commemoration",
+              "edition": "senior",
+              "article": {
+                "storyId": "lincoln-commemoration",
+                "order": 4,
+                "category": "culture",
+                "contentKind": "news",
+                "headline": "Gettysburg Plans Free Events for 163rd Anniversary of Lincoln Address",
+                "bodyParagraphs": [
+                  "Gettysburg will hold Dedication Day events on November 19 to mark the 163rd anniversary of Abraham Lincoln's famous Gettysburg Address. The National Park Service announced that all activities are free and require no tickets for visitors. A historical recreation will feature a procession from the David Wills House to Gettysburg National Cemetery. Community Media plans to stream the ceremony online for people who cannot attend in person. Lincoln delivered the original speech in 1863 during the Civil War."
+                ],
+                "wordCount": 79,
+                "vocabulary": [
+                  {
+                    "term": "procession",
+                    "definitionEn": "a group of people moving forward in an orderly way, often as part of a ceremony",
+                    "meaningZhHant": "隊伍；遊行"
+                  },
+                  {
+                    "term": "stream",
+                    "definitionEn": "to send video or audio over the internet so people can watch or listen live",
+                    "meaningZhHant": "串流；直播"
+                  }
+                ],
+                "image": {
+                  "assetId": "culture",
+                  "alt": "culture original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "US National Park Service",
+                    "url": "https://www.nps.gov/gett/planyourvisit/dedication-day.htm",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 4790,
+              "reviewerMs": 3846,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "字數 79，目標 90–120",
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "Lincoln delivered the original speech in 1863 during the Civil War.",
+                    "reason": "The article states the Civil War as context, but the source evidence only mentions the 163rd anniversary and 1863 delivery. The Civil War reference is historically accurate but not explicitly in the source; it adds background that may be assumed knowledge for B1 readers.",
+                    "claim_ids": [
+                      "claim-5"
+                    ],
+                    "suggested_action": "Consider adding a brief note that the Gettysburg Address was given during the American Civil War for clarity, or keep as is since it's common knowledge."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 5,
+                  "reason": "The article covers a concrete, real-world event with clear details (free, no tickets, live stream, historical procession) that connects to a famous speech. The vocabulary 'procession' and 'stream' are well-chosen for B1: they are useful, transferable words with clear definitions and natural Traditional Chinese meanings. The structure is simple, factual, and engaging for a young reader interested in history or events.",
+                  "suggestion": "No major rewrite needed. Optionally, add one sentence explaining why the Gettysburg Address is famous (e.g., 'It is one of the most famous speeches in American history') to boost interest and information value."
+                }
+              },
+              "firstPass": false
+            }
+          ],
+          "apiMs": 146904,
+          "firstPass": 0,
+          "complete": true
+        },
+        {
+          "number": 2,
+          "drafts": [
+            {
+              "storyId": "voyager-signal",
+              "edition": "elementary",
+              "article": {
+                "storyId": "voyager-signal",
+                "order": 1,
+                "category": "science",
+                "contentKind": "news",
+                "headline": "NASA Checks Voyager 1 Signal From Far Away",
+                "bodyParagraphs": [
+                  "NASA says Voyager 1 sends a carrier signal but not science data. Engineers study the problem. They plan to use the signal and path math to check the one-light-day distance on November 19. A radio wave takes 24 hours to reach the probe and 24 hours to come back to Earth. The data issue started on November 14. Fixing it may take weeks or longer."
+                ],
+                "wordCount": 65,
+                "vocabulary": [
+                  {
+                    "term": "carrier signal",
+                    "definitionEn": "a simple radio wave that shows the spacecraft is still working",
+                    "meaningZhHant": "載波訊號；顯示太空船仍在運作的簡單無線電波"
+                  },
+                  {
+                    "term": "trajectory",
+                    "definitionEn": "the path a spacecraft follows through space",
+                    "meaningZhHant": "軌道；太空船在太空中飛行的路徑"
+                  }
+                ],
+                "image": {
+                  "assetId": "science",
+                  "alt": "science original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "NASA",
+                    "url": "https://science.nasa.gov/blogs/voyager/2026/11/18/voyager-1-engineers-analyze-data-issue-ready-to-confirm-light-day/",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 4067,
+              "reviewerMs": 11026,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "字數 65，目標 40–60",
+                "句長超過目標",
+                "單字未實際出現在正文"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "path math",
+                    "reason": "The phrase 'path math' is an informal simplification of 'trajectory calculations' that may confuse A1 learners; 'trajectory' is already taught in the glossary.",
+                    "claim_ids": [
+                      "claim-2"
+                    ],
+                    "suggested_action": "Replace 'path math' with 'trajectory calculations' or 'the path it follows' for consistency with the vocabulary list."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "meaningZhHant for carrier signal",
+                    "reason": "The Chinese gloss '載波訊號；顯示太空船仍在運作的簡單無線電波' mixes the technical term and its definition; the definition part is not a direct translation of the term.",
+                    "claim_ids": [],
+                    "suggested_action": "Separate the term translation and the definition, e.g., '載波訊號（指示太空船仍在運作的簡單無線電波）'."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 4,
+                  "reason": "The article presents a real NASA mission update with a concrete distance concept (one light‑day) that is engaging for children. All key facts are sourced and clearly stated. Sentences are short and use familiar vocabulary, with only two glossary terms introduced.",
+                  "suggestion": "保持現有結構，僅將 'path math' 改為 'trajectory calculations' 或 '飛行路徑計算'，並調整載波訊號的中文解釋格式，即可發布。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "sierra-snow",
+              "edition": "elementary",
+              "article": {
+                "storyId": "sierra-snow",
+                "order": 2,
+                "category": "nature",
+                "contentKind": "news",
+                "headline": "Early Snow Falls in California Mountains",
+                "bodyParagraphs": [
+                  "NASA says a storm brought snow to the Sierra Nevada on November 13, 2026. The Terra satellite took a picture of fresh snow on November 14. Two days before, the mountains were mostly bare. About 30 centimeters of snow fell at Donner Pass. More snow may come later in November."
+                ],
+                "wordCount": 50,
+                "vocabulary": [
+                  {
+                    "term": "satellite",
+                    "definitionEn": "a machine that goes around Earth and takes pictures",
+                    "meaningZhHant": "衛星"
+                  },
+                  {
+                    "term": "storm",
+                    "definitionEn": "bad weather with rain, snow, or strong wind",
+                    "meaningZhHant": "暴風雨"
+                  }
+                ],
+                "image": {
+                  "assetId": "nature",
+                  "alt": "nature original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "NASA Earth Observatory",
+                    "url": "https://science.nasa.gov/earth/earth-observatory/sierra-snow-season-spins-up/",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": null
+              },
+              "writerMs": 2653,
+              "reviewerMs": 9961,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [],
+              "assessment": {
+                "factual_status": "needs_revision",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "major",
+                    "span": "About 30 centimeters of snow fell at Donner Pass.",
+                    "reason": "The source states the 30 cm snowfall occurred from November 18 to 20, not on November 13. The article incorrectly attributes this amount to the earlier storm.",
+                    "claim_ids": [
+                      "claim-3"
+                    ],
+                    "suggested_action": "Correct the snowfall amount and date: either remove the specific 30 cm figure for November 13, or clarify that 30 cm fell later (Nov 18–20) per the source."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "More snow may come later in November.",
+                    "reason": "The source mentions a National Weather Service warning for November 18–20, which is more specific than 'later in November'. The article could reflect this precision.",
+                    "claim_ids": [
+                      "claim-4"
+                    ],
+                    "suggested_action": "Update to: 'The National Weather Service warned of more mountain snow from November 18 to 20.'"
+                  }
+                ],
+                "publish_recommendation": "revise",
+                "readership": {
+                  "interest": 4,
+                  "information": 3,
+                  "readability": 5,
+                  "reason": "The topic of early snow in California mountains is concrete and visually engaging for children. The article is very short and simple, but the factual error about snowfall amount/date reduces information quality. Readability is excellent for A1.",
+                  "suggestion": "修正唐納山口降雪量與日期的錯誤，並具體說明國家氣象局對 11 月 18 至 20 日的預警，以提升資訊準確度。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "safe-toilets",
+              "edition": "elementary",
+              "article": {
+                "storyId": "safe-toilets",
+                "order": 3,
+                "category": "world",
+                "contentKind": "knowledge",
+                "headline": "World Toilet Day 2026: Safe Toilets for Equal Futures",
+                "bodyParagraphs": [
+                  "The United Nations observes World Toilet Day on November 19. The 2026 campaign is called Safe toilets. Equal futures. It focuses on sanitation and gender equality. The UN says safe toilets help women and girls take part in school, work and society. UN DESA reports that 3.4 billion people still lack safe toilets."
+                ],
+                "wordCount": 53,
+                "vocabulary": [
+                  {
+                    "term": "sanitation",
+                    "definitionEn": "systems that keep people healthy by removing waste and providing clean toilets",
+                    "meaningZhHant": "環境衛生；公共衛生設施"
+                  },
+                  {
+                    "term": "gender equality",
+                    "definitionEn": "fair treatment and equal chances for women and men, girls and boys",
+                    "meaningZhHant": "性別平等"
+                  }
+                ],
+                "image": {
+                  "assetId": "world",
+                  "alt": "world original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "UN DESA",
+                    "url": "https://desapublications.un.org/un-desa-voice/more-from-undesa/november-2026/world-toilet-day-2026-safe-toilets-equal-futures",
+                    "publishedAt": "2026-11-01T00:00:00Z",
+                    "publishedAtPrecision": "month"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 5159,
+              "reviewerMs": 13773,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "句長超過目標"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: sanitation",
+                    "reason": "The Traditional Chinese meaning '環境衛生；公共衛生設施' is correct but slightly formal for A1 learners. A more accessible phrasing like '衛生設施（如廁所、污水處理）' would better match the target level.",
+                    "claim_ids": [],
+                    "suggested_action": "Consider updating the Traditional Chinese meaning to '衛生設施（如廁所、污水處理）' for better A1 accessibility."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: gender equality",
+                    "reason": "The term 'gender equality' is a compound noun phrase. At A1, learners may benefit from seeing it broken down or contextualized. The Chinese translation '性別平等' is standard and appropriate.",
+                    "claim_ids": [],
+                    "suggested_action": "No change required; the term is well-chosen for the topic and the translation is accurate."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 5,
+                  "readability": 5,
+                  "reason": "The article covers a concrete, globally relevant topic (World Toilet Day) with a clear focus on children's lives (school, gender equality). The 3.4 billion statistic is striking but not frightening. The structure is simple and direct, matching A1 readability. The vocabulary terms are high-value for this theme.",
+                  "suggestion": "文章結構清晰、資訊準確、語言適合 A1 程度。建議僅微調「sanitation」的中文解釋為更生活化的「衛生設施（如廁所、污水處理）」，其餘可直接發布。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "lincoln-commemoration",
+              "edition": "elementary",
+              "article": {
+                "storyId": "lincoln-commemoration",
+                "order": 4,
+                "category": "culture",
+                "contentKind": "news",
+                "headline": "Gettysburg Plans Free Events for Lincoln Speech Anniversary",
+                "bodyParagraphs": [
+                  "Gettysburg will hold Dedication Day on November 19. The events mark the 163rd anniversary of Abraham Lincoln's famous Gettysburg Address. Lincoln gave the speech in 1863. All events are free and need no tickets. A historical recreation includes a walk from the David Wills House to the National Cemetery. Community Media will stream the events online."
+                ],
+                "wordCount": 57,
+                "vocabulary": [
+                  {
+                    "term": "anniversary",
+                    "definitionEn": "the date when an event happened in a past year",
+                    "meaningZhHant": "週年紀念日"
+                  },
+                  {
+                    "term": "stream",
+                    "definitionEn": "to send video or audio over the internet live",
+                    "meaningZhHant": "直播"
+                  }
+                ],
+                "image": {
+                  "assetId": "culture",
+                  "alt": "culture original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "US National Park Service",
+                    "url": "https://www.nps.gov/gett/planyourvisit/dedication-day.htm",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 2391,
+              "reviewerMs": 10188,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: anniversary",
+                    "reason": "The term 'anniversary' is a useful A1 word, but the definition 'the date when an event happened in a past year' is slightly imprecise; an anniversary is the yearly recurrence of a date, not the original date itself. The Traditional Chinese '週年紀念日' is correct.",
+                    "claim_ids": [],
+                    "suggested_action": "Refine definition to 'the yearly return of the date of an event' or 'a date that is remembered because something special happened on that date in a previous year'."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: stream",
+                    "reason": "The definition 'to send video or audio over the internet live' is accurate for the verb sense used. The Traditional Chinese '直播' is the correct noun/verb for live streaming in Taiwan usage.",
+                    "claim_ids": [],
+                    "suggested_action": "No change needed; term is well-chosen for A1."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 5,
+                  "reason": "The article covers a concrete, real-world event (Dedication Day) with a clear hook (163rd anniversary, free entry, live stream). It provides useful facts (date, location, cost, how to watch) without filler. Structure is simple, sentences are short, and background assumptions (Lincoln, Gettysburg Address, 1863) are minimal and appropriate for A1.",
+                  "suggestion": "文章結構清晰、資訊完整，適合 A1 程度學習者。建議維持現狀發布；若未來版本需加強詞彙教學，可在文中加入 anniversary 與 stream 的例句或簡單搭配。"
+                }
+              },
+              "firstPass": true
+            },
+            {
+              "storyId": "voyager-signal",
+              "edition": "junior",
+              "article": {
+                "storyId": "voyager-signal",
+                "order": 1,
+                "category": "science",
+                "contentKind": "news",
+                "headline": "NASA Checks Voyager 1 Signal From Far Away",
+                "bodyParagraphs": [
+                  "NASA says Voyager 1 is sending a carrier signal but not its science and engineering data. Engineers are investigating the cause of the problem. The space agency plans to use the signal and trajectory calculations to confirm the one-light-day distance on November 19. A radio wave takes about 24 hours to travel each way between Earth and the spacecraft. The data issue was first noticed on November 14, and diagnosing it may take weeks or longer."
+                ],
+                "wordCount": 76,
+                "vocabulary": [
+                  {
+                    "term": "carrier signal",
+                    "definitionEn": "a basic radio wave that shows the spacecraft is still working but carries no detailed information",
+                    "meaningZhHant": "載波訊號"
+                  },
+                  {
+                    "term": "trajectory",
+                    "definitionEn": "the path that a spacecraft follows through space",
+                    "meaningZhHant": "軌跡"
+                  }
+                ],
+                "image": {
+                  "assetId": "science",
+                  "alt": "science original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "NASA",
+                    "url": "https://science.nasa.gov/blogs/voyager/2026/11/18/voyager-1-engineers-analyze-data-issue-ready-to-confirm-light-day/",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 5553,
+              "reviewerMs": 6661,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "句長超過目標",
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: carrier signal",
+                    "reason": "The Chinese translation '載波訊號' is technically correct but may be too technical for A2 learners; consider adding a simpler gloss like '基本無線電訊號' in parentheses.",
+                    "claim_ids": [],
+                    "suggested_action": "Add a parenthetical simpler Chinese gloss for 'carrier signal' in the vocabulary entry."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: trajectory",
+                    "reason": "The Chinese translation '軌跡' is accurate but abstract; for A2 learners, '飛行路徑' may be more concrete and accessible.",
+                    "claim_ids": [],
+                    "suggested_action": "Replace or supplement '軌跡' with '飛行路徑' in the vocabulary entry."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 4,
+                  "reason": "The article covers a real NASA mission with a concrete distance concept (one light-day) that sparks curiosity. It delivers clear, source-supported facts without filler. Structure is simple, sentences are short, and background assumptions are minimal, fitting A2 readers well.",
+                  "suggestion": "Keep the current structure; optionally add a one-sentence reminder of why Voyager 1 is famous (e.g., '它是飛得最遠的人造物體') to boost interest and context for young readers."
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "sierra-snow",
+              "edition": "junior",
+              "article": {
+                "storyId": "sierra-snow",
+                "order": 2,
+                "category": "nature",
+                "contentKind": "news",
+                "headline": "Early Snow Falls in California Mountains",
+                "bodyParagraphs": [
+                  "NASA says an early storm brought snow to the Sierra Nevada on November 13, 2026. The Terra satellite took a picture of fresh snow on November 14. Two days before, the mountains looked mostly bare. About 30 centimeters of snow fell at Donner Pass on November 13. The National Weather Service warned that more snow would come during November 18 to 20."
+                ],
+                "wordCount": 62,
+                "vocabulary": [
+                  {
+                    "term": "satellite",
+                    "definitionEn": "a machine that goes around Earth and takes pictures or sends signals",
+                    "meaningZhHant": "衛星"
+                  },
+                  {
+                    "term": "storm",
+                    "definitionEn": "bad weather with strong wind, rain, or snow",
+                    "meaningZhHant": "暴風雨"
+                  }
+                ],
+                "image": {
+                  "assetId": "nature",
+                  "alt": "nature original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "NASA Earth Observatory",
+                    "url": "https://science.nasa.gov/earth/earth-observatory/sierra-snow-season-spins-up/",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": null
+              },
+              "writerMs": 7737,
+              "reviewerMs": 17751,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "needs_revision",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "major",
+                    "span": "About 30 centimeters of snow fell at Donner Pass on November 13.",
+                    "reason": "The source evidence states 'Nearly 12 inches (30 centimeters) of snow fell at Donner Pass from November 18 to 20', not on November 13. The article misattributes the date of the 30 cm snowfall.",
+                    "claim_ids": [
+                      "claim-3"
+                    ],
+                    "suggested_action": "Correct the date to November 18–20, or remove the specific amount/date if the source does not support a November 13 total."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "The National Weather Service warned that more snow would come during November 18 to 20.",
+                    "reason": "The source evidence says 'from November 18 to 20' (snow fell), not that a warning was issued for that period. The article presents a forecast/warning as a reported fact, but the source describes observed snowfall during those dates.",
+                    "claim_ids": [
+                      "claim-4"
+                    ],
+                    "suggested_action": "Clarify that snow fell during November 18–20, or attribute the warning to the National Weather Service if a separate warning was issued (not in evidence)."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary terms: satellite, storm",
+                    "reason": "Both terms are very common and likely already known at A2 level. 'Satellite' is a basic science word; 'storm' is a high-frequency weather word. They add little new learning value for A2 readers.",
+                    "claim_ids": [],
+                    "suggested_action": "Consider replacing with more A2-appropriate words like 'instrument' (from MODIS instrument) or 'bare' (from 'mostly bare mountains'), which appear in the text and are more precise."
+                  }
+                ],
+                "publish_recommendation": "revise",
+                "readership": {
+                  "interest": 3,
+                  "information": 3,
+                  "readability": 4,
+                  "reason": "The article covers a concrete, timely event with satellite imagery that can engage children. However, the factual error on the snowfall date reduces information reliability. The structure is simple and clear, with short sentences suitable for A2. Background knowledge needed is minimal (mountains, snow, satellites).",
+                  "suggestion": "修正唐納山口降雪日期為 11 月 18 至 20 日，並說明這是觀測到的降雪量而非預警。可保留衛星拍攝對比圖的描述，增加具體細節。詞彙建議換成 'instrument' (儀器) 或 'bare' (光禿禿的)，更貼近文本且適合 A2 程度。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "safe-toilets",
+              "edition": "junior",
+              "article": {
+                "storyId": "safe-toilets",
+                "order": 3,
+                "category": "world",
+                "contentKind": "knowledge",
+                "headline": "World Toilet Day 2026 Focuses on Safe Toilets and Equal Futures",
+                "bodyParagraphs": [
+                  "The United Nations observes World Toilet Day every year on November 19. The 2026 campaign is called Safe toilets. Equal futures. It highlights the link between sanitation and gender equality. The UN says safe toilets help women and girls attend school, work and take part in society. UN DESA reports that 3.4 billion people still lack safe toilets. UN-Water coordinates the observance, which the UN has officially marked since 2013."
+                ],
+                "wordCount": 70,
+                "vocabulary": [
+                  {
+                    "term": "sanitation",
+                    "definitionEn": "systems and services that keep people healthy by removing waste safely",
+                    "meaningZhHant": "環境衛生；污水處理系統"
+                  },
+                  {
+                    "term": "gender equality",
+                    "definitionEn": "equal rights, chances and treatment for people of all genders",
+                    "meaningZhHant": "性別平等"
+                  }
+                ],
+                "image": {
+                  "assetId": "world",
+                  "alt": "world original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "UN DESA",
+                    "url": "https://desapublications.un.org/un-desa-voice/more-from-undesa/november-2026/world-toilet-day-2026-safe-toilets-equal-futures",
+                    "publishedAt": "2026-11-01T00:00:00Z",
+                    "publishedAtPrecision": "month"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 3476,
+              "reviewerMs": 4875,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: gender equality",
+                    "reason": "The term 'gender equality' is a fixed collocation; the glossary entry treats it as a single vocabulary item but the definition and Chinese translation are accurate. No factual error, but consider whether to split into 'gender' + 'equality' for A2 learners or keep as a phrase.",
+                    "claim_ids": [],
+                    "suggested_action": "Optional: add separate entries for 'gender' and 'equality' if they have not appeared in previous levels, or note that this is a set phrase."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 5,
+                  "readability": 5,
+                  "reason": "The article presents a clear, concrete UN campaign with a relatable focus on girls' education and a striking statistic (3.4 billion). The tone is calm and educational, suitable for children. Structure is simple: one paragraph, short sentences, no jargon beyond the two glossary terms.",
+                  "suggestion": "No rewrite needed. The article is ready for publication at A2 level."
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "lincoln-commemoration",
+              "edition": "junior",
+              "article": {
+                "storyId": "lincoln-commemoration",
+                "order": 4,
+                "category": "culture",
+                "contentKind": "news",
+                "headline": "Gettysburg Plans Free Events for Lincoln Speech Anniversary",
+                "bodyParagraphs": [
+                  "Gettysburg will hold Dedication Day on November 19 to mark the 163rd anniversary of Abraham Lincoln's famous Gettysburg Address. The original speech was given in 1863 during the Civil War. All events are free and no tickets are needed. A historical recreation will show a procession from the David Wills House to the National Cemetery. Community Media plans to stream the ceremony online for people who cannot attend."
+                ],
+                "wordCount": 69,
+                "vocabulary": [
+                  {
+                    "term": "procession",
+                    "definitionEn": "a group of people walking together in a formal way for a ceremony",
+                    "meaningZhHant": "遊行；隊伍"
+                  },
+                  {
+                    "term": "stream",
+                    "definitionEn": "to send video or audio over the internet so people can watch live",
+                    "meaningZhHant": "串流；直播"
+                  }
+                ],
+                "image": {
+                  "assetId": "culture",
+                  "alt": "culture original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "US National Park Service",
+                    "url": "https://www.nps.gov/gett/planyourvisit/dedication-day.htm",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 3865,
+              "reviewerMs": 7392,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: procession",
+                    "reason": "The Traditional Chinese meaning '遊行；隊伍' is acceptable but '遊行' often implies a protest march in Taiwan usage; '巡遊' or '儀仗隊伍' would be more precise for a ceremonial procession.",
+                    "claim_ids": [],
+                    "suggested_action": "Update meaningZhHant to '巡遊；儀仗隊伍' for clearer ceremonial sense."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: stream",
+                    "reason": "The Traditional Chinese meaning '串流；直播' is correct; however, '直播' alone is more common for live video in Taiwan. The glossary entry is fine but could be simplified.",
+                    "claim_ids": [],
+                    "suggested_action": "Consider changing meaningZhHant to '直播' for the most natural Taiwan usage."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 5,
+                  "reason": "The article presents a concrete, real-world event (free Dedication Day with live stream) that children can relate to; facts are clearly sourced and the takeaway is useful. Structure is simple, sentences are short, and background (Civil War, 1863) is given in one accessible sentence.",
+                  "suggestion": "No major rewrite needed. Optionally add one sentence about why the Gettysburg Address matters (e.g., '它被視為美國歷史上最重要的演說之一') to boost interest and information value."
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "voyager-signal",
+              "edition": "senior",
+              "article": {
+                "storyId": "voyager-signal",
+                "order": 1,
+                "category": "science",
+                "contentKind": "news",
+                "headline": "NASA Checks Voyager 1 Signal as Probe Remains Far From Earth",
+                "bodyParagraphs": [
+                  "NASA says Voyager 1 is still sending a carrier signal but has stopped transmitting its science and engineering data. The problem was first noticed on November 14, and engineers are now working to find the cause. The spacecraft is so far away that a radio message needs about 24 hours to reach it, and a reply takes another full day to return. Because of this long delay, diagnosing the issue may take weeks or even longer. On November 19, the team plans to use the carrier signal and trajectory calculations to confirm the one-light-day distance to the probe."
+                ],
+                "wordCount": 98,
+                "vocabulary": [
+                  {
+                    "term": "carrier signal",
+                    "definitionEn": "a basic radio wave sent by the spacecraft to show it is still operating",
+                    "meaningZhHant": "載波訊號；探測器發出的基本無線電波，顯示其仍在運作"
+                  },
+                  {
+                    "term": "trajectory",
+                    "definitionEn": "the calculated path that a spacecraft follows through space",
+                    "meaningZhHant": "軌道；太空船在太空中飛行的計算路徑"
+                  }
+                ],
+                "image": {
+                  "assetId": "science",
+                  "alt": "science original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "NASA",
+                    "url": "https://science.nasa.gov/blogs/voyager/2026/11/18/voyager-1-engineers-analyze-data-issue-ready-to-confirm-light-day/",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 4657,
+              "reviewerMs": 6293,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "句長超過目標",
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: carrier signal",
+                    "reason": "Traditional Chinese translation '載波訊號' is technically correct but may be too technical for B1 learners; consider adding a simpler gloss like '基本無線電訊號' alongside.",
+                    "claim_ids": [],
+                    "suggested_action": "Add a parenthetical simpler Chinese gloss: '載波訊號（基本無線電訊號）' to aid B1 readers."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: trajectory",
+                    "reason": "Chinese meaning '軌道' is accurate but '飛行路徑' is more accessible for B1; current gloss mixes technical and plain terms.",
+                    "claim_ids": [],
+                    "suggested_action": "Adjust Chinese meaning to '飛行路徑（軌道）' for clearer B1 accessibility."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 4,
+                  "reason": "The article presents a concrete, real-time space mission update with a clear takeaway: Voyager 1 is still alive but not sending science data, and the 24-hour light-time makes troubleshooting slow. The structure is simple, background assumptions are minimal, and the vocabulary (carrier signal, trajectory) is well-chosen for B1 learners. The only minor gaps are the Chinese glosses being slightly more technical than necessary.",
+                  "suggestion": "保持現有結構與事實內容；在詞彙表的中文釋義加上更淺顯的同義詞（如『載波訊號（基本無線電訊號）』與『飛行路徑（軌道）』），即可發布。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "sierra-snow",
+              "edition": "senior",
+              "article": {
+                "storyId": "sierra-snow",
+                "order": 2,
+                "category": "nature",
+                "contentKind": "news",
+                "headline": "Early Snow Falls in California's Sierra Nevada Mountains",
+                "bodyParagraphs": [
+                  "NASA reported that an early-season storm brought snow to California's Sierra Nevada mountains on November 13, 2026. The agency's Terra satellite recorded fresh snow covering the peaks on November 14. Just two days earlier, the same mountains appeared mostly bare in satellite images. The MODIS instrument on the Terra satellite captured these clear pictures from space. According to the Central Sierra Snow Laboratory, about 30 centimeters of snow fell at Donner Pass during the storm. The National Weather Service also issued a warning for more mountain snow from November 18 through 20. This early snowfall marks the start of the water year for the region."
+                ],
+                "wordCount": 105,
+                "vocabulary": [
+                  {
+                    "term": "satellite",
+                    "definitionEn": "A machine sent into space that orbits Earth and takes pictures or collects data.",
+                    "meaningZhHant": "衛星"
+                  },
+                  {
+                    "term": "water year",
+                    "definitionEn": "A 12-month period used by experts to track rain and snow totals, often starting in autumn.",
+                    "meaningZhHant": "水文年"
+                  }
+                ],
+                "image": {
+                  "assetId": "nature",
+                  "alt": "nature original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "NASA Earth Observatory",
+                    "url": "https://science.nasa.gov/earth/earth-observatory/sierra-snow-season-spins-up/",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": null
+              },
+              "writerMs": 7650,
+              "reviewerMs": 7540,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "needs_revision",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "major",
+                    "span": "About 30 centimeters of snow fell at Donner Pass during the storm.",
+                    "reason": "The source states 30 cm fell from November 18–20, not on November 13. The article incorrectly attributes the later forecast period to the early storm.",
+                    "claim_ids": [
+                      "claim-3"
+                    ],
+                    "suggested_action": "Correct the snowfall amount to the November 18–20 period and clarify it is a separate event from the November 13 storm."
+                  },
+                  {
+                    "severity": "major",
+                    "span": "The National Weather Service also issued a warning for more mountain snow from November 18 through 20.",
+                    "reason": "The source says 'from November 18 to 20' (nearly 12 inches fell), but does not explicitly state a warning was issued. The article adds 'warning' without direct support.",
+                    "claim_ids": [
+                      "claim-4"
+                    ],
+                    "suggested_action": "Remove 'warning' or rephrase to 'more snow fell' if supported; otherwise, delete the sentence."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "The MODIS instrument on the Terra satellite captured these clear pictures from space.",
+                    "reason": "Claim-5 is optional and not must_keep; the sentence is acceptable but could be omitted without loss.",
+                    "claim_ids": [
+                      "claim-5"
+                    ],
+                    "suggested_action": "Optional: keep or remove for conciseness."
+                  }
+                ],
+                "publish_recommendation": "revise",
+                "readership": {
+                  "interest": 4,
+                  "information": 3,
+                  "readability": 4,
+                  "reason": "The article has a clear, engaging hook (early snow seen from space) and concrete details that appeal to children. However, the factual error about snowfall timing reduces information quality. Structure and language are appropriate for B1 readers.",
+                  "suggestion": "修正雪量日期錯誤，將 30 公分降雪改為 11 月 18–20 日的獨立事件，並移除未經證實的「警告」用詞。保留衛星影像對比的生動描述，適合 B1 程度學習者。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "safe-toilets",
+              "edition": "senior",
+              "article": {
+                "storyId": "safe-toilets",
+                "order": 3,
+                "category": "world",
+                "contentKind": "knowledge",
+                "headline": "UN Marks World Toilet Day with Focus on Safe Toilets and Equal Futures",
+                "bodyParagraphs": [
+                  "The United Nations observes World Toilet Day every year on November 19. The 2026 campaign uses the theme Safe toilets. Equal futures. to highlight the link between sanitation and gender equality. UN DESA reports that 3.4 billion people still lack safe toilets. The UN says safe toilets help women and girls take part in school, work and society. UN-Water coordinates the observance, which has been officially observed by the UN since 2013."
+                ],
+                "wordCount": 72,
+                "vocabulary": [
+                  {
+                    "term": "sanitation",
+                    "definitionEn": "systems and services that keep people healthy by safely managing human waste",
+                    "meaningZhHant": "環境衛生；公共衛生設施"
+                  },
+                  {
+                    "term": "gender equality",
+                    "definitionEn": "the state in which people of all genders have the same rights, opportunities and treatment",
+                    "meaningZhHant": "性別平等"
+                  }
+                ],
+                "image": {
+                  "assetId": "world",
+                  "alt": "world original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "UN DESA",
+                    "url": "https://desapublications.un.org/un-desa-voice/more-from-undesa/november-2026/world-toilet-day-2026-safe-toilets-equal-futures",
+                    "publishedAt": "2026-11-01T00:00:00Z",
+                    "publishedAtPrecision": "month"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 3391,
+              "reviewerMs": 14878,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "字數 72，目標 90–120",
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: sanitation",
+                    "reason": "The Traditional Chinese meaning '環境衛生；公共衛生設施' is acceptable but could be more precise for the specific context of toilet/waste management. '污水處理與廁所設施' or '糞便管理系統' would better match the English definition 'safely managing human waste'.",
+                    "claim_ids": [],
+                    "suggested_action": "Update meaningZhHant to '污水處理與廁所設施；糞便管理系統' for better alignment with the English definition and article context."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: gender equality",
+                    "reason": "The Traditional Chinese meaning '性別平等' is correct and standard. No change needed, but noted for completeness.",
+                    "claim_ids": [],
+                    "suggested_action": "No action needed; term is appropriate."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 5,
+                  "readability": 4,
+                  "reason": "The article covers a concrete UN observance with a clear theme (Safe toilets. Equal futures.) and a striking statistic (3.4 billion people lack safe toilets), which is likely to spark curiosity in children about global issues. It delivers useful, source-supported facts without filler. The structure is simple and direct, with manageable background assumptions for B1 learners; the two vocabulary terms are well-chosen for this level.",
+                  "suggestion": "考慮在詞彙表中將 sanitation 的中文釋義改為「污水處理與廁所設施；糞便管理系統」，以更貼切文章語境。其餘內容結構清晰、事實正確，適合發布。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "lincoln-commemoration",
+              "edition": "senior",
+              "article": {
+                "storyId": "lincoln-commemoration",
+                "order": 4,
+                "category": "culture",
+                "contentKind": "news",
+                "headline": "Gettysburg Plans Free Events for 163rd Anniversary of Lincoln Address",
+                "bodyParagraphs": [
+                  "Gettysburg will hold Dedication Day events on November 19 to mark the 163rd anniversary of Abraham Lincoln's famous Gettysburg Address. The National Park Service announced that all activities are free and require no tickets for visitors. A historical recreation will feature a procession from the David Wills House to Gettysburg National Cemetery. Community Media plans to stream the ceremony online for people who cannot attend in person. Lincoln delivered the original speech in 1863 during the Civil War."
+                ],
+                "wordCount": 79,
+                "vocabulary": [
+                  {
+                    "term": "procession",
+                    "definitionEn": "a group of people moving forward in an orderly way, often as part of a ceremony",
+                    "meaningZhHant": "遊行；隊伍"
+                  },
+                  {
+                    "term": "stream",
+                    "definitionEn": "to send video or audio over the internet so people can watch or listen live",
+                    "meaningZhHant": "串流；直播"
+                  }
+                ],
+                "image": {
+                  "assetId": "culture",
+                  "alt": "culture original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "US National Park Service",
+                    "url": "https://www.nps.gov/gett/planyourvisit/dedication-day.htm",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 3786,
+              "reviewerMs": 15495,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "字數 79，目標 90–120",
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term 'stream'",
+                    "reason": "The Chinese meaning '串流；直播' mixes noun and verb forms without clarifying the verb sense used in the article. For B1 learners, it is clearer to give the verb gloss '直播（動詞）' or '網路直播' and note the noun '直播串流' separately.",
+                    "claim_ids": [],
+                    "suggested_action": "Update the glossary entry for 'stream' to: definitionEn: 'to broadcast live video or audio over the internet'; meaningZhHant: '網路直播（動詞）'."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 5,
+                  "reason": "The article reports a concrete, upcoming public event with free access and an online stream, which is relevant and engaging for young readers. It delivers the key facts (date, anniversary, cost, procession, streaming) without filler. Sentences are short, structure is clear, and background assumptions (Civil War, Lincoln) are minimal and appropriate for B1.",
+                  "suggestion": "文章結構清晰、資訊完整，適合 B1 程度學生閱讀。建議僅微調詞彙表中 'stream' 的中文釋義，明確標示為動詞用法，避免學習者混淆名詞與動詞。"
+                }
+              },
+              "firstPass": false
+            }
+          ],
+          "apiMs": 180218,
+          "firstPass": 1,
+          "complete": true
+        },
+        {
+          "number": 3,
+          "drafts": [
+            {
+              "storyId": "voyager-signal",
+              "edition": "elementary",
+              "article": {
+                "storyId": "voyager-signal",
+                "order": 1,
+                "category": "science",
+                "contentKind": "news",
+                "headline": "NASA Checks Voyager 1 Signal From Far Away",
+                "bodyParagraphs": [
+                  "NASA says Voyager 1 sends a carrier signal but no science data. Engineers study the problem. They plan to use the signal and path math to check the one-light-day distance on November 19. A radio wave takes 24 hours to reach the probe and 24 hours to come back to Earth."
+                ],
+                "wordCount": 51,
+                "vocabulary": [
+                  {
+                    "term": "carrier signal",
+                    "definitionEn": "a simple radio wave that shows the spacecraft is still working",
+                    "meaningZhHant": "載波訊號；顯示太空船仍在運作的簡單無線電波"
+                  },
+                  {
+                    "term": "trajectory",
+                    "definitionEn": "the path a spacecraft follows through space",
+                    "meaningZhHant": "軌道；太空船在太空中飛行的路徑"
+                  }
+                ],
+                "image": {
+                  "assetId": "science",
+                  "alt": "science original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "NASA",
+                    "url": "https://science.nasa.gov/blogs/voyager/2026/11/18/voyager-1-engineers-analyze-data-issue-ready-to-confirm-light-day/",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 14187,
+              "reviewerMs": 6055,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "句長超過目標",
+                "單字未實際出現在正文"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: carrier signal",
+                    "reason": "The English definition 'a simple radio wave that shows the spacecraft is still working' is slightly imprecise; a carrier signal is an unmodulated wave used as a reference, not necessarily proof of full operation. The Traditional Chinese meaning '載波訊號；顯示太空船仍在運作的簡單無線電波' is acceptable but could note it is unmodulated.",
+                    "claim_ids": [],
+                    "suggested_action": "Refine definition to 'an unmodulated radio wave used to confirm the spacecraft transmitter is on' and adjust Chinese to '載波訊號；未調變的無線電波，用來確認太空船發射機仍在運作'."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: trajectory",
+                    "reason": "The definition and Chinese meaning are accurate. However, 'path math' in the body paragraph is an informal phrasing that may confuse A1 learners; 'trajectory calculations' or 'flight path calculations' would be clearer.",
+                    "claim_ids": [],
+                    "suggested_action": "Replace 'path math' with 'trajectory calculations' or 'flight path calculations' in the body paragraph."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 4,
+                  "reason": "The article covers a real NASA mission with a concrete distance concept (one light-day) that is engaging for children. It delivers the key facts from the source without speculation. Structure is simple, sentences are short, and background assumptions (radio waves, space distance) are manageable for A1.",
+                  "suggestion": "Keep the current structure. Apply the minor vocabulary refinements above for precision and clarity."
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "sierra-snow",
+              "edition": "elementary",
+              "article": {
+                "storyId": "sierra-snow",
+                "order": 2,
+                "category": "nature",
+                "contentKind": "news",
+                "headline": "Early Snow Falls in California Mountains",
+                "bodyParagraphs": [
+                  "NASA says a storm brought snow to the Sierra Nevada on November 13, 2026. A satellite took a picture of fresh snow on November 14. The mountains looked mostly bare two days before. About 30 centimeters of snow fell at Donner Pass. More snow may come later in November."
+                ],
+                "wordCount": 49,
+                "vocabulary": [
+                  {
+                    "term": "satellite",
+                    "definitionEn": "a machine that goes around Earth and takes pictures",
+                    "meaningZhHant": "衛星"
+                  },
+                  {
+                    "term": "storm",
+                    "definitionEn": "bad weather with rain, snow, or strong wind",
+                    "meaningZhHant": "暴風雨"
+                  }
+                ],
+                "image": {
+                  "assetId": "nature",
+                  "alt": "nature original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "NASA Earth Observatory",
+                    "url": "https://science.nasa.gov/earth/earth-observatory/sierra-snow-season-spins-up/",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": null
+              },
+              "writerMs": 4628,
+              "reviewerMs": 12506,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [],
+              "assessment": {
+                "factual_status": "needs_revision",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "major",
+                    "span": "About 30 centimeters of snow fell at Donner Pass.",
+                    "reason": "The source states 30 cm fell from November 18–20, not on November 13. The article incorrectly attributes the later forecasted snowfall to the earlier storm.",
+                    "claim_ids": [
+                      "claim-3"
+                    ],
+                    "suggested_action": "Remove the sentence or clarify that 30 cm is expected later (Nov 18–20), not on Nov 13."
+                  },
+                  {
+                    "severity": "major",
+                    "span": "More snow may come later in November.",
+                    "reason": "The source mentions a National Weather Service warning for Nov 18–20, not a vague 'later in November'. The article should reflect the specific forecast period.",
+                    "claim_ids": [
+                      "claim-4"
+                    ],
+                    "suggested_action": "Replace with: 'The National Weather Service warned of more mountain snow from November 18 to 20.'"
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "A satellite took a picture of fresh snow on November 14.",
+                    "reason": "The source specifies the MODIS instrument on NASA's Terra satellite. Adding this detail improves accuracy and learning value.",
+                    "claim_ids": [
+                      "claim-2",
+                      "claim-5"
+                    ],
+                    "suggested_action": "Change to: 'NASA's Terra satellite took a picture of fresh snow on November 14.'"
+                  }
+                ],
+                "publish_recommendation": "revise",
+                "readership": {
+                  "interest": 4,
+                  "information": 3,
+                  "readability": 5,
+                  "reason": "The topic of early snow in California mountains is concrete and visually engaging for children. The article is very readable with short sentences and simple vocabulary. However, factual inaccuracies (snow amount and timing) reduce the information quality. The core event — satellite seeing snow appear in two days — is a strong hook.",
+                  "suggestion": "修正唐納山口降雪量與時間的錯誤，明確說明 30 公分是 11 月 18 到 20 日的預報，而非 13 日實測。補充 Terra 衛星與 MODIS 儀器名稱，增加科學準確性。最後一句改為具體預警日期，避免模糊表達。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "safe-toilets",
+              "edition": "elementary",
+              "article": {
+                "storyId": "safe-toilets",
+                "order": 3,
+                "category": "world",
+                "contentKind": "knowledge",
+                "headline": "World Toilet Day 2026: Safe Toilets, Equal Futures",
+                "bodyParagraphs": [
+                  "The United Nations observes World Toilet Day on November 19. The 2026 campaign is called Safe toilets. Equal futures. It focuses on sanitation and gender equality. The UN says safe toilets help women and girls take part in school, work and society. UN DESA reports that 3.4 billion people still lack safe toilets."
+                ],
+                "wordCount": 53,
+                "vocabulary": [
+                  {
+                    "term": "sanitation",
+                    "definitionEn": "systems that keep people healthy by removing waste safely",
+                    "meaningZhHant": "環境衛生；污水處理系統"
+                  },
+                  {
+                    "term": "gender equality",
+                    "definitionEn": "fair treatment and equal chances for women and men",
+                    "meaningZhHant": "性別平等"
+                  }
+                ],
+                "image": {
+                  "assetId": "world",
+                  "alt": "world original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "UN DESA",
+                    "url": "https://desapublications.un.org/un-desa-voice/more-from-undesa/november-2026/world-toilet-day-2026-safe-toilets-equal-futures",
+                    "publishedAt": "2026-11-01T00:00:00Z",
+                    "publishedAtPrecision": "month"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 2474,
+              "reviewerMs": 10471,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "句長超過目標"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: sanitation",
+                    "reason": "The Traditional Chinese meaning '環境衛生；污水處理系統' is accurate but slightly formal for A1 learners; a simpler gloss like '衛生設施；污水處理' would be more accessible.",
+                    "claim_ids": [],
+                    "suggested_action": "Consider simplifying the Chinese gloss to '衛生設施；污水處理' for A1 readability."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: gender equality",
+                    "reason": "The term is appropriate for the content, but the English definition 'fair treatment and equal chances for women and men' uses 'chances' which is less common than 'opportunities' in this context; the Chinese '性別平等' is correct.",
+                    "claim_ids": [],
+                    "suggested_action": "Optionally adjust English definition to 'fair treatment and equal opportunities for women and men' for slightly more natural collocation."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 5,
+                  "reason": "The article presents a clear, concrete fact (3.4 billion people lack safe toilets) tied to a specific UN day, which is engaging and relevant for children learning about global issues. The structure is simple, sentences are short, and background assumptions are minimal. Vocabulary is well-chosen for A1 with useful everyday words.",
+                  "suggestion": "文章結構清晰、句子簡短，適合 A1 程度學習者。建議將 sanitation 的中文釋義簡化為「衛生設施；污水處理」，gender equality 的英文釋義可改用 opportunities 替代 chances，讓詞彙更自然易懂。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "lincoln-commemoration",
+              "edition": "elementary",
+              "article": {
+                "storyId": "lincoln-commemoration",
+                "order": 4,
+                "category": "culture",
+                "contentKind": "news",
+                "headline": "Gettysburg Plans Free Events for Lincoln Speech Anniversary",
+                "bodyParagraphs": [
+                  "Gettysburg will hold Dedication Day on November 19. The events mark the 163rd anniversary of Abraham Lincoln's famous Gettysburg Address. All activities are free and need no tickets. A historical recreation includes a walk from the David Wills House to the National Cemetery. Community Media will stream the ceremony online for everyone to watch."
+                ],
+                "wordCount": 55,
+                "vocabulary": [
+                  {
+                    "term": "anniversary",
+                    "definitionEn": "the date when an event happened in a past year",
+                    "meaningZhHant": "週年紀念日"
+                  },
+                  {
+                    "term": "recreation",
+                    "definitionEn": "an event that copies something from history",
+                    "meaningZhHant": "歷史重現"
+                  }
+                ],
+                "image": {
+                  "assetId": "culture",
+                  "alt": "culture original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "US National Park Service",
+                    "url": "https://www.nps.gov/gett/planyourvisit/dedication-day.htm",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 3863,
+              "reviewerMs": 5354,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "句長超過目標"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: recreation",
+                    "reason": "The definition 'an event that copies something from history' is slightly imprecise; 'recreation' here means a historical reenactment. The Chinese meaning '歷史重現' is correct, but the English definition could be clearer for A1 learners.",
+                    "claim_ids": [],
+                    "suggested_action": "Update English definition to 'a historical reenactment; an event that acts out something from history' for better clarity at A1 level."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 5,
+                  "reason": "The article covers a concrete, real-world event (Lincoln's Gettysburg Address anniversary) with clear facts: free entry, no tickets, live stream, and a historical walk. It is highly relevant for children learning about US history and commemorations. The structure is simple, sentences are short, and background assumptions are minimal. The vocabulary 'anniversary' and 'recreation' are well-chosen for A1 — concrete, useful, and transferable.",
+                  "suggestion": "文章結構清晰、資訊完整，適合 A1 程度兒童閱讀。建議微調 vocabulary 中 recreation 的英文釋義，使其更精確易懂；其餘無需修改，可直接發布。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "voyager-signal",
+              "edition": "junior",
+              "article": {
+                "storyId": "voyager-signal",
+                "order": 1,
+                "category": "science",
+                "contentKind": "news",
+                "headline": "NASA Checks Voyager 1 Signal From Far Away",
+                "bodyParagraphs": [
+                  "NASA says Voyager 1 is sending a carrier signal but not its science and engineering data. Engineers are investigating the cause of the problem. The space agency plans to use the signal and trajectory calculations to confirm the one-light-day distance on November 19. A signal takes about 24 hours to travel each way between Earth and the spacecraft. The data issue was noticed on November 14, and diagnosing it may take weeks or longer."
+                ],
+                "wordCount": 74,
+                "vocabulary": [
+                  {
+                    "term": "carrier signal",
+                    "definitionEn": "a basic radio wave sent by the spacecraft to show it is still working",
+                    "meaningZhHant": "載波訊號"
+                  },
+                  {
+                    "term": "trajectory",
+                    "definitionEn": "the path that a spacecraft follows through space",
+                    "meaningZhHant": "軌跡"
+                  }
+                ],
+                "image": {
+                  "assetId": "science",
+                  "alt": "science original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "NASA",
+                    "url": "https://science.nasa.gov/blogs/voyager/2026/11/18/voyager-1-engineers-analyze-data-issue-ready-to-confirm-light-day/",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 4563,
+              "reviewerMs": 6730,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "句長超過目標",
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: carrier signal",
+                    "reason": "The English definition 'a basic radio wave sent by the spacecraft to show it is still working' is slightly imprecise; a carrier signal is a continuous wave that can be modulated to carry data, not solely to show the spacecraft is working. The Traditional Chinese term '載波訊號' is correct.",
+                    "claim_ids": [],
+                    "suggested_action": "Refine definition to: 'a continuous radio wave that the spacecraft transmits, which can carry data when modulated; receiving it confirms the transmitter is on.'"
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: trajectory",
+                    "reason": "The definition and Traditional Chinese translation '軌跡' are accurate. However, for A2 learners, adding a simple example like 'the path Voyager 1 follows through space' in the definition could aid understanding.",
+                    "claim_ids": [],
+                    "suggested_action": "Consider expanding the English definition to: 'the path that a spacecraft follows through space, like Voyager 1's route past the planets.'"
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 5,
+                  "reason": "The article covers a real, ongoing NASA mission with a concrete 'light-day' distance concept that sparks curiosity. It delivers clear, source-supported facts (carrier signal vs. data, 24-hour light time, investigation timeline) without filler. The structure is simple, sentences are short, and background assumptions (what Voyager 1 is, why distance matters) are minimal, making it highly readable for the target age/level.",
+                  "suggestion": "文章內容扎實、用語淺顯，適合 A2 程度學習者。建議微調 vocabulary 定義：carrier signal 可補充「可攜帶資料的連續波」，trajectory 可加一句具體例子，幫助學習者更精確掌握詞義。其餘無須修改，可直接發布。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "sierra-snow",
+              "edition": "junior",
+              "article": {
+                "storyId": "sierra-snow",
+                "order": 2,
+                "category": "nature",
+                "contentKind": "news",
+                "headline": "Early Snow Falls in California Mountains",
+                "bodyParagraphs": [
+                  "NASA says a storm brought snow to the Sierra Nevada on November 13, 2026. The Terra satellite took pictures of fresh snow on November 14. Two days before, the mountains looked mostly bare. About 30 centimeters of snow fell at Donner Pass. The National Weather Service warned that more snow would come from November 18 to 20."
+                ],
+                "wordCount": 57,
+                "vocabulary": [
+                  {
+                    "term": "satellite",
+                    "definitionEn": "a machine that orbits Earth and takes pictures or collects data",
+                    "meaningZhHant": "衛星"
+                  },
+                  {
+                    "term": "storm",
+                    "definitionEn": "bad weather with strong wind, rain, or snow",
+                    "meaningZhHant": "暴風雨"
+                  }
+                ],
+                "image": {
+                  "assetId": "nature",
+                  "alt": "nature original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "NASA Earth Observatory",
+                    "url": "https://science.nasa.gov/earth/earth-observatory/sierra-snow-season-spins-up/",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": null
+              },
+              "writerMs": 3921,
+              "reviewerMs": 5533,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "字數 57，目標 60–90",
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "needs_revision",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "major",
+                    "span": "About 30 centimeters of snow fell at Donner Pass.",
+                    "reason": "The source states the 30 cm snowfall occurred from November 18 to 20, not on November 13. The article incorrectly attributes the date.",
+                    "claim_ids": [
+                      "claim-3"
+                    ],
+                    "suggested_action": "Change to: 'About 30 centimeters of snow fell at Donner Pass from November 18 to 20.'"
+                  }
+                ],
+                "publish_recommendation": "revise",
+                "readership": {
+                  "interest": 4,
+                  "information": 3,
+                  "readability": 5,
+                  "reason": "The article covers a concrete, timely weather event with satellite imagery that children can visualize. The early snowfall in the Sierra Nevada is a relatable seasonal change. However, the factual error about the snowfall date reduces the information score. The structure is simple and clear, with short sentences and familiar vocabulary, making it highly readable for A2 learners.",
+                  "suggestion": "修正唐納山口降雪日期為 11 月 18 日至 20 日，並可補充說明這是水文年度首場大雪，幫助讀者理解季節意義。保持簡短句子與衛星拍照的具體意象，適合 A2 程度。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "safe-toilets",
+              "edition": "junior",
+              "article": {
+                "storyId": "safe-toilets",
+                "order": 3,
+                "category": "world",
+                "contentKind": "knowledge",
+                "headline": "World Toilet Day 2026 Highlights Safe Toilets for All",
+                "bodyParagraphs": [
+                  "The United Nations marks World Toilet Day on November 19 each year. In 2026, the campaign theme is Safe toilets. Equal futures. It shows how clean toilets help women and girls join school, work and community life. UN DESA says 3.4 billion people still do not have safe toilets. UN-Water has organized this day since 2013 to push for better sanitation worldwide."
+                ],
+                "wordCount": 62,
+                "vocabulary": [
+                  {
+                    "term": "sanitation",
+                    "definitionEn": "systems that keep people healthy by removing waste safely",
+                    "meaningZhHant": "環境衛生；公共衛生設施"
+                  },
+                  {
+                    "term": "campaign",
+                    "definitionEn": "a planned set of activities to reach a goal",
+                    "meaningZhHant": "運動；宣傳活動"
+                  }
+                ],
+                "image": {
+                  "assetId": "world",
+                  "alt": "world original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "UN DESA",
+                    "url": "https://desapublications.un.org/un-desa-voice/more-from-undesa/november-2026/world-toilet-day-2026-safe-toilets-equal-futures",
+                    "publishedAt": "2026-11-01T00:00:00Z",
+                    "publishedAtPrecision": "month"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 5787,
+              "reviewerMs": 10592,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: sanitation",
+                    "reason": "The Traditional Chinese meaning '環境衛生；公共衛生設施' is a noun phrase, while the English definition describes a system. For A2 learners, a verb-based definition like 'keeping places clean and removing waste safely' with a matching Chinese phrase '妥善處理廢棄物、保持環境清潔的系統' would be more consistent and easier to grasp.",
+                    "claim_ids": [],
+                    "suggested_action": "Adjust the English definition to 'systems for keeping places clean by removing waste safely' and the Chinese meaning to '妥善處理廢棄物、保持環境清潔的系統' for better part-of-speech alignment and clarity at A2 level."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: campaign",
+                    "reason": "The Chinese meaning '運動；宣傳活動' covers two distinct senses (social movement vs. promotional activity). The article context is a UN awareness campaign, so '宣傳活動' or '倡議活動' is more precise. Listing both without context may confuse A2 learners.",
+                    "claim_ids": [],
+                    "suggested_action": "Change the Chinese meaning to '宣傳活動；倡議活動' to match the article's context of an organized awareness effort."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 5,
+                  "readability": 5,
+                  "reason": "The article presents a clear, concrete global fact (3.4 billion people lack safe toilets) tied to a specific UN day, which is highly relevant for children learning about world issues and equality. The structure is simple: date, theme, impact, statistic, and organizing body. Background assumptions are minimal (knowing what the UN is), and the tone is educational and non-graphic as required.",
+                  "suggestion": "No rewrite needed. The article is ready for publication. Consider adding a one-sentence 'What you can do' line (e.g., 'Learning about this day helps us understand why clean water and toilets are a human right.') to boost engagement, but this is optional."
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "lincoln-commemoration",
+              "edition": "junior",
+              "article": {
+                "storyId": "lincoln-commemoration",
+                "order": 4,
+                "category": "culture",
+                "contentKind": "news",
+                "headline": "Gettysburg Plans Free Events for Lincoln Speech Anniversary",
+                "bodyParagraphs": [
+                  "Gettysburg will hold Dedication Day on November 19 to mark the 163rd anniversary of Abraham Lincoln's famous Gettysburg Address. The original speech was given in 1863 during the Civil War. All events are free and no tickets are needed. A historical recreation will show a procession from the David Wills House to the National Cemetery. Community Media plans to stream the ceremony online for people who cannot attend."
+                ],
+                "wordCount": 69,
+                "vocabulary": [
+                  {
+                    "term": "procession",
+                    "definitionEn": "a group of people moving forward in an organized way, often for a ceremony",
+                    "meaningZhHant": "隊伍；遊行"
+                  },
+                  {
+                    "term": "stream",
+                    "definitionEn": "to send video or audio over the internet so people can watch or listen live",
+                    "meaningZhHant": "串流；直播"
+                  }
+                ],
+                "image": {
+                  "assetId": "culture",
+                  "alt": "culture original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "US National Park Service",
+                    "url": "https://www.nps.gov/gett/planyourvisit/dedication-day.htm",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 3198,
+              "reviewerMs": 7823,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: procession",
+                    "reason": "The Traditional Chinese meaning '隊伍；遊行' is acceptable but could be more precise for a ceremonial context; '儀仗隊伍' or '典禮遊行' would better match the article's historical recreation sense.",
+                    "claim_ids": [],
+                    "suggested_action": "Update meaningZhHant to '儀仗隊伍；典禮遊行' for clearer ceremonial nuance."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: stream",
+                    "reason": "The Traditional Chinese meaning '串流；直播' is correct; however, '線上直播' is more natural for a live event broadcast in Taiwan usage.",
+                    "claim_ids": [],
+                    "suggested_action": "Update meaningZhHant to '線上直播' for more idiomatic Taiwan usage."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 5,
+                  "reason": "The article presents a concrete, upcoming event with a clear historical hook (163rd anniversary of the Gettysburg Address) that is relevant and engaging for young readers. It delivers the key facts — date, free admission, procession, live stream — without filler. Sentences are short, vocabulary is controlled, and background assumptions (Civil War, Lincoln) are minimal and appropriate for A2.",
+                  "suggestion": "文章結構清晰、資訊完整，適合 A2 程度學生閱讀。建議僅微調詞彙表的中文釋義，使其更符合台灣慣用語（procession → 儀仗隊伍/典禮遊行，stream → 線上直播），其餘可直接發布。"
+                }
+              },
+              "firstPass": true
+            },
+            {
+              "storyId": "voyager-signal",
+              "edition": "senior",
+              "article": {
+                "storyId": "voyager-signal",
+                "order": 1,
+                "category": "science",
+                "contentKind": "news",
+                "headline": "NASA Checks Voyager 1 Signal as Probe Remains Far Away",
+                "bodyParagraphs": [
+                  "NASA says Voyager 1 is still sending a carrier signal but has stopped transmitting science and engineering data. The problem was first noticed on November 14, and engineers are now investigating the cause. Because the spacecraft is extremely far from Earth, a radio wave takes about 24 hours to reach it, and any reply takes another 24 hours to return. This long delay makes the diagnosis very slow and difficult. NASA plans to use the carrier signal and trajectory calculations on November 19 to confirm the one-light-day distance. Officials warn that fixing the issue may take weeks or even longer."
+                ],
+                "wordCount": 100,
+                "vocabulary": [
+                  {
+                    "term": "carrier signal",
+                    "definitionEn": "A basic radio wave sent by the spacecraft to show it is still working, without carrying detailed information.",
+                    "meaningZhHant": "載波訊號"
+                  },
+                  {
+                    "term": "trajectory",
+                    "definitionEn": "The calculated path that a spacecraft follows through space.",
+                    "meaningZhHant": "軌跡"
+                  }
+                ],
+                "image": {
+                  "assetId": "science",
+                  "alt": "science original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "NASA",
+                    "url": "https://science.nasa.gov/blogs/voyager/2026/11/18/voyager-1-engineers-analyze-data-issue-ready-to-confirm-light-day/",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 4522,
+              "reviewerMs": 8667,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term 'carrier signal'",
+                    "reason": "The Traditional Chinese translation '載波訊號' is technically correct but may be too technical for the target B1/child audience; a more accessible gloss such as '基本無線電訊號' could aid comprehension.",
+                    "claim_ids": [],
+                    "suggested_action": "Consider adding a simpler parenthetical gloss in Traditional Chinese, e.g., '載波訊號（基本無線電訊號）'."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term 'trajectory'",
+                    "reason": "The Traditional Chinese translation '軌跡' is accurate but can also mean 'track/trace' in general contexts; '飛行軌跡' or '軌道' would be more precise for a spacecraft path.",
+                    "claim_ids": [],
+                    "suggested_action": "Update the glossary entry to '飛行軌跡' or '軌道' for clearer space-context meaning."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 4,
+                  "reason": "The article presents a concrete, real-time space mission update with a clear takeaway (Voyager 1's data issue and the 24-hour light-time delay). The structure is logical, background assumptions are minimal, and the vocabulary is appropriate for B1 learners. The two glossary terms are relevant and transferable.",
+                  "suggestion": "No major rewrite needed. Optionally refine the Chinese glosses as noted for better accessibility."
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "sierra-snow",
+              "edition": "senior",
+              "article": {
+                "storyId": "sierra-snow",
+                "order": 2,
+                "category": "nature",
+                "contentKind": "news",
+                "headline": "Early Snow Falls on Sierra Nevada Mountains",
+                "bodyParagraphs": [
+                  "NASA reported that an early-season storm brought snow to California's Sierra Nevada on November 13, 2026. The agency's Terra satellite recorded fresh snow covering the mountains on November 14. Just two days earlier, the same peaks appeared mostly bare in satellite images. The MODIS instrument on Terra captured this rapid change. About 30 centimeters of snow fell at Donner Pass on November 13, according to the Central Sierra Snow Laboratory. The National Weather Service also issued a warning for more mountain snow during November 18 to 20. This early snowfall marks the start of the water year for the region."
+                ],
+                "wordCount": 100,
+                "vocabulary": [
+                  {
+                    "term": "water year",
+                    "definitionEn": "A 12-month period used to measure rain and snow totals, often starting in autumn",
+                    "meaningZhHant": "水文年（用於測量雨雪總量的12個月期間，通常從秋季開始）"
+                  },
+                  {
+                    "term": "instrument",
+                    "definitionEn": "A tool or device used for scientific measurement or observation",
+                    "meaningZhHant": "儀器（用於科學測量或觀測的工具或設備）"
+                  }
+                ],
+                "image": {
+                  "assetId": "nature",
+                  "alt": "nature original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "NASA Earth Observatory",
+                    "url": "https://science.nasa.gov/earth/earth-observatory/sierra-snow-season-spins-up/",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": null
+              },
+              "writerMs": 6521,
+              "reviewerMs": 6555,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [],
+              "assessment": {
+                "factual_status": "needs_revision",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "major",
+                    "span": "About 30 centimeters of snow fell at Donner Pass on November 13, according to the Central Sierra Snow Laboratory.",
+                    "reason": "Evidence states snow fell from November 18 to 20, not November 13. Claim 3 is unsupported and must_keep=false but appears in article.",
+                    "claim_ids": [
+                      "claim-3"
+                    ],
+                    "suggested_action": "Correct the date to November 18–20 or remove the specific claim about November 13 snowfall at Donner Pass."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "The National Weather Service also issued a warning for more mountain snow during November 18 to 20.",
+                    "reason": "Claim 4 is optional (must_keep=false) and supported by evidence, but article presents it as fact without noting it's a forecast/warning.",
+                    "claim_ids": [
+                      "claim-4"
+                    ],
+                    "suggested_action": "Clarify this was a forecast warning, not observed snowfall."
+                  }
+                ],
+                "publish_recommendation": "revise",
+                "readership": {
+                  "interest": 4,
+                  "information": 3,
+                  "readability": 4,
+                  "reason": "Article covers a concrete, timely weather event with satellite imagery that children can visualize. The early snowfall marking the water year start is a clear takeaway. However, the factual error about Donner Pass date reduces information reliability. Structure is clear with good flow from observation to context.",
+                  "suggestion": "修正唐納山口降雪日期為11月18-20日，並說明氣象預警屬預測非實測。保留衛星影像對比與水文年概念，適合B1程度學習者。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "safe-toilets",
+              "edition": "senior",
+              "article": {
+                "storyId": "safe-toilets",
+                "order": 3,
+                "category": "world",
+                "contentKind": "knowledge",
+                "headline": "UN Marks World Toilet Day with Focus on Safe Toilets and Equal Futures",
+                "bodyParagraphs": [
+                  "The United Nations observes World Toilet Day every year on November 19. The 2026 campaign carries the theme Safe toilets. Equal futures. and highlights the link between sanitation and gender equality. UN DESA reports that 3.4 billion people still lack safe toilets. The UN says safe toilets help women and girls take part in school, work and society. UN-Water coordinates the observance, which has been officially observed by the UN since 2013."
+                ],
+                "wordCount": 72,
+                "vocabulary": [
+                  {
+                    "term": "sanitation",
+                    "definitionEn": "systems and services that keep people healthy by safely managing human waste",
+                    "meaningZhHant": "環境衛生；污水處理系統"
+                  },
+                  {
+                    "term": "gender equality",
+                    "definitionEn": "the state in which people of all genders have the same rights, opportunities and treatment",
+                    "meaningZhHant": "性別平等"
+                  }
+                ],
+                "image": {
+                  "assetId": "world",
+                  "alt": "world original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "UN DESA",
+                    "url": "https://desapublications.un.org/un-desa-voice/more-from-undesa/november-2026/world-toilet-day-2026-safe-toilets-equal-futures",
+                    "publishedAt": "2026-11-01T00:00:00Z",
+                    "publishedAtPrecision": "month"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 4634,
+              "reviewerMs": 16465,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "字數 72，目標 90–120",
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "The 2026 campaign carries the theme Safe toilets. Equal futures. and highlights the link between sanitation and gender equality.",
+                    "reason": "The article states the campaign 'highlights the link between sanitation and gender equality' but the source evidence only mentions the theme and that safe toilets enable women and girls to attend school, work and participate in society. The explicit 'link' framing is a slight editorial addition not directly in the source text.",
+                    "claim_ids": [
+                      "claim-2"
+                    ],
+                    "suggested_action": "Consider phrasing as 'The 2026 campaign theme is Safe toilets. Equal futures., focusing on how safe toilets help women and girls take part in school, work and society.' to stay closer to the source wording."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "UN-Water coordinates the observance, which has been officially observed by the UN since 2013.",
+                    "reason": "Claim 5 is marked as optional (must_keep: false) and the source evidence provided does not contain information about UN-Water coordination or the 2013 start date. This claim appears unsupported by the given evidence.",
+                    "claim_ids": [
+                      "claim-5"
+                    ],
+                    "suggested_action": "Remove this sentence or verify with additional sources. Since it's an optional claim, removal would not affect mandatory content."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 5,
+                  "reason": "The article covers a concrete UN observance with a clear theme and striking statistic (3.4 billion people lacking safe toilets) that is relevant and understandable for children. The connection to gender equality and education makes it relatable. Structure is simple and direct with short sentences. Vocabulary terms 'sanitation' and 'gender equality' are well-chosen for B1 level - they are transferable, appear in context, and have clear definitions.",
+                  "suggestion": "文章結構清晰，資訊量適中，適合 B1 程度學生。建議移除未經證實的 UN-Water 協調與 2013 年官方紀念起始說法，並微調第二句話貼近原文：「2026 年主題為 Safe toilets. Equal futures.，著重安全廁所如何幫助女童與女性參與學校、工作與社會。」即可發布。"
+                }
+              },
+              "firstPass": false
+            },
+            {
+              "storyId": "lincoln-commemoration",
+              "edition": "senior",
+              "article": {
+                "storyId": "lincoln-commemoration",
+                "order": 4,
+                "category": "culture",
+                "contentKind": "news",
+                "headline": "Gettysburg Plans Free Events for 163rd Anniversary of Lincoln Address",
+                "bodyParagraphs": [
+                  "Gettysburg will mark the 163rd anniversary of Abraham Lincoln's famous Gettysburg Address on November 19 with a full day of Dedication Day events. The National Park Service announced that all activities are free and require no tickets for the public. A historical recreation will feature a procession from the David Wills House to the Gettysburg National Cemetery, following the same route used in 1863. Community Media plans to stream the ceremony online for people who cannot attend in person. Lincoln delivered the original speech in 1863 during the Civil War, and the address remains a key moment in American history."
+                ],
+                "wordCount": 101,
+                "vocabulary": [
+                  {
+                    "term": "procession",
+                    "definitionEn": "a group of people moving forward in an orderly, ceremonial way",
+                    "meaningZhHant": "隊伍；遊行"
+                  },
+                  {
+                    "term": "stream",
+                    "definitionEn": "to broadcast video or audio live over the internet",
+                    "meaningZhHant": "串流直播"
+                  }
+                ],
+                "image": {
+                  "assetId": "culture",
+                  "alt": "culture original category illustration",
+                  "caption": "原創分類圖示",
+                  "kind": "icon",
+                  "credit": "DayDay"
+                },
+                "sources": [
+                  {
+                    "publisher": "US National Park Service",
+                    "url": "https://www.nps.gov/gett/planyourvisit/dedication-day.htm",
+                    "publishedAt": "2026-11-18T00:00:00Z",
+                    "publishedAtPrecision": "date"
+                  }
+                ],
+                "eventDate": "2026-11-19"
+              },
+              "writerMs": 9123,
+              "reviewerMs": 10998,
+              "writerCalls": 1,
+              "reviewerCalls": 1,
+              "errors": [
+                "句長超過目標",
+                "與較簡單版本重複選字"
+              ],
+              "assessment": {
+                "factual_status": "pass",
+                "level_fit": "suitable",
+                "suitability": "pass",
+                "issues": [
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: procession",
+                    "reason": "The Traditional Chinese meaning '隊伍；遊行' is acceptable but could be more precise for the ceremonial context; '儀仗隊伍' or '莊嚴遊行' better captures the orderly, ceremonial sense.",
+                    "claim_ids": [],
+                    "suggested_action": "Update meaningZhHant to '儀仗隊伍；莊嚴遊行' for clearer nuance."
+                  },
+                  {
+                    "severity": "minor",
+                    "span": "vocabulary term: stream",
+                    "reason": "The Traditional Chinese meaning '串流直播' is correct but slightly technical; adding '網路直播' makes it more accessible for B1 learners.",
+                    "claim_ids": [],
+                    "suggested_action": "Update meaningZhHant to '串流直播；網路直播'."
+                  }
+                ],
+                "publish_recommendation": "pass",
+                "readership": {
+                  "interest": 4,
+                  "information": 4,
+                  "readability": 5,
+                  "reason": "The article covers a concrete, real-world commemoration with free public events and a live stream, which is relevant and engaging for children interested in history or current events. It delivers clear, source-supported facts (date, location, cost, procession, streaming) without filler. Structure is simple, sentences are short, and background assumptions (Civil War, Lincoln) are manageable for B1 readers.",
+                  "suggestion": "文章結構清晰、資訊完整，適合 B1 程度學生閱讀。建議微調詞彙表的中文釋義，讓『procession』與『stream』的語感更貼近台灣用語，並可在文中補充一句林肯演說的核心意義（如『強調自由與平等』），幫助讀者理解歷史重要性。"
+                }
+              },
+              "firstPass": false
+            }
+          ],
+          "apiMs": 175170,
+          "firstPass": 1,
+          "complete": true
+        }
+      ],
+      "facts": [
+        {
+          "story_id": "voyager-signal",
+          "event_key": "voyager-signal-2026-11-19",
+          "primary_category": "science",
+          "content_kind": "news",
+          "published_at": "2026-11-18T00:00:00Z",
+          "published_at_precision": "date",
+          "event_date": "2026-11-19",
+          "sources": [
+            {
+              "source_id": "source-voyager-signal",
+              "url": "https://science.nasa.gov/blogs/voyager/2026/11/18/voyager-1-engineers-analyze-data-issue-ready-to-confirm-light-day/",
+              "publisher": "NASA",
+              "published_at": "2026-11-18T00:00:00Z",
+              "published_at_precision": "date",
+              "retrieved_at": "2026-11-19T13:15:29.420683Z",
+              "read_at": "2026-11-19T13:15:29.420683Z",
+              "rights_reviewed": true,
+              "independence_group": "NASA",
+              "evidence": "the spacecraft had stopped sending science and engineering data\nreceived a carrier signal\nusing the carrier signal and trajectory calculations\nA radio wave, which is a form of invisible light, takes 24 hours to reach the probe, and any signal it sends takes 24 hours to reach Earth."
+            }
+          ],
+          "claims": [
+            {
+              "claim_id": "claim-1",
+              "text": "NASA reports that Voyager 1 is sending a carrier signal but not its science and engineering data.",
+              "supporting_source_ids": [
+                "source-voyager-signal"
+              ],
+              "evidence_ref": "source-voyager-signal",
+              "status": "reported",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-2",
+              "text": "Engineers are investigating the cause; NASA plans to use the signal and trajectory calculations to confirm the one-light-day distance on November 19.",
+              "supporting_source_ids": [
+                "source-voyager-signal"
+              ],
+              "evidence_ref": "source-voyager-signal",
+              "status": "reported_plan",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-3",
+              "text": "A signal takes about 24 hours to travel each way between Earth and Voyager 1.",
+              "supporting_source_ids": [
+                "source-voyager-signal"
+              ],
+              "evidence_ref": "source-voyager-signal",
+              "status": "reported",
+              "must_keep": false
+            },
+            {
+              "claim_id": "claim-4",
+              "text": "The data problem was noticed on November 14, 2026.",
+              "supporting_source_ids": [
+                "source-voyager-signal"
+              ],
+              "evidence_ref": "source-voyager-signal",
+              "status": "reported",
+              "must_keep": false
+            },
+            {
+              "claim_id": "claim-5",
+              "text": "Diagnosing the issue may take weeks or longer.",
+              "supporting_source_ids": [
+                "source-voyager-signal"
+              ],
+              "evidence_ref": "source-voyager-signal",
+              "status": "reported_plan",
+              "must_keep": false
+            }
+          ],
+          "uncertainties": [
+            "Do not say the probe has gone silent, been repaired, or confirmed the milestone through data. Its carrier signal and data stream are different. The source is a November 18 report about planned November 19 confirmation."
+          ],
+          "sensitivity": "low",
+          "is_demo": false
+        },
+        {
+          "story_id": "sierra-snow",
+          "event_key": "sierra-snow-2026-11-19",
+          "primary_category": "nature",
+          "content_kind": "news",
+          "published_at": "2026-11-18T00:00:00Z",
+          "published_at_precision": "date",
+          "event_date": null,
+          "sources": [
+            {
+              "source_id": "source-sierra-snow",
+              "url": "https://science.nasa.gov/earth/earth-observatory/sierra-snow-season-spins-up/",
+              "publisher": "NASA Earth Observatory",
+              "published_at": "2026-11-18T00:00:00Z",
+              "published_at_precision": "date",
+              "retrieved_at": "2026-11-19T13:15:29.420683Z",
+              "read_at": "2026-11-19T13:15:29.420683Z",
+              "rights_reviewed": true,
+              "independence_group": "NASA Earth Observatory",
+              "evidence": "one of the first major snowfalls of the water year arrived on November 13, 2026.\nfresh snow in the Sierra Nevada on the morning of November 14\nNearly 12 inches (30 centimeters) of snow fell at Donner Pass\nfrom November 18 to 20"
+            }
+          ],
+          "claims": [
+            {
+              "claim_id": "claim-1",
+              "text": "NASA reports an early-season storm brought snow to California’s Sierra Nevada on November 13, 2026.",
+              "supporting_source_ids": [
+                "source-sierra-snow"
+              ],
+              "evidence_ref": "source-sierra-snow",
+              "status": "reported",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-2",
+              "text": "NASA’s Terra satellite recorded fresh snow on November 14, compared with mostly bare mountains two days earlier.",
+              "supporting_source_ids": [
+                "source-sierra-snow"
+              ],
+              "evidence_ref": "source-sierra-snow",
+              "status": "reported",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-3",
+              "text": "About 30 centimeters of snow fell at Donner Pass on November 13, according to the Central Sierra Snow Laboratory.",
+              "supporting_source_ids": [
+                "source-sierra-snow"
+              ],
+              "evidence_ref": "source-sierra-snow",
+              "status": "reported",
+              "must_keep": false
+            },
+            {
+              "claim_id": "claim-4",
+              "text": "The National Weather Service issued a warning for more mountain snow during November 18–20.",
+              "supporting_source_ids": [
+                "source-sierra-snow"
+              ],
+              "evidence_ref": "source-sierra-snow",
+              "status": "reported",
+              "must_keep": false
+            },
+            {
+              "claim_id": "claim-5",
+              "text": "The MODIS instrument on Terra took the satellite image.",
+              "supporting_source_ids": [
+                "source-sierra-snow"
+              ],
+              "evidence_ref": "source-sierra-snow",
+              "status": "reported",
+              "must_keep": false
+            }
+          ],
+          "uncertainties": [
+            "Do not present the November 13 snowfall as happening today. Future snow totals are forecasts, not observed amounts. No travel or medical advice is needed."
+          ],
+          "sensitivity": "low",
+          "is_demo": false
+        },
+        {
+          "story_id": "safe-toilets",
+          "event_key": "safe-toilets-2026-11-19",
+          "primary_category": "world",
+          "content_kind": "knowledge",
+          "published_at": "2026-11-01T00:00:00Z",
+          "published_at_precision": "month",
+          "event_date": "2026-11-19",
+          "sources": [
+            {
+              "source_id": "source-safe-toilets",
+              "url": "https://desapublications.un.org/un-desa-voice/more-from-undesa/november-2026/world-toilet-day-2026-safe-toilets-equal-futures",
+              "publisher": "UN DESA",
+              "published_at": "2026-11-01T00:00:00Z",
+              "published_at_precision": "month",
+              "retrieved_at": "2026-11-19T13:15:29.420683Z",
+              "read_at": "2026-11-19T13:15:29.420683Z",
+              "rights_reviewed": true,
+              "independence_group": "UN DESA",
+              "evidence": "Every year on 19 November, the United Nations observes World Toilet Day\nthemed “Safe toilets. Equal futures.”\nenabling them to attend school, work and fully participate in society.\n3.4 billion people still live without safe toilets"
+            }
+          ],
+          "claims": [
+            {
+              "claim_id": "claim-1",
+              "text": "The United Nations observes World Toilet Day on November 19.",
+              "supporting_source_ids": [
+                "source-safe-toilets"
+              ],
+              "evidence_ref": "source-safe-toilets",
+              "status": "reported",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-2",
+              "text": "The 2026 campaign, Safe toilets. Equal futures., focuses on sanitation and gender equality.",
+              "supporting_source_ids": [
+                "source-safe-toilets"
+              ],
+              "evidence_ref": "source-safe-toilets",
+              "status": "reported",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-3",
+              "text": "The UN says safe toilets help women and girls take part in school, work and society.",
+              "supporting_source_ids": [
+                "source-safe-toilets"
+              ],
+              "evidence_ref": "source-safe-toilets",
+              "status": "reported",
+              "must_keep": false
+            },
+            {
+              "claim_id": "claim-4",
+              "text": "UN DESA reports that 3.4 billion people still lack safe toilets.",
+              "supporting_source_ids": [
+                "source-safe-toilets"
+              ],
+              "evidence_ref": "source-safe-toilets",
+              "status": "reported",
+              "must_keep": false
+            },
+            {
+              "claim_id": "claim-5",
+              "text": "UN-Water coordinates the observance, which has been officially observed by the UN since 2013.",
+              "supporting_source_ids": [
+                "source-safe-toilets"
+              ],
+              "evidence_ref": "source-safe-toilets",
+              "status": "reported",
+              "must_keep": false
+            }
+          ],
+          "uncertainties": [
+            "Use an educational, non-frightening tone. This is a November 2026 campaign explainer; its exact publication day is unknown. Do not infer November 1 or November 19 as the publication day. Avoid graphic descriptions or unsupported health advice."
+          ],
+          "sensitivity": "low",
+          "is_demo": false
+        },
+        {
+          "story_id": "lincoln-commemoration",
+          "event_key": "lincoln-commemoration-2026-11-19",
+          "primary_category": "culture",
+          "content_kind": "news",
+          "published_at": "2026-11-18T00:00:00Z",
+          "published_at_precision": "date",
+          "event_date": "2026-11-19",
+          "sources": [
+            {
+              "source_id": "source-lincoln-commemoration",
+              "url": "https://www.nps.gov/gett/planyourvisit/dedication-day.htm",
+              "publisher": "US National Park Service",
+              "published_at": "2026-11-18T00:00:00Z",
+              "published_at_precision": "date",
+              "retrieved_at": "2026-11-19T13:15:29.420683Z",
+              "read_at": "2026-11-19T13:15:29.420683Z",
+              "rights_reviewed": true,
+              "independence_group": "US National Park Service",
+              "evidence": "Dedication Day 2026 will commemorate the 163rd anniversary of Lincoln’s Gettysburg Address.\nAll events are FREE. No tickets are required.\n2026 Live Stream Information\nLast updated: November 18, 2026"
+            }
+          ],
+          "claims": [
+            {
+              "claim_id": "claim-1",
+              "text": "Gettysburg’s planned November 19 Dedication Day events mark the 163rd anniversary of Abraham Lincoln’s Gettysburg Address.",
+              "supporting_source_ids": [
+                "source-lincoln-commemoration"
+              ],
+              "evidence_ref": "source-lincoln-commemoration",
+              "status": "reported_plan",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-2",
+              "text": "The announced events are free and require no tickets.",
+              "supporting_source_ids": [
+                "source-lincoln-commemoration"
+              ],
+              "evidence_ref": "source-lincoln-commemoration",
+              "status": "reported_plan",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-3",
+              "text": "A planned historical recreation includes a procession from the David Wills House to Gettysburg National Cemetery.",
+              "supporting_source_ids": [
+                "source-lincoln-commemoration"
+              ],
+              "evidence_ref": "source-lincoln-commemoration",
+              "status": "reported_plan",
+              "must_keep": false
+            },
+            {
+              "claim_id": "claim-4",
+              "text": "Community Media plans to stream the events online.",
+              "supporting_source_ids": [
+                "source-lincoln-commemoration"
+              ],
+              "evidence_ref": "source-lincoln-commemoration",
+              "status": "reported_plan",
+              "must_keep": false
+            },
+            {
+              "claim_id": "claim-5",
+              "text": "Lincoln delivered the original address in 1863.",
+              "supporting_source_ids": [
+                "source-lincoln-commemoration"
+              ],
+              "evidence_ref": "source-lincoln-commemoration",
+              "status": "reported",
+              "must_keep": false
+            }
+          ],
+          "uncertainties": [
+            "These are announced events, not a report that the ceremony has finished. The procession is a historical recreation; Abraham Lincoln is not alive or attending in person. Avoid graphic war details."
+          ],
+          "sensitivity": "low",
+          "is_demo": false
+        }
+      ],
+      "sourceMode": "developer-read official source excerpts; identical facts across all rounds",
+      "sourceLabels": [
+        {
+          "storyId": "voyager-signal",
+          "label": null
+        },
+        {
+          "storyId": "sierra-snow",
+          "label": null
+        },
+        {
+          "storyId": "safe-toilets",
+          "label": "November 2026; the page does not provide an exact publication day. November 1 is only a normalized month value."
+        },
+        {
+          "storyId": "lincoln-commemoration",
+          "label": "Source last updated November 18, 2026."
+        }
+      ],
+      "methodology": "Three independent first-draft rounds with identical facts, model and prompts; no cache shared between rounds, no manual copy edits, no semantic retries. API time includes network and schema repairs; PDF/layout time is excluded. Resume uses the original recorded timing.",
+      "totalCalls": 72,
+      "totalTokens": 168682,
+      "costStatus": "cost_unknown",
+      "estimatedUsd": null,
+      "pdfRound": 3,
+      "pdfFiles": [
+        {
+          "edition": "elementary",
+          "mode": "color",
+          "pages": 2,
+          "path": "/benchmarks/2026-11-19-new-four/DD_2026-11-19_elementary_r103_color.pdf",
+          "sha256": "fbbc833871431081aa277f58a515560538585ea2801b966a27ac71a662ccb6a1",
+          "qualityValidated": false
+        },
+        {
+          "edition": "elementary",
+          "mode": "ink",
+          "pages": 2,
+          "path": "/benchmarks/2026-11-19-new-four/DD_2026-11-19_elementary_r103_ink.pdf",
+          "sha256": "1f6408cdd6f46998df77bd8da5d9cbc14bc0efdb769d7ba407ed4f9064e553a7",
+          "qualityValidated": false
+        },
+        {
+          "edition": "junior",
+          "mode": "color",
+          "pages": 2,
+          "path": "/benchmarks/2026-11-19-new-four/DD_2026-11-19_junior_r103_color.pdf",
+          "sha256": "6059b92424f5c8132e9959297d563f093c9e5dd9680fd8eb9f26e0786c1290dd",
+          "qualityValidated": false
+        },
+        {
+          "edition": "junior",
+          "mode": "ink",
+          "pages": 2,
+          "path": "/benchmarks/2026-11-19-new-four/DD_2026-11-19_junior_r103_ink.pdf",
+          "sha256": "3544194e70010537eaca14704611b74e86048c4df537176d447d11be9d6d98b7",
+          "qualityValidated": false
+        },
+        {
+          "edition": "senior",
+          "mode": "color",
+          "pages": 2,
+          "path": "/benchmarks/2026-11-19-new-four/DD_2026-11-19_senior_r103_color.pdf",
+          "sha256": "7a0d5da89bfa31d52ccac6901888572c528ebb2853a6d7f1358b907afcd847ec",
+          "qualityValidated": false
+        },
+        {
+          "edition": "senior",
+          "mode": "ink",
+          "pages": 2,
+          "path": "/benchmarks/2026-11-19-new-four/DD_2026-11-19_senior_r103_ink.pdf",
+          "sha256": "68f3dccae5e0f7b6ca18390f9b4d7e4f88b62f0b4617b4b76efa7511b7a60ed5",
+          "qualityValidated": false
+        }
+      ],
+      "errorCode": null,
+      "published": false,
+      "databaseWritten": false,
+      "fingerprint": "e160a5c126daee89b3521940564b4d0a46c50ca10b5d5181bf3b711402e2db1b",
+      "sourceRun": 44533303325
+    }
+  ]
+}

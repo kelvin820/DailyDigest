@@ -9,24 +9,25 @@ import { containsTerm } from '../content/core.mjs';
 import { cachedStep,hash } from './state.mjs';
 import {learningTermKey} from '../content/vocabulary.mjs';
 import {recoverReviewedArticle} from './recover-reviewed';
+import {advisoryReviewNote} from '../editorial/readability';
 import {supportedStoryCounts} from '../../config/issue-settings.mjs';
 
 export type Store = { get: (key: string) => Promise<unknown>; set: (key: string, value: unknown) => Promise<void>; reviewedCandidates?:(storyId:string,edition:string)=>Promise<{writer:unknown;review:unknown}[]> };
-export async function produceEditions({ facts, issueDate, revision, provider, store, writerModel, reviewerModel,editDraft,editorPolicyHash,allowMinorReviewHolds=false,storyCount=facts.length }: {
+export async function produceEditions({ facts, issueDate, revision, provider, store, writerModel, reviewerModel,editDraft,editorPolicyHash,allowMinorReviewHolds=false,storyCount=facts.length,lengthPolicy=storyCount===4?'advisory':'strict' }: {
   facts: z.infer<typeof factSchema>[]; issueDate: string; revision: number; provider: TextModelProvider;
-  store: Store; writerModel: string; reviewerModel: string;storyCount?:number;allowMinorReviewHolds?:boolean;editorPolicyHash?:string;editDraft?:(input:{storyId:string;edition:string;outputHash:string;attempt:number;previousLevelTerms:string[];data:z.infer<typeof writerSchema>})=>Promise<z.infer<typeof writerSchema>>;
+  store: Store; writerModel: string; reviewerModel: string;storyCount?:number;lengthPolicy?:'strict'|'advisory';allowMinorReviewHolds?:boolean;editorPolicyHash?:string;editDraft?:(input:{storyId:string;edition:string;outputHash:string;attempt:number;previousLevelTerms:string[];data:z.infer<typeof writerSchema>})=>Promise<z.infer<typeof writerSchema>>;
 }) {
   if(!supportedStoryCounts.includes(storyCount)||facts.length!==storyCount||
     new Set(facts.map(f=>f.story_id)).size!==storyCount)throw Error('DISTINCT_EVENTS_REQUIRED');
   facts.forEach(f => factSchema.parse(f));
-  const writer = await readFile('prompts/writer.v1.txt', 'utf8');
-  const reviewPrompt = await readFile('prompts/reviewer.v1.txt', 'utf8');
+  const writer = await readFile(lengthPolicy==='advisory'?'prompts/writer.v2.txt':'prompts/writer.v1.txt', 'utf8');
+  const reviewPrompt = (await readFile('prompts/reviewer.v1.txt', 'utf8'))+(lengthPolicy==='advisory'?'\n'+advisoryReviewNote:'');
   const payloads = [], reviews = [];
   for (const edition of editionKeys) {
     const c = editions[edition], articles: ArticleView[] = [];
     for (const [index, fact] of facts.entries()) {
       const previousLevelTerms=payloads.flatMap(p=>p.articles.filter(a=>a.storyId===fact.story_id).flatMap(a=>a.vocabulary.map(v=>v.term)));
-      const acceptedInput={fact,edition,order:index+1,config:c,writer,reviewPrompt,writerModel,reviewerModel,previousLevelTerms,provider:provider.cacheIdentity,policy:'tiered-v1',editorPolicyHash,allowMinorReviewHolds,reviewHoldPolicy:'final-attempt-v1'};
+      const acceptedInput={fact,edition,order:index+1,config:c,writer,reviewPrompt,writerModel,reviewerModel,previousLevelTerms,provider:provider.cacheIdentity,policy:'tiered-v1',lengthPolicy,editorPolicyHash,allowMinorReviewHolds,reviewHoldPolicy:'final-attempt-v1'};
       const acceptedKey=`${fact.story_id}:${edition}:accepted:0`;
       const prior=await store.get(acceptedKey) as {status?:string;inputHash?:string;output?:{article:unknown;review:unknown};outputHash?:string}|undefined;
       if(prior?.status==='success'&&prior.inputHash===hash(acceptedInput)&&prior.output&&prior.outputHash===hash(prior.output)){
@@ -34,7 +35,7 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
       }
       let recovered;
       for(const pair of await store.reviewedCandidates?.(fact.story_id,edition)||[]){
-        recovered=recoverReviewedArticle({...pair,fact,index,config:c,previousLevelTerms,reviewerModel,reviewPrompt,provider:provider.cacheIdentity});if(recovered)break;
+        recovered=recoverReviewedArticle({...pair,fact,index,config:c,previousLevelTerms,reviewerModel,reviewPrompt,lengthPolicy,provider:provider.cacheIdentity});if(recovered)break;
       }
       if(recovered){await store.set(acceptedKey,{status:'success',inputHash:hash(acceptedInput),output:recovered,outputHash:hash(recovered)});
         articles.push(recovered.article);reviews.push({...recovered.review,storyId:fact.story_id,edition});continue;}
@@ -44,8 +45,8 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
           .replaceAll('{{english_variant}}', 'American English').replaceAll('{{min_words}}', String(c.min))
           .replaceAll('{{max_words}}', String(c.max)).replaceAll('{{avg_sentence_max}}', String(c.avg))
           .replaceAll('{{sentence_max}}', String(c.sentenceMax));
-        system+='\nFINAL BODY CHECK: Write about '+(edition==='elementary'?'seven short sentences of six to eight words each':edition==='junior'?'six or seven sentences of ten to thirteen words each':'seven or eight sentences of thirteen to sixteen words each')+'. Restate claims in your own simple sentences, rather than copying long fact-bundle sentences. Body must total '+c.min+'–'+c.max+' words; sentence average at most '+c.avg+', every sentence at most '+c.sentenceMax+' words.';
-        if(attempt){
+        if(lengthPolicy==='strict')system+='\nFINAL BODY CHECK: Write about '+(edition==='elementary'?'seven short sentences of six to eight words each':edition==='junior'?'six or seven sentences of ten to thirteen words each':'seven or eight sentences of thirteen to sixteen words each')+'. Restate claims in your own simple sentences, rather than copying long fact-bundle sentences. Body must total '+c.min+'–'+c.max+' words; sentence average at most '+c.avg+', every sentence at most '+c.sentenceMax+' words.';
+        if(attempt&&lengthPolicy==='strict'){
           const previous=feedback as {statistics?:{count:number;average:number;max:number}};
           const s=previous.statistics;
           system+='\nTRUSTED REVISION REQUIREMENT: Rewrite the body to '+c.min+'–'+c.max+
@@ -53,8 +54,9 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
             (s?'The previous body has '+s.count+' words. '+(s.count>c.max?'SHORTEN it; omit optional details. ':s.count<c.min?'EXPAND using supported details only. ':''):'')+
             'The previous longest sentence has '+(s?.max??'unknown')+' words; average '+(s?.average??'unknown')+'. Rewrite and split long sentences: EVERY sentence must have at most '+c.sentenceMax+' words, with an average at most '+c.avg+'. Keep all must_keep facts but do not copy their sentence structure. Then choose two useful, level-appropriate terms occurring in the revised body; avoid previousLevelTerms.';
         }
+        if(attempt&&lengthPolicy==='advisory')system+='\nRevise only to address the factual, vocabulary or genuine audience-fit feedback. Do not rewrite to meet word or sentence counts.';
         const previousStats=(feedback as {statistics?:{count:number}}|null)?.statistics;
-        const mustShorten=attempt>0&&previousStats&&previousStats.count>c.max;
+        const mustShorten=lengthPolicy==='strict'&&attempt>0&&previousStats&&previousStats.count>c.max;
         const writingFact=mustShorten?{...fact,claims:fact.claims.filter(claim=>claim.must_keep),
           sources:fact.sources.map(source=>({source_id:source.source_id,publisher:source.publisher,url:source.url,published_at:source.published_at}))}:fact;
         const revisionFeedback=mustShorten&&feedback&&typeof feedback==='object'?Object.fromEntries(Object.entries(feedback).filter(([key])=>key!=='previous_article')):feedback;
@@ -72,12 +74,12 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
         }
         const body = data.body_paragraphs.join(' '), s = stats(body);
         const mustKeep = fact.claims.every(claim => !claim.must_keep || data.used_claim_ids.includes(claim.claim_id));
-        const lengthPass = s.count >= c.min && s.count <= c.max && s.average <= c.avg && s.max <= c.sentenceMax;
+        const lengthPass = lengthPolicy==='advisory'||(s.count >= c.min && s.count <= c.max && s.average <= c.avg && s.max <= c.sentenceMax);
         const vocabPass = new Set(data.vocabulary.map(v => v.term.toLowerCase())).size === 2 &&
           data.vocabulary.every(v => containsTerm(body, v.term)&&!previousLevelTerms.some(term=>learningTermKey(term)===learningTermKey(v.term)));
         if (!mustKeep || !lengthPass || !vocabPass) {
           feedback = { previous_article:data,statistics: s, wordLimits: c, mustKeep, vocabPass,
-            instruction: 'Revise the complete article; do not truncate sentences.' };
+            instruction: lengthPolicy==='advisory'?'Repair factual coverage or vocabulary only; numerical length is advisory.':'Revise the complete article; do not truncate sentences.' };
           continue;
         }
         const article = articleSchema.parse({ storyId: fact.story_id, order: index + 1,
@@ -106,7 +108,7 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
     }
     payloads.push(editionSchema.parse({ schemaVersion: '1.0', issueDate, revision, edition,storyCount,
       readingRules:{min:c.min,max:c.max,avg:c.avg,maxSentence:c.sentenceMax},
-      targetCefr: c.cefr, templateVersion: '1.0', vocabularyPolicy:'tiered-v1', publishedAt: null, isDemo: facts.some(f => f.is_demo), articles }));
+      targetCefr: c.cefr, templateVersion: '1.0',lengthPolicy, vocabularyPolicy:'tiered-v1', publishedAt: null, isDemo: facts.some(f => f.is_demo), articles }));
   }
   return { editions: payloads, reviews };
 }
