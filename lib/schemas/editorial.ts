@@ -7,9 +7,9 @@ export const claimSchema = z.object({ claim_id: z.string().min(1), text: z.strin
 export const factSchema = z.object({
   story_id: z.string().regex(/^[A-Za-z0-9_-]{1,100}$/), event_key: z.string().min(1),
   primary_category: z.enum(['world', 'business', 'technology', 'culture', 'nature', 'science']),
-  content_kind: z.enum(['news', 'update', 'knowledge']), published_at: z.iso.datetime(), published_at_precision:z.enum(['date','datetime']).optional(), event_date: z.iso.date().nullable(),
+  content_kind: z.enum(['news', 'update', 'knowledge']), published_at: z.iso.datetime(), published_at_precision:z.enum(['date','datetime','month']).optional(), event_date: z.iso.date().nullable(),
   sources: z.array(z.object({ source_id: z.string().min(1), url: httpsUrl, publisher: z.string().min(1),
-    published_at: z.iso.datetime(), published_at_precision:z.enum(['date','datetime']).optional(), retrieved_at: z.iso.datetime(), read_at: z.iso.datetime(),
+    published_at: z.iso.datetime(), published_at_precision:z.enum(['date','datetime','month']).optional(), retrieved_at: z.iso.datetime(), read_at: z.iso.datetime(),
     rights_reviewed: z.literal(true), independence_group: z.string().min(1), evidence: z.string().min(30) }).strict()).min(1),
   claims: z.array(claimSchema).min(1), uncertainties: z.array(z.string()),
   update_reason: z.string().min(1).max(300).optional(),

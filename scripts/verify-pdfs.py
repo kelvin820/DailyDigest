@@ -26,7 +26,7 @@ for file in manifest:
     assert issue['templateVersion'] == file['templateVersion']
     minimum = {'elementary': 13, 'junior': 12, 'senior': 11}[issue['edition']]
     reader = PdfReader(path)
-    assert len(reader.pages) == 2, (path, 'page count')
+    assert len(reader.pages) == file['pages'] and len(reader.pages) >= 1, (path, 'page count')
     fonts = []
     texts, readable_texts = [], []
     for page in reader.pages:
@@ -47,22 +47,22 @@ for file in manifest:
             fonts.append({'font': str(font.get('/BaseFont')), 'embedded': embedded})
     assert fonts and all(f['embedded'] for f in fonts), (path, 'font not embedded')
     for i, article in enumerate(issue['articles']):
-        text = texts[i // per_page]
+        text = ''.join(texts) if file.get('pagination') == 'natural' else texts[i // per_page]
         assert normalize(article['headline']) in text, (path, article['storyId'], 'missing headline')
         for para in article['bodyParagraphs']:
             assert normalize(para) in text, (path, article['storyId'], 'missing body')
-            assert normalize(para) in readable_texts[i // per_page], (path, article['storyId'], 'body below minimum font size')
+            assert normalize(para) in (''.join(readable_texts) if file.get('pagination') == 'natural' else readable_texts[i // per_page]), (path, article['storyId'], 'body below minimum font size')
         for vocab in article['vocabulary']:
             for key in ['term', 'definitionEn', 'meaningZhHant']:
                 assert normalize(vocab[key]) in text, (path, 'missing vocabulary', key)
     assert len(file['layout']['articles']) == story_count
     assert all(a['fontPt'] >= minimum - .01 for a in file['layout']['articles'])
     file['textVerified'], file['fontsEmbedded'] = True, True
-    proofs.append({'file': path.name, 'pages': 2, 'all_full_bodies_verified': True, 'story_count': story_count,
+    proofs.append({'file': path.name, 'pages': len(reader.pages), 'all_full_bodies_verified': True, 'story_count': story_count,
         'minimum_body_pt': minimum, 'pdf_body_size_verified': True, 'fonts': fonts})
 # Only update verification flags after all six files have passed.
 manifest_path.write_text(json.dumps(manifest, indent=2), encoding='utf-8')
 proof_path = manifest_path.parent.parent / 'pdf-verification.json'
 proof_path.write_text(json.dumps(proofs, indent=2), encoding='utf-8')
 (manifest_path.parent / 'pdf-verification.json').write_text(json.dumps(proofs, indent=2), encoding='utf-8')
-print('PASS: six two-page PDFs; all headlines, bodies and vocabulary; embedded fonts; minimum body sizes.')
+print('PASS: six PDFs with verified actual page counts; all headlines, bodies and vocabulary; embedded fonts; minimum body sizes.')

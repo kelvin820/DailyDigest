@@ -8,13 +8,13 @@ import {publishGate} from '../lib/pipeline/gates.mjs';
 import {factSchema,reviewSchema} from '../lib/schemas/editorial';
 import {hash} from '../lib/pipeline/state.mjs';
 
-test('four-story snapshots validate, split two per print page and retain legacy eight-story payloads',()=>{
+test('four-story snapshots validate, use four newspaper sections with natural pagination and retain legacy eight-story payloads',()=>{
   for(const edition of ['elementary','junior','senior'] as const){
     const legacy=demoIssue(edition);assert.equal(editionSchema.safeParse(legacy).success,true);
     const four={...legacy,storyCount:4 as const,reviewCopy:true,articles:legacy.articles.slice(0,4)};
     assert.equal(editionSchema.safeParse(four).success,true);assert.deepEqual(validateIssue(four),[]);
-    const pages=renderPrint(four,'color').split('<section class="print-page">').slice(1);
-    assert.equal(pages.length,2);for(const page of pages)assert.equal((page.match(/class="print-article"/g)||[]).length,2);
+    const pages=renderPrint(four,'color').split('<section class="print-page flow-page">').slice(1);
+    assert.equal(pages.length,1);for(const page of pages)assert.equal((page.match(/class="print-article"/g)||[]).length,4);
     assert.match(renderPrint({...four,isDemo:false},'color'),/試閱刊 · 尚未正式發布/);
     assert.equal(editionSchema.safeParse({...four,storyCount:8}).success,false);
     assert.equal(editionSchema.safeParse({...four,storyCount:undefined}).success,false);

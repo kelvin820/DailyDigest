@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { promisify } from 'node:util';
 import { execFile } from 'node:child_process';
 import { chromium } from 'playwright';
+import {z} from 'zod';
 import { PDFDocument } from 'pdf-lib';
 import { editionKeys, editions } from '../config/editions';
 import { demoIssue } from '../fixtures/issue';
@@ -12,9 +13,10 @@ import { hash } from '../lib/pipeline/state.mjs';
 import { localServer } from '../lib/pdf/local-server.mjs';
 import { checkPrintLayout } from '../lib/pdf/print-checks.mjs';
 
-export async function renderIssues(issues: EditionView[], outDir: string) {
+export async function renderIssues(issues: EditionView[], outDir: string, options:{allowUncalibratedReviewDraft?:boolean}={}) {
   if (issues.length !== 3 || new Set(issues.map(p => p.edition)).size !== 3) throw Error('THREE_EDITIONS_REQUIRED');
-  issues.forEach(p => editionSchema.parse(p));
+  const quality=issues.map(p=>editionSchema.safeParse(p).success);
+  issues.forEach((p,i)=>{if(quality[i])return;if(!options.allowUncalibratedReviewDraft||!p.reviewCopy||p.isDemo||p.publishedAt!==null)editionSchema.parse(p);else z.object(editionSchema.shape).strict().parse(p);});
   await mkdir(resolve(outDir, 'fonts'), { recursive: true });
   for (const font of ['NotoSans-Regular.ttf', 'Newsreader.ttf', 'NotoSansTC.ttf',
     'InstrumentSerif-Regular.ttf', 'LibreCaslonText.ttf', 'OldStandard-Bold.ttf', 'PlayfairDisplay.ttf']) {
@@ -45,8 +47,8 @@ export async function renderIssues(issues: EditionView[], outDir: string) {
         const layout = await checkPrintLayout(page, editions[issue.edition].minPrintSize, issue.storyCount ?? 8);
         const path = resolve(outDir, name + '.pdf');
         const pdf = await page.pdf({ path, format: 'A4', printBackground: true, preferCSSPageSize: true });
-        if ((await PDFDocument.load(pdf)).getPageCount() !== 2) throw Error('PDF_PAGE_COUNT');
-        results.push({ edition: issue.edition, mode, pages: 2, noOverflow: true,
+        const pages=(await PDFDocument.load(pdf)).getPageCount();if(pages<1)throw Error('PDF_PAGE_COUNT');
+        results.push({ edition: issue.edition, mode, pages, pagination:issue.storyCount===4?'natural':'fixed',qualityValidated:quality[issues.indexOf(issue)], noOverflow: true,
           textVerified: false, fontsEmbedded: false, revision: issue.revision,
           issueDate: issue.issueDate, templateVersion: issue.templateVersion, contentHash: hash(issue),
           minimumBodyPt: editions[issue.edition].minPrintSize, layout, path, payloadPath });

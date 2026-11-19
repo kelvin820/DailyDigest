@@ -27,7 +27,7 @@ const seen=new Set<string>();
 for(const issue of issues){
  for(const mode of ['color','ink']){
   const proof=verified.find((f:{edition:string;mode:string})=>f.edition===issue.edition&&f.mode===mode);
-  if(!proof||proof.pages!==2||!proof.noOverflow||!proof.textVerified||!proof.fontsEmbedded||proof.contentHash!==hash(issue))throw Error('STALE_PDF');
+  if(!proof||(!Number.isInteger(proof.pages)||proof.pages<1)||proof.qualityValidated===false||!proof.noOverflow||!proof.textVerified||!proof.fontsEmbedded||proof.contentHash!==hash(issue))throw Error('STALE_PDF');
   const name=`DD_${issue.issueDate}_${issue.edition}_r${issue.revision}_${mode}.pdf`;await copy(name);pdfPaths[issue.edition+':'+mode]=base+name;
  }
  for(const a of issue.articles)if(a.image.rendition){

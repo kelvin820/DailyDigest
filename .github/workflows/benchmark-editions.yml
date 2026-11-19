@@ -1,0 +1,56 @@
+name: Compare three LLM draft rounds
+on:
+  workflow_dispatch:
+    inputs:
+      benchmark_id:
+        description: 'Reviewed four-source benchmark plan ID (review only)'
+        type: string
+        default: '2026-11-19-new-four'
+        required: true
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: dayday-llm-benchmark-${{ inputs.benchmark_id }}
+  cancel-in-progress: false
+jobs:
+  benchmark:
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      BENCHMARK_ID: ${{ inputs.benchmark_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: pnpm/action-setup@v4
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements-pdf.txt
+      - name: Find browser
+        run: |
+          browser_path=$(command -v google-chrome || command -v chromium || true)
+          if [ -n "$browser_path" ]; then echo "DD_CHROME=$browser_path" >> "$GITHUB_ENV"; else pnpm exec playwright install chromium; fi
+      - name: Resume recorded results without repeating completed API calls
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          node --input-type=module -e 'if(!/^[a-z0-9-]{1,80}$/.test(process.env.BENCHMARK_ID))throw Error("INVALID_BENCHMARK_ID")'
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?name=benchmark-$BENCHMARK_ID&per_page=20" > /tmp/dayday-benchmark-artifacts.json
+          previous_run=$(node --input-type=module -e 'import{readFileSync}from"node:fs";const a=JSON.parse(readFileSync("/tmp/dayday-benchmark-artifacts.json")).artifacts.sort((a,b)=>Date.parse(b.created_at)-Date.parse(a.created_at)).find(a=>a.workflow_run.id!==Number(process.env.GITHUB_RUN_ID));if(a?.expired)throw Error("RESUME_ARTIFACT_EXPIRED");if(a)process.stdout.write(String(a.workflow_run.id))')
+          if [ -n "$previous_run" ]; then gh run download "$previous_run" -n "benchmark-$BENCHMARK_ID" -D output/previous-benchmark; echo 'BENCHMARK_RESUME_DIR=output/previous-benchmark' >> "$GITHUB_ENV"; fi
+      - name: Measure three independent writing and review rounds (never publish)
+        run: node --import tsx scripts/benchmark-editions.ts
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY || secrets.NVIDIA_API_KEY }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: benchmark-${{ inputs.benchmark_id }}
+          path: output/llm-benchmark/
+          retention-days: 14

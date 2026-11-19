@@ -1,0 +1,196 @@
+{
+  "id": "2026-11-19-new-four",
+  "issueDate": "2026-11-19",
+  "capturedAt": "2026-11-19T13:15:29.420683Z",
+  "rounds": 3,
+  "model": "nvidia/nemotron-3-ultra-550b-a55b",
+  "sourceMode": "developer-read official source excerpts; identical facts across all rounds",
+  "stories": [
+    {
+      "id": "voyager-signal",
+      "category": "science",
+      "kind": "news",
+      "publisher": "NASA",
+      "url": "https://science.nasa.gov/blogs/voyager/2026/11/18/voyager-1-engineers-analyze-data-issue-ready-to-confirm-light-day/",
+      "sourceDate": "2026-11-18",
+      "precision": "date",
+      "eventDate": "2026-11-19",
+      "quotes": [
+        "the spacecraft had stopped sending science and engineering data",
+        "received a carrier signal",
+        "using the carrier signal and trajectory calculations",
+        "A radio wave, which is a form of invisible light, takes 24 hours to reach the probe, and any signal it sends takes 24 hours to reach Earth."
+      ],
+      "claims": [
+        [
+          "NASA reports that Voyager 1 is sending a carrier signal but not its science and engineering data.",
+          true,
+          "reported"
+        ],
+        [
+          "Engineers are investigating the cause; NASA plans to use the signal and trajectory calculations to confirm the one-light-day distance on November 19.",
+          true,
+          "reported_plan"
+        ],
+        [
+          "A signal takes about 24 hours to travel each way between Earth and Voyager 1.",
+          false,
+          "reported"
+        ],
+        [
+          "The data problem was noticed on November 14, 2026.",
+          false,
+          "reported"
+        ],
+        [
+          "Diagnosing the issue may take weeks or longer.",
+          false,
+          "reported_plan"
+        ]
+      ],
+      "uncertainties": [
+        "Do not say the probe has gone silent, been repaired, or confirmed the milestone through data. Its carrier signal and data stream are different. The source is a November 18 report about planned November 19 confirmation."
+      ]
+    },
+    {
+      "id": "sierra-snow",
+      "category": "nature",
+      "kind": "news",
+      "publisher": "NASA Earth Observatory",
+      "url": "https://science.nasa.gov/earth/earth-observatory/sierra-snow-season-spins-up/",
+      "sourceDate": "2026-11-18",
+      "precision": "date",
+      "eventDate": null,
+      "quotes": [
+        "one of the first major snowfalls of the water year arrived on November 13, 2026.",
+        "fresh snow in the Sierra Nevada on the morning of November 14",
+        "Nearly 12 inches (30 centimeters) of snow fell at Donner Pass",
+        "from November 18 to 20"
+      ],
+      "claims": [
+        [
+          "NASA reports an early-season storm brought snow to California’s Sierra Nevada on November 13, 2026.",
+          true,
+          "reported"
+        ],
+        [
+          "NASA’s Terra satellite recorded fresh snow on November 14, compared with mostly bare mountains two days earlier.",
+          true,
+          "reported"
+        ],
+        [
+          "About 30 centimeters of snow fell at Donner Pass on November 13, according to the Central Sierra Snow Laboratory.",
+          false,
+          "reported"
+        ],
+        [
+          "The National Weather Service issued a warning for more mountain snow during November 18–20.",
+          false,
+          "reported"
+        ],
+        [
+          "The MODIS instrument on Terra took the satellite image.",
+          false,
+          "reported"
+        ]
+      ],
+      "uncertainties": [
+        "Do not present the November 13 snowfall as happening today. Future snow totals are forecasts, not observed amounts. No travel or medical advice is needed."
+      ]
+    },
+    {
+      "id": "safe-toilets",
+      "category": "world",
+      "kind": "knowledge",
+      "publisher": "UN DESA",
+      "url": "https://desapublications.un.org/un-desa-voice/more-from-undesa/november-2026/world-toilet-day-2026-safe-toilets-equal-futures",
+      "sourceDate": "2026-11-01",
+      "precision": "month",
+      "eventDate": "2026-11-19",
+      "sourceDateLabel": "November 2026; the page does not provide an exact publication day. November 1 is only a normalized month value.",
+      "quotes": [
+        "Every year on 19 November, the United Nations observes World Toilet Day",
+        "themed “Safe toilets. Equal futures.”",
+        "enabling them to attend school, work and fully participate in society.",
+        "3.4 billion people still live without safe toilets"
+      ],
+      "claims": [
+        [
+          "The United Nations observes World Toilet Day on November 19.",
+          true,
+          "reported"
+        ],
+        [
+          "The 2026 campaign, Safe toilets. Equal futures., focuses on sanitation and gender equality.",
+          true,
+          "reported"
+        ],
+        [
+          "The UN says safe toilets help women and girls take part in school, work and society.",
+          false,
+          "reported"
+        ],
+        [
+          "UN DESA reports that 3.4 billion people still lack safe toilets.",
+          false,
+          "reported"
+        ],
+        [
+          "UN-Water coordinates the observance, which has been officially observed by the UN since 2013.",
+          false,
+          "reported"
+        ]
+      ],
+      "uncertainties": [
+        "Use an educational, non-frightening tone. This is a November 2026 campaign explainer; its exact publication day is unknown. Do not infer November 1 or November 19 as the publication day. Avoid graphic descriptions or unsupported health advice."
+      ]
+    },
+    {
+      "id": "lincoln-commemoration",
+      "category": "culture",
+      "kind": "news",
+      "publisher": "US National Park Service",
+      "url": "https://www.nps.gov/gett/planyourvisit/dedication-day.htm",
+      "sourceDate": "2026-11-18",
+      "precision": "date",
+      "eventDate": "2026-11-19",
+      "sourceDateLabel": "Source last updated November 18, 2026.",
+      "quotes": [
+        "Dedication Day 2026 will commemorate the 163rd anniversary of Lincoln’s Gettysburg Address.",
+        "All events are FREE. No tickets are required.",
+        "2026 Live Stream Information",
+        "Last updated: November 18, 2026"
+      ],
+      "claims": [
+        [
+          "Gettysburg’s planned November 19 Dedication Day events mark the 163rd anniversary of Abraham Lincoln’s Gettysburg Address.",
+          true,
+          "reported_plan"
+        ],
+        [
+          "The announced events are free and require no tickets.",
+          true,
+          "reported_plan"
+        ],
+        [
+          "A planned historical recreation includes a procession from the David Wills House to Gettysburg National Cemetery.",
+          false,
+          "reported_plan"
+        ],
+        [
+          "Community Media plans to stream the events online.",
+          false,
+          "reported_plan"
+        ],
+        [
+          "Lincoln delivered the original address in 1863.",
+          false,
+          "reported"
+        ]
+      ],
+      "uncertainties": [
+        "These are announced events, not a report that the ceremony has finished. The procession is a historical recreation; Abraham Lincoln is not alive or attending in person. Avoid graphic war details."
+      ]
+    }
+  ]
+}

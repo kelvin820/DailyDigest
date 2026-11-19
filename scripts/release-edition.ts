@@ -9,7 +9,7 @@ import {hash} from '../lib/pipeline/state.mjs';
 
 const id=process.env.PACKET_ID,expected=process.env.EXPECTED_FINGERPRINT,actor=process.env.RELEASE_ACTOR;
 const method=process.env.RELEASE_METHOD;
-if(!id||!actor||!expected||!['github_manual','developer_test_release'].includes(method||''))throw Error('EXPLICIT_RELEASE_REQUIRED');
+if(!id||!actor||!expected||method!=='github_manual')throw Error('EXPLICIT_RELEASE_REQUIRED');
 if(method==='github_manual'&&(process.env.GITHUB_EVENT_NAME!=='workflow_dispatch'||process.env.CONFIRM_REVIEW!=='true'||actor!==process.env.GITHUB_ACTOR))throw Error('OWNER_REVIEW_REQUIRED');
 const catalog=catalogSchema.parse(JSON.parse(await readFile('content/publications/catalog.json','utf8')));
 const packet=catalog.packets.find(p=>p.id===id);
