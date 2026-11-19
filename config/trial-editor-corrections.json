@@ -73,5 +73,37 @@
         "meaningZhHant": "比較"
       }
     ]
+  },
+  {
+    "storyId": "trial-quantum",
+    "edition": "senior",
+    "writerOutputHash": "4204e226f008b8f4aae9290b316509aafaf9efbe9fbc70c919aab8254ba93b76",
+    "reason": "Developer scientific copy edit: put the selected technical term in the body and describe a laboratory protocol without unsupported claims about instantaneous effects or replacing all traditional signals.",
+    "replacements": [
+      {
+        "from": "linked light particles through optical fibers",
+        "to": "entangled photons, or linked light particles, through optical fibers"
+      },
+      {
+        "from": "This technique relies on quantum physics rather than traditional signals.",
+        "to": "Researchers developed this new protocol in a laboratory."
+      },
+      {
+        "from": "The photons stay connected so measuring one instantly affects the other.",
+        "to": "The result shows a laboratory possibility, rather than a service people can buy."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "entangled photons",
+        "definitionEn": "light particles with strongly linked measurement results",
+        "meaningZhHant": "糾纏光子"
+      },
+      {
+        "term": "optical fibers",
+        "definitionEn": "very thin glass threads that guide light signals",
+        "meaningZhHant": "光纖"
+      }
+    ]
   }
 ]
