@@ -2669,6 +2669,1372 @@
         "senior:color": "/preview-issues/2026-11-19/r1/DD_2026-11-19_senior_r1_color.pdf",
         "senior:ink": "/preview-issues/2026-11-19/r1/DD_2026-11-19_senior_r1_ink.pdf"
       }
+    },
+    {
+      "id": "2026-11-19-r3",
+      "issueDate": "2026-11-19",
+      "revision": 3,
+      "fingerprint": "68667ecd0db4de57cfd23b190576ac4f494bb009b0b055b325d7be2894aaa926",
+      "generatedAt": "2026-11-19T12:42:08.930Z",
+      "editions": [
+        {
+          "schemaVersion": "1.0",
+          "issueDate": "2026-11-19",
+          "revision": 3,
+          "edition": "elementary",
+          "targetCefr": "A1",
+          "templateVersion": "1.0",
+          "publishedAt": null,
+          "isDemo": false,
+          "reviewCopy": true,
+          "vocabularyPolicy": "tiered-v1",
+          "storyCount": 4,
+          "readingRules": {
+            "min": 40,
+            "max": 60,
+            "avg": 10,
+            "maxSentence": 15
+          },
+          "articles": [
+            {
+              "storyId": "atacama",
+              "order": 1,
+              "category": "nature",
+              "contentKind": "news",
+              "headline": "Rain Brings Flowers to Atacama Desert",
+              "bodyParagraphs": [
+                "NASA reports flowers in Chile's Atacama Desert. Rain helped seeds wake from their long sleep. Flowers grew across dry land in spring 2026. The desert is usually very dry. Landsat satellites took pictures in September and October. These images show changes in plants and flowers."
+              ],
+              "wordCount": 45,
+              "vocabulary": [
+                {
+                  "term": "seeds",
+                  "definitionEn": "small parts of plants that can grow into new plants",
+                  "meaningZhHant": "種子"
+                },
+                {
+                  "term": "desert",
+                  "definitionEn": "a large area of land with very little rain",
+                  "meaningZhHant": "沙漠"
+                }
+              ],
+              "image": {
+                "assetId": "b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a",
+                "alt": "Landsat satellite view of the Atacama Desert during the 2026 flowering season.",
+                "caption": "Satellite view, October 24, 2026; not a photograph taken today.",
+                "kind": "event_photo",
+                "credit": "NASA Earth Observatory / Michala Garrison · USGS Landsat data",
+                "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+                "sourcePage": "https://science.nasa.gov/earth/earth-observatory/el-nino-rains-paint-the-atacama/",
+                "rendition": {
+                  "webPath": "/preview-issues/2026-11-19/r3/assets/b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a-web.webp",
+                  "printPath": "/preview-issues/2026-11-19/r3/assets/b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a-print.jpg",
+                  "width": 1200,
+                  "height": 800
+                },
+                "focalPoint": {
+                  "x": 50,
+                  "y": 50
+                }
+              },
+              "sources": [
+                {
+                  "publisher": "NASA Earth Observatory",
+                  "url": "https://science.nasa.gov/earth/earth-observatory/el-nino-rains-paint-the-atacama/",
+                  "publishedAt": "2026-11-19T00:00:00Z"
+                }
+              ],
+              "eventDate": null
+            },
+            {
+              "storyId": "horsehead",
+              "order": 2,
+              "category": "science",
+              "contentKind": "news",
+              "headline": "NASA Shows Horsehead and Flame Nebulas",
+              "bodyParagraphs": [
+                "NASA shares a picture of the Horsehead and Flame Nebulas today. The Horsehead looks like a dark horse head in space. It is a cloud of dust and gas. The nebula is about five light-years tall. It sits around 1,500 light-years from Earth. The Flame Nebula glows bright near it."
+              ],
+              "wordCount": 50,
+              "vocabulary": [
+                {
+                  "term": "gas",
+                  "definitionEn": "matter, such as air, that is not solid or liquid",
+                  "meaningZhHant": "氣體"
+                },
+                {
+                  "term": "glows",
+                  "definitionEn": "shines with a steady light",
+                  "meaningZhHant": "發光"
+                }
+              ],
+              "image": {
+                "assetId": "science",
+                "alt": "science category illustration",
+                "caption": "Original category illustration",
+                "kind": "icon",
+                "credit": "DayDay original artwork"
+              },
+              "sources": [
+                {
+                  "publisher": "NASA APOD",
+                  "url": "https://science.nasa.gov/image-article/apod-2026-november-19-the-horsehead-and-flame-nebulas/",
+                  "publishedAt": "2026-11-19T00:00:00Z"
+                }
+              ],
+              "eventDate": null
+            },
+            {
+              "storyId": "philosophy",
+              "order": 3,
+              "category": "culture",
+              "contentKind": "news",
+              "headline": "UNESCO Plans World Philosophy Day Event in Paris",
+              "bodyParagraphs": [
+                "UNESCO will hold a World Philosophy Day event in Paris on November 19, 2026. A lecture called Living the Earth Together will start the program. Philosopher Souleymane Bachir Diagne will give the talk. A round-table discussion will follow the lecture. Three students will share views on climate and artificial intelligence."
+              ],
+              "wordCount": 50,
+              "vocabulary": [
+                {
+                  "term": "lecture",
+                  "definitionEn": "a talk given to teach people about a subject",
+                  "meaningZhHant": "演講"
+                },
+                {
+                  "term": "discussion",
+                  "definitionEn": "a conversation where people share ideas",
+                  "meaningZhHant": "討論"
+                }
+              ],
+              "image": {
+                "assetId": "1affa0d9861ed284ba3d0c46253dcb177508ed022adb3f032cd9d000ebc8649b",
+                "alt": "Concept illustration of students discussing ideas. Not a photograph of the event.",
+                "caption": "AI 概念插畫，非事件照片。",
+                "kind": "generated_illustration",
+                "credit": "DayDay",
+                "rendition": {
+                  "webPath": "/preview-issues/2026-11-19/r3/assets/1affa0d9861ed284ba3d0c46253dcb177508ed022adb3f032cd9d000ebc8649b-web.webp",
+                  "printPath": "/preview-issues/2026-11-19/r3/assets/1affa0d9861ed284ba3d0c46253dcb177508ed022adb3f032cd9d000ebc8649b-print.jpg",
+                  "width": 1200,
+                  "height": 821
+                },
+                "focalPoint": {
+                  "x": 50,
+                  "y": 50
+                }
+              },
+              "sources": [
+                {
+                  "publisher": "UNESCO",
+                  "url": "https://www.unesco.org/en/articles/world-philosophy-day-2026?hub=66761",
+                  "publishedAt": "2026-11-19T00:00:00Z"
+                }
+              ],
+              "eventDate": "2026-11-19"
+            },
+            {
+              "storyId": "teachers-ai",
+              "order": 4,
+              "category": "technology",
+              "contentKind": "news",
+              "headline": "UNESCO Plans Online AI Workshop for Teachers",
+              "bodyParagraphs": [
+                "UNESCO and CodeAI plan an online workshop for teachers on November 19, 2026. Teachers will use pictures of fish and marine waste. They will explore how AI learns from data. The activity helps teachers notice possible errors and biases. No previous programming knowledge is required."
+              ],
+              "wordCount": 45,
+              "vocabulary": [
+                {
+                  "term": "workshop",
+                  "definitionEn": "a class where people learn by trying activities",
+                  "meaningZhHant": "工作坊"
+                },
+                {
+                  "term": "data",
+                  "definitionEn": "information, such as pictures, used by a computer",
+                  "meaningZhHant": "資料"
+                }
+              ],
+              "image": {
+                "assetId": "bdfe635365a122aff10d0a901022db5651c1019d0abff71eeb423168b79f1344",
+                "alt": "Concept illustration of a classroom AI picture-sorting activity. Not a photograph of the event.",
+                "caption": "AI 概念插畫，非事件照片。",
+                "kind": "generated_illustration",
+                "credit": "DayDay",
+                "rendition": {
+                  "webPath": "/preview-issues/2026-11-19/r3/assets/bdfe635365a122aff10d0a901022db5651c1019d0abff71eeb423168b79f1344-web.webp",
+                  "printPath": "/preview-issues/2026-11-19/r3/assets/bdfe635365a122aff10d0a901022db5651c1019d0abff71eeb423168b79f1344-print.jpg",
+                  "width": 1200,
+                  "height": 821
+                },
+                "focalPoint": {
+                  "x": 50,
+                  "y": 50
+                }
+              },
+              "sources": [
+                {
+                  "publisher": "UNESCO",
+                  "url": "https://www.unesco.org/en/articles/online-workshop-teachers-dive-ai-hands-experience-learn-about-artificial-intelligence-and-bring-it",
+                  "publishedAt": "2026-11-19T00:00:00Z"
+                }
+              ],
+              "eventDate": "2026-11-19"
+            }
+          ]
+        },
+        {
+          "schemaVersion": "1.0",
+          "issueDate": "2026-11-19",
+          "revision": 3,
+          "edition": "junior",
+          "targetCefr": "A2",
+          "templateVersion": "1.0",
+          "publishedAt": null,
+          "isDemo": false,
+          "reviewCopy": true,
+          "vocabularyPolicy": "tiered-v1",
+          "storyCount": 4,
+          "readingRules": {
+            "min": 60,
+            "max": 90,
+            "avg": 14,
+            "maxSentence": 22
+          },
+          "articles": [
+            {
+              "storyId": "atacama",
+              "order": 1,
+              "category": "nature",
+              "contentKind": "news",
+              "headline": "Rain Brings Flowers to Atacama Desert",
+              "bodyParagraphs": [
+                "NASA reports that flowers bloomed in Chile's Atacama Desert in spring 2026. The desert is normally one of the driest places on Earth. Earlier rain woke up seeds that had slept in the soil for a long time. Soon, colorful flowers began to bloom across the sand. Landsat satellites took pictures of the green desert in September and October. Scientists use these images to study how plants grow after rare rain."
+              ],
+              "wordCount": 71,
+              "vocabulary": [
+                {
+                  "term": "bloom",
+                  "definitionEn": "to produce flowers",
+                  "meaningZhHant": "開花"
+                },
+                {
+                  "term": "satellites",
+                  "definitionEn": "machines that travel around Earth and send pictures or information",
+                  "meaningZhHant": "衛星"
+                }
+              ],
+              "image": {
+                "assetId": "b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a",
+                "alt": "Landsat satellite view of the Atacama Desert during the 2026 flowering season.",
+                "caption": "Satellite view, October 24, 2026; not a photograph taken today.",
+                "kind": "event_photo",
+                "credit": "NASA Earth Observatory / Michala Garrison · USGS Landsat data",
+                "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+                "sourcePage": "https://science.nasa.gov/earth/earth-observatory/el-nino-rains-paint-the-atacama/",
+                "rendition": {
+                  "webPath": "/preview-issues/2026-11-19/r3/assets/b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a-web.webp",
+                  "printPath": "/preview-issues/2026-11-19/r3/assets/b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a-print.jpg",
+                  "width": 1200,
+                  "height": 800
+                },
+                "focalPoint": {
+                  "x": 50,
+                  "y": 50
+                }
+              },
+              "sources": [
+                {
+                  "publisher": "NASA Earth Observatory",
+                  "url": "https://science.nasa.gov/earth/earth-observatory/el-nino-rains-paint-the-atacama/",
+                  "publishedAt": "2026-11-19T00:00:00Z"
+                }
+              ],
+              "eventDate": null
+            },
+            {
+              "storyId": "horsehead",
+              "order": 2,
+              "category": "science",
+              "contentKind": "news",
+              "headline": "NASA Shows Horsehead and Flame Nebulas",
+              "bodyParagraphs": [
+                "NASA's online astronomy feature for November 19, 2026, presents the Horsehead and Flame Nebulas. These are objects in space. The Horsehead is a cloud of dust and gas. Its dark shape looks like a horse's head. It is about five light-years tall. The nebula lies around 1,500 light-years from Earth. NASA's feature describes the Horsehead and shows the Flame Nebula nearby."
+              ],
+              "wordCount": 61,
+              "vocabulary": [
+                {
+                  "term": "nebula",
+                  "definitionEn": "a large cloud of dust and gas in space",
+                  "meaningZhHant": "星雲"
+                },
+                {
+                  "term": "light-years",
+                  "definitionEn": "units of distance equal to how far light travels in one year",
+                  "meaningZhHant": "光年"
+                }
+              ],
+              "image": {
+                "assetId": "science",
+                "alt": "science category illustration",
+                "caption": "Original category illustration",
+                "kind": "icon",
+                "credit": "DayDay original artwork"
+              },
+              "sources": [
+                {
+                  "publisher": "NASA APOD",
+                  "url": "https://science.nasa.gov/image-article/apod-2026-november-19-the-horsehead-and-flame-nebulas/",
+                  "publishedAt": "2026-11-19T00:00:00Z"
+                }
+              ],
+              "eventDate": null
+            },
+            {
+              "storyId": "philosophy",
+              "order": 3,
+              "category": "culture",
+              "contentKind": "news",
+              "headline": "UNESCO Plans World Philosophy Day Event in Paris",
+              "bodyParagraphs": [
+                "UNESCO will hold a World Philosophy Day event in Paris on November 19, 2026. The main lecture is called Living the Earth Together. Philosopher Souleymane Bachir Diagne will give the talk at UNESCO Headquarters. A round-table discussion will follow the lecture. Three students will share their views on climate and artificial intelligence. The event brings together thinkers and decision-makers at UNESCO Headquarters."
+              ],
+              "wordCount": 62,
+              "vocabulary": [
+                {
+                  "term": "philosopher",
+                  "definitionEn": "a person who studies and thinks deeply about life, knowledge, and values",
+                  "meaningZhHant": "哲學家"
+                },
+                {
+                  "term": "decision-makers",
+                  "definitionEn": "people who have the power to make important choices for a group or country",
+                  "meaningZhHant": "決策者"
+                }
+              ],
+              "image": {
+                "assetId": "ed1974de7f0571b5e686d25052aec29afe88af0182f5b5563b738f97ecd5a8e7",
+                "alt": "Concept illustration of students discussing ideas. Not a photograph of the event.",
+                "caption": "AI 概念插畫，非事件照片。",
+                "kind": "generated_illustration",
+                "credit": "DayDay",
+                "rendition": {
+                  "webPath": "/preview-issues/2026-11-19/r3/assets/ed1974de7f0571b5e686d25052aec29afe88af0182f5b5563b738f97ecd5a8e7-web.webp",
+                  "printPath": "/preview-issues/2026-11-19/r3/assets/ed1974de7f0571b5e686d25052aec29afe88af0182f5b5563b738f97ecd5a8e7-print.jpg",
+                  "width": 1200,
+                  "height": 821
+                },
+                "focalPoint": {
+                  "x": 50,
+                  "y": 50
+                }
+              },
+              "sources": [
+                {
+                  "publisher": "UNESCO",
+                  "url": "https://www.unesco.org/en/articles/world-philosophy-day-2026?hub=66761",
+                  "publishedAt": "2026-11-19T00:00:00Z"
+                }
+              ],
+              "eventDate": "2026-11-19"
+            },
+            {
+              "storyId": "teachers-ai",
+              "order": 4,
+              "category": "technology",
+              "contentKind": "news",
+              "headline": "UNESCO Plans Online AI Workshop for Teachers",
+              "bodyParagraphs": [
+                "UNESCO and CodeAI plan an online workshop for teachers on November 19, 2026. Teachers will explore how AI learns from examples. They will use an activity with pictures of fish and marine waste. Sorting the pictures can show how a system makes choices. The exercise also helps teachers look for errors and biases. No earlier programming knowledge is needed for the activity."
+              ],
+              "wordCount": 62,
+              "vocabulary": [
+                {
+                  "term": "Sorting",
+                  "definitionEn": "putting things into groups based on their features",
+                  "meaningZhHant": "分類"
+                },
+                {
+                  "term": "biases",
+                  "definitionEn": "unfair patterns that can affect a computer system’s decisions",
+                  "meaningZhHant": "偏誤"
+                }
+              ],
+              "image": {
+                "assetId": "109b6f225fa91da163c8a3500728972ca0a48cd7745c20a95a14998dce6ce661",
+                "alt": "Concept illustration of a classroom AI picture-sorting activity. Not a photograph of the event.",
+                "caption": "AI 概念插畫，非事件照片。",
+                "kind": "generated_illustration",
+                "credit": "DayDay",
+                "rendition": {
+                  "webPath": "/preview-issues/2026-11-19/r3/assets/109b6f225fa91da163c8a3500728972ca0a48cd7745c20a95a14998dce6ce661-web.webp",
+                  "printPath": "/preview-issues/2026-11-19/r3/assets/109b6f225fa91da163c8a3500728972ca0a48cd7745c20a95a14998dce6ce661-print.jpg",
+                  "width": 1200,
+                  "height": 821
+                },
+                "focalPoint": {
+                  "x": 50,
+                  "y": 50
+                }
+              },
+              "sources": [
+                {
+                  "publisher": "UNESCO",
+                  "url": "https://www.unesco.org/en/articles/online-workshop-teachers-dive-ai-hands-experience-learn-about-artificial-intelligence-and-bring-it",
+                  "publishedAt": "2026-11-19T00:00:00Z"
+                }
+              ],
+              "eventDate": "2026-11-19"
+            }
+          ]
+        },
+        {
+          "schemaVersion": "1.0",
+          "issueDate": "2026-11-19",
+          "revision": 3,
+          "edition": "senior",
+          "targetCefr": "B1",
+          "templateVersion": "1.0",
+          "publishedAt": null,
+          "isDemo": false,
+          "reviewCopy": true,
+          "vocabularyPolicy": "tiered-v1",
+          "storyCount": 4,
+          "readingRules": {
+            "min": 90,
+            "max": 120,
+            "avg": 18,
+            "maxSentence": 28
+          },
+          "articles": [
+            {
+              "storyId": "atacama",
+              "order": 1,
+              "category": "nature",
+              "contentKind": "news",
+              "headline": "Rain Awakens Dormant Seeds in Chile's Atacama Desert",
+              "bodyParagraphs": [
+                "NASA's November 19 report describes flowers in Chile's Atacama Desert during spring 2026. Earlier rain helped dormant seeds wake and begin growing in the soil. The desert is normally one of the driest places on Earth. Landsat satellites recorded the landscape in September and October, showing the flowering season from space. Landsat 8 recorded the September view, while Landsat 9 supplied the October view. The November report looks back at the flowering seen in these September and October images. These observations show the colorful change in a normally dry desert landscape."
+              ],
+              "wordCount": 91,
+              "vocabulary": [
+                {
+                  "term": "dormant",
+                  "definitionEn": "alive but not growing or active for a period of time",
+                  "meaningZhHant": "休眠的"
+                },
+                {
+                  "term": "observations",
+                  "definitionEn": "records of what someone notices or measures",
+                  "meaningZhHant": "觀測紀錄"
+                }
+              ],
+              "image": {
+                "assetId": "b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a",
+                "alt": "Landsat satellite view of the Atacama Desert during the 2026 flowering season.",
+                "caption": "Satellite view, October 24, 2026; not a photograph taken today.",
+                "kind": "event_photo",
+                "credit": "NASA Earth Observatory / Michala Garrison · USGS Landsat data",
+                "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+                "sourcePage": "https://science.nasa.gov/earth/earth-observatory/el-nino-rains-paint-the-atacama/",
+                "rendition": {
+                  "webPath": "/preview-issues/2026-11-19/r3/assets/b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a-web.webp",
+                  "printPath": "/preview-issues/2026-11-19/r3/assets/b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a-print.jpg",
+                  "width": 1200,
+                  "height": 800
+                },
+                "focalPoint": {
+                  "x": 50,
+                  "y": 50
+                }
+              },
+              "sources": [
+                {
+                  "publisher": "NASA Earth Observatory",
+                  "url": "https://science.nasa.gov/earth/earth-observatory/el-nino-rains-paint-the-atacama/",
+                  "publishedAt": "2026-11-19T00:00:00Z"
+                }
+              ],
+              "eventDate": null
+            },
+            {
+              "storyId": "horsehead",
+              "order": 2,
+              "category": "science",
+              "contentKind": "news",
+              "headline": "NASA Shares New View of Horsehead and Flame Nebulas",
+              "bodyParagraphs": [
+                "NASA's astronomy feature for November 19 presents the Horsehead and Flame Nebulas. The Horsehead is a cloud of dust and gas with a shape that resembles a horse's head. The feature describes it as about five light-years tall and approximately 1,500 light-years away. These figures describe its size and distance, respectively. The dark horse-like form gives the object its familiar name. NASA presents the Horsehead together with the Flame Nebula in the same astronomy feature. This is a daily presentation of these objects, with the Horsehead's shape, material and distance explained for readers."
+              ],
+              "wordCount": 93,
+              "vocabulary": [
+                {
+                  "term": "resembles",
+                  "definitionEn": "looks like or has similar features to something else",
+                  "meaningZhHant": "看起來像"
+                },
+                {
+                  "term": "approximately",
+                  "definitionEn": "close to a number or amount, but not exactly",
+                  "meaningZhHant": "大約"
+                }
+              ],
+              "image": {
+                "assetId": "science",
+                "alt": "science category illustration",
+                "caption": "Original category illustration",
+                "kind": "icon",
+                "credit": "DayDay original artwork"
+              },
+              "sources": [
+                {
+                  "publisher": "NASA APOD",
+                  "url": "https://science.nasa.gov/image-article/apod-2026-november-19-the-horsehead-and-flame-nebulas/",
+                  "publishedAt": "2026-11-19T00:00:00Z"
+                }
+              ],
+              "eventDate": null
+            },
+            {
+              "storyId": "philosophy",
+              "order": 3,
+              "category": "culture",
+              "contentKind": "news",
+              "headline": "UNESCO Hosts World Philosophy Day Event in Paris",
+              "bodyParagraphs": [
+                "UNESCO's official program for World Philosophy Day on November 19, 2026, in Paris includes both a lecture and a round-table discussion. Philosopher Souleymane Bachir Diagne is scheduled to give a lecture titled Living the Earth Together. Three students are expected to share their perspectives in the discussion that follows. Their planned contributions concern issues including climate and artificial intelligence. The event is listed for UNESCO Headquarters in Paris, bringing together thinkers and decision-makers. By combining a lecture with student contributions, the scheduled program gives several voices a place in the conversation."
+              ],
+              "wordCount": 91,
+              "vocabulary": [
+                {
+                  "term": "perspectives",
+                  "definitionEn": "ways of thinking about or understanding an issue",
+                  "meaningZhHant": "觀點"
+                },
+                {
+                  "term": "contributions",
+                  "definitionEn": "ideas or other things people add to a shared activity",
+                  "meaningZhHant": "提供的意見"
+                }
+              ],
+              "image": {
+                "assetId": "88c40a9944933e904bf671f15139a422c125259996dc05c4c52cad17bab64c47",
+                "alt": "Concept illustration of students discussing ideas. Not a photograph of the event.",
+                "caption": "AI 概念插畫，非事件照片。",
+                "kind": "generated_illustration",
+                "credit": "DayDay",
+                "rendition": {
+                  "webPath": "/preview-issues/2026-11-19/r3/assets/88c40a9944933e904bf671f15139a422c125259996dc05c4c52cad17bab64c47-web.webp",
+                  "printPath": "/preview-issues/2026-11-19/r3/assets/88c40a9944933e904bf671f15139a422c125259996dc05c4c52cad17bab64c47-print.jpg",
+                  "width": 1200,
+                  "height": 821
+                },
+                "focalPoint": {
+                  "x": 50,
+                  "y": 50
+                }
+              },
+              "sources": [
+                {
+                  "publisher": "UNESCO",
+                  "url": "https://www.unesco.org/en/articles/world-philosophy-day-2026?hub=66761",
+                  "publishedAt": "2026-11-19T00:00:00Z"
+                }
+              ],
+              "eventDate": "2026-11-19"
+            },
+            {
+              "storyId": "teachers-ai",
+              "order": 4,
+              "category": "technology",
+              "contentKind": "news",
+              "headline": "UNESCO Plans Online AI Workshop for Teachers",
+              "bodyParagraphs": [
+                "UNESCO and CodeAI have scheduled an online workshop for teachers on November 19, 2026. It is aimed at teachers and education professionals in Latin America and the Caribbean. Participants are to try AI for Oceans, an activity using pictures of fish and marine waste. They will classify these images to explore how a machine learning model uses data. The exercise is also intended to reveal potential errors and biases in the system's decisions. No previous programming knowledge is required. UNESCO describes the session as a hands-on opportunity to learn about AI and consider its use in teaching."
+              ],
+              "wordCount": 97,
+              "vocabulary": [
+                {
+                  "term": "classify",
+                  "definitionEn": "put things into groups based on their shared features",
+                  "meaningZhHant": "分類"
+                },
+                {
+                  "term": "potential errors",
+                  "definitionEn": "mistakes that could happen or be present",
+                  "meaningZhHant": "可能的錯誤"
+                }
+              ],
+              "image": {
+                "assetId": "fbb200264579721f2062e5177bfede5ed214c7615965953cb70b056a4f722439",
+                "alt": "Concept illustration of a classroom AI picture-sorting activity. Not a photograph of the event.",
+                "caption": "AI 概念插畫，非事件照片。",
+                "kind": "generated_illustration",
+                "credit": "DayDay",
+                "rendition": {
+                  "webPath": "/preview-issues/2026-11-19/r3/assets/fbb200264579721f2062e5177bfede5ed214c7615965953cb70b056a4f722439-web.webp",
+                  "printPath": "/preview-issues/2026-11-19/r3/assets/fbb200264579721f2062e5177bfede5ed214c7615965953cb70b056a4f722439-print.jpg",
+                  "width": 1200,
+                  "height": 821
+                },
+                "focalPoint": {
+                  "x": 50,
+                  "y": 50
+                }
+              },
+              "sources": [
+                {
+                  "publisher": "UNESCO",
+                  "url": "https://www.unesco.org/en/articles/online-workshop-teachers-dive-ai-hands-experience-learn-about-artificial-intelligence-and-bring-it",
+                  "publishedAt": "2026-11-19T00:00:00Z"
+                }
+              ],
+              "eventDate": "2026-11-19"
+            }
+          ]
+        }
+      ],
+      "facts": [
+        {
+          "story_id": "atacama",
+          "event_key": "atacama-2026-11-19",
+          "primary_category": "nature",
+          "content_kind": "news",
+          "published_at": "2026-11-19T00:00:00Z",
+          "published_at_precision": "date",
+          "event_date": null,
+          "sources": [
+            {
+              "source_id": "source-atacama",
+              "url": "https://science.nasa.gov/earth/earth-observatory/el-nino-rains-paint-the-atacama/",
+              "publisher": "NASA Earth Observatory",
+              "published_at": "2026-11-19T00:00:00Z",
+              "published_at_precision": "date",
+              "retrieved_at": "2026-11-19T12:17:38.097Z",
+              "read_at": "2026-11-19T12:17:38.097Z",
+              "rights_reviewed": true,
+              "independence_group": "NASA Earth Observatory",
+              "evidence": "The rain woke seeds lying dormant in the soil\nThe OLI (Operational Land Imager) on Landsat 8 acquired the September images, and the OLI on Landsat 9 acquired the October images.\nParts of the Atacama Desert in northern Chile"
+            }
+          ],
+          "claims": [
+            {
+              "claim_id": "claim-1",
+              "text": "NASA reports that rain helped dormant seeds grow and flowers bloom in Chile’s Atacama Desert in spring 2026.",
+              "supporting_source_ids": [
+                "source-atacama"
+              ],
+              "evidence_ref": "source-atacama",
+              "status": "reported",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-2",
+              "text": "Landsat satellites recorded the desert in September and October 2026.",
+              "supporting_source_ids": [
+                "source-atacama"
+              ],
+              "evidence_ref": "source-atacama",
+              "status": "reported",
+              "must_keep": false
+            },
+            {
+              "claim_id": "claim-3",
+              "text": "The desert is normally one of the driest places on Earth.",
+              "supporting_source_ids": [
+                "source-atacama"
+              ],
+              "evidence_ref": "source-atacama",
+              "status": "reported",
+              "must_keep": false
+            }
+          ],
+          "uncertainties": [
+            "The report is dated November 19; the pictured flowering happened earlier in spring 2026. Do not say it first happened today."
+          ],
+          "sensitivity": "low",
+          "is_demo": false
+        },
+        {
+          "story_id": "horsehead",
+          "event_key": "horsehead-2026-11-19",
+          "primary_category": "science",
+          "content_kind": "news",
+          "published_at": "2026-11-19T00:00:00Z",
+          "published_at_precision": "date",
+          "event_date": null,
+          "sources": [
+            {
+              "source_id": "source-horsehead",
+              "url": "https://science.nasa.gov/image-article/apod-2026-november-19-the-horsehead-and-flame-nebulas/",
+              "publisher": "NASA APOD",
+              "published_at": "2026-11-19T00:00:00Z",
+              "published_at_precision": "date",
+              "retrieved_at": "2026-11-19T12:17:38.196Z",
+              "read_at": "2026-11-19T12:17:38.196Z",
+              "rights_reviewed": true,
+              "independence_group": "NASA APOD",
+              "evidence": "The instantly recognizable shape of a dark horse's head at the center is the aptly named Horsehead Nebula.\nIt is about five light-years tall and lies approximately 1,500 light-years away.\nIt is made of dust and gas"
+            }
+          ],
+          "claims": [
+            {
+              "claim_id": "claim-1",
+              "text": "NASA’s astronomy feature for November 19 presents the Horsehead and Flame Nebulas.",
+              "supporting_source_ids": [
+                "source-horsehead"
+              ],
+              "evidence_ref": "source-horsehead",
+              "status": "reported",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-2",
+              "text": "The Horsehead is a cloud of dust and gas whose shape looks like a horse’s head.",
+              "supporting_source_ids": [
+                "source-horsehead"
+              ],
+              "evidence_ref": "source-horsehead",
+              "status": "reported",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-3",
+              "text": "It is approximately 1,500 light-years away.",
+              "supporting_source_ids": [
+                "source-horsehead"
+              ],
+              "evidence_ref": "source-horsehead",
+              "status": "reported",
+              "must_keep": false
+            }
+          ],
+          "uncertainties": [
+            "This is today’s astronomy feature, not a newly discovered nebula. The astrophotographer owns the featured image; do not republish that image."
+          ],
+          "sensitivity": "low",
+          "is_demo": false
+        },
+        {
+          "story_id": "philosophy",
+          "event_key": "philosophy-2026-11-19",
+          "primary_category": "culture",
+          "content_kind": "news",
+          "published_at": "2026-11-19T00:00:00Z",
+          "published_at_precision": "date",
+          "event_date": "2026-11-19",
+          "sources": [
+            {
+              "source_id": "source-philosophy",
+              "url": "https://www.unesco.org/en/articles/world-philosophy-day-2026?hub=66761",
+              "publisher": "UNESCO",
+              "published_at": "2026-11-19T00:00:00Z",
+              "published_at_precision": "date",
+              "retrieved_at": "2026-11-19T12:17:38.800Z",
+              "read_at": "2026-11-19T12:17:38.800Z",
+              "rights_reviewed": true,
+              "independence_group": "UNESCO",
+              "evidence": "On World Philosophy Day, UNESCO will bring together thinkers and decision-makers at its Headquarters in Paris on 19 November 2026 for a lecture by philosopher Souleymane Bachir Diagne.\nA round-table discussion will follow the lecture\nwith the voices of three students"
+            }
+          ],
+          "claims": [
+            {
+              "claim_id": "claim-1",
+              "text": "UNESCO lists a World Philosophy Day lecture and discussion in Paris on November 19, 2026.",
+              "supporting_source_ids": [
+                "source-philosophy"
+              ],
+              "evidence_ref": "source-philosophy",
+              "status": "reported_plan",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-2",
+              "text": "The lecture is titled Living the Earth Together.",
+              "supporting_source_ids": [
+                "source-philosophy"
+              ],
+              "evidence_ref": "source-philosophy",
+              "status": "reported_plan",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-3",
+              "text": "Three students are scheduled to share views on issues including climate and artificial intelligence.",
+              "supporting_source_ids": [
+                "source-philosophy"
+              ],
+              "evidence_ref": "source-philosophy",
+              "status": "reported_plan",
+              "must_keep": false
+            }
+          ],
+          "uncertainties": [
+            "The source describes a scheduled event. Do not claim the lecture or discussion has already happened or report its results."
+          ],
+          "sensitivity": "low",
+          "is_demo": false
+        },
+        {
+          "story_id": "teachers-ai",
+          "event_key": "teachers-ai-2026-11-19",
+          "primary_category": "technology",
+          "content_kind": "news",
+          "published_at": "2026-11-19T00:00:00Z",
+          "published_at_precision": "date",
+          "event_date": "2026-11-19",
+          "sources": [
+            {
+              "source_id": "source-teachers-ai",
+              "url": "https://www.unesco.org/en/articles/online-workshop-teachers-dive-ai-hands-experience-learn-about-artificial-intelligence-and-bring-it",
+              "publisher": "UNESCO",
+              "published_at": "2026-11-19T00:00:00Z",
+              "published_at_precision": "date",
+              "retrieved_at": "2026-11-19T12:17:39.869Z",
+              "read_at": "2026-11-19T12:17:39.869Z",
+              "rights_reviewed": true,
+              "independence_group": "UNESCO",
+              "evidence": "on Thursday, 19 November 2026\nAI for Oceans\nclassification of images of fish and marine waste\nwithout requiring any prior programming knowledge\nerrors and biases\nAimed at teachers and education professionals across Latin America and the Caribbean"
+            }
+          ],
+          "claims": [
+            {
+              "claim_id": "claim-1",
+              "text": "UNESCO and CodeAI plan an online workshop for teachers on November 19, 2026.",
+              "supporting_source_ids": [
+                "source-teachers-ai"
+              ],
+              "evidence_ref": "source-teachers-ai",
+              "status": "reported_plan",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-2",
+              "text": "Teachers are to use pictures of fish and marine waste to explore how AI learns from data.",
+              "supporting_source_ids": [
+                "source-teachers-ai"
+              ],
+              "evidence_ref": "source-teachers-ai",
+              "status": "reported_plan",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-3",
+              "text": "The activity helps teachers notice possible errors and biases; no previous programming knowledge is required.",
+              "supporting_source_ids": [
+                "source-teachers-ai"
+              ],
+              "evidence_ref": "source-teachers-ai",
+              "status": "reported_plan",
+              "must_keep": false
+            },
+            {
+              "claim_id": "claim-4",
+              "text": "The planned workshop is aimed at teachers and education professionals in Latin America and the Caribbean.",
+              "supporting_source_ids": [
+                "source-teachers-ai"
+              ],
+              "evidence_ref": "source-teachers-ai",
+              "status": "reported_plan",
+              "must_keep": false
+            }
+          ],
+          "uncertainties": [
+            "This is a planned online educational exercise. It does not describe a robot cleaning the ocean or claim the workshop has finished."
+          ],
+          "sensitivity": "low",
+          "is_demo": false
+        }
+      ],
+      "reviews": [
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [],
+          "publish_recommendation": "pass",
+          "storyId": "atacama",
+          "edition": "elementary"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [
+            {
+              "severity": "minor",
+              "span": "vocabulary term 'gas'",
+              "reason": "The term 'gas' is a basic A1 word, but its definition 'matter, such as air, that is not solid or liquid' is more appropriate for A2. At A1, a simpler definition like 'air-like substance' would be more level-appropriate.",
+              "claim_ids": [],
+              "suggested_action": "Simplify the English definition for 'gas' to better match A1 level, e.g., 'air-like substance that is not solid or liquid'."
+            },
+            {
+              "severity": "minor",
+              "span": "vocabulary term 'glows'",
+              "reason": "The term 'glows' is appropriate for A1, but the Traditional Chinese meaning '發光' is a general term for 'emit light'. In the context of a nebula, '發亮' or '發出光芒' might be more natural in Taiwan usage for a steady glow.",
+              "claim_ids": [],
+              "suggested_action": "Consider adjusting the Traditional Chinese meaning to '發出光芒' or '發亮' for more natural Taiwan usage in this context."
+            }
+          ],
+          "publish_recommendation": "pass",
+          "storyId": "horsehead",
+          "edition": "elementary"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [
+            {
+              "severity": "minor",
+              "span": "vocabulary term 'discussion'",
+              "reason": "The article uses 'round-table discussion' but the vocabulary entry only defines 'discussion' generally. The specific term 'round-table discussion' (圓桌討論) is more precise and would be a better learning target.",
+              "claim_ids": [],
+              "suggested_action": "Consider adding 'round-table discussion' as a vocabulary term with definition 'a formal discussion where all participants have equal status' and meaning '圓桌討論'."
+            }
+          ],
+          "publish_recommendation": "pass",
+          "storyId": "philosophy",
+          "edition": "elementary"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [
+            {
+              "severity": "minor",
+              "span": "UNESCO and CodeAI plan an online workshop for teachers on November 19, 2026.",
+              "reason": "The source evidence mentions UNESCO and the workshop details but does not explicitly mention 'CodeAI' as a partner. The article includes CodeAI without direct source support.",
+              "claim_ids": [
+                "claim-1"
+              ],
+              "suggested_action": "Verify CodeAI's involvement from the source or remove the reference if unsupported."
+            },
+            {
+              "severity": "minor",
+              "span": "Teachers will use pictures of fish and marine waste.",
+              "reason": "The source specifies 'classification of images of fish and marine waste' as part of an activity called 'AI for Oceans'. The article simplifies this but retains the core idea.",
+              "claim_ids": [
+                "claim-2"
+              ],
+              "suggested_action": "Consider adding 'classify' or 'sort' to better reflect the activity described in the source."
+            }
+          ],
+          "publish_recommendation": "pass",
+          "storyId": "teachers-ai",
+          "edition": "elementary"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [],
+          "publish_recommendation": "pass",
+          "storyId": "atacama",
+          "edition": "junior"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [],
+          "publish_recommendation": "pass",
+          "storyId": "horsehead",
+          "edition": "junior"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [
+            {
+              "severity": "minor",
+              "span": "vocabulary term: decision-makers",
+              "reason": "The term 'decision-makers' is a compound noun that may be considered a single lexical item; its inclusion as a separate vocabulary entry is acceptable but could be noted as a compound.",
+              "claim_ids": [],
+              "suggested_action": "No change needed; term is appropriate for A2 level."
+            }
+          ],
+          "publish_recommendation": "pass",
+          "storyId": "philosophy",
+          "edition": "junior"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [
+            {
+              "severity": "minor",
+              "span": "UNESCO and CodeAI plan an online workshop for teachers on November 19, 2026.",
+              "reason": "The source evidence mentions UNESCO and the workshop details but does not explicitly name 'CodeAI' as a partner. The article includes an organization not directly confirmed in the provided evidence.",
+              "claim_ids": [
+                "claim-1"
+              ],
+              "suggested_action": "Verify CodeAI's involvement with UNESCO for this workshop. If unconfirmed, remove 'CodeAI' or attribute the plan to UNESCO alone."
+            },
+            {
+              "severity": "minor",
+              "span": "The exercise also helps teachers look for errors and biases.",
+              "reason": "The article omits the target audience (teachers and education professionals in Latin America and the Caribbean) specified in claim-4 and the source evidence.",
+              "claim_ids": [
+                "claim-4"
+              ],
+              "suggested_action": "Add the target audience to the article for completeness and accuracy."
+            }
+          ],
+          "publish_recommendation": "revise",
+          "storyId": "teachers-ai",
+          "edition": "junior"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [
+            {
+              "severity": "minor",
+              "span": "observations",
+              "reason": "The term 'observations' is defined as 'records of what someone notices or measures' (觀測紀錄), but in the article it refers specifically to satellite imagery data. The definition is slightly broader than the contextual usage, which could confuse learners about the precise meaning in this scientific context.",
+              "claim_ids": [
+                "claim-2"
+              ],
+              "suggested_action": "Refine the definition to specify 'satellite imagery records' or 'remote sensing data' for better contextual accuracy, or keep as is since the general definition is acceptable for B1 learners."
+            }
+          ],
+          "publish_recommendation": "pass",
+          "storyId": "atacama",
+          "edition": "senior"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [
+            {
+              "severity": "minor",
+              "span": "vocabulary term 'resembles'",
+              "reason": "The term 'resembles' is more appropriate for A2 level (Cambridge lists it at A2). For B1 target, consider a more precise verb like 'mirrors' or 'evokes' to better match the level's expectation for nuanced vocabulary.",
+              "claim_ids": [],
+              "suggested_action": "Replace 'resembles' with a B1-appropriate term such as 'mirrors' or 'evokes' in both the article body and vocabulary list."
+            },
+            {
+              "severity": "minor",
+              "span": "vocabulary term 'approximately'",
+              "reason": "The term 'approximately' is listed at A2 in major frameworks (Oxford 3000, Cambridge). For B1, a term like 'roughly' (B1) or 'in the region of' would be more level-appropriate and add useful register variation.",
+              "claim_ids": [],
+              "suggested_action": "Replace 'approximately' with 'roughly' or a similar B1-level expression in the vocabulary list and article body."
+            }
+          ],
+          "publish_recommendation": "revise",
+          "storyId": "horsehead",
+          "edition": "senior"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [
+            {
+              "severity": "minor",
+              "span": "vocabulary term: contributions",
+              "reason": "The definition 'ideas or other things people add to a shared activity' and Traditional Chinese '提供的意見' are acceptable but slightly generic; 'contributions' here specifically means spoken remarks in a discussion, which could be clarified for B1 learners.",
+              "claim_ids": [],
+              "suggested_action": "Consider refining the definition to 'remarks or ideas offered during a discussion' and the Chinese to '發言、貢獻的意見' for greater precision."
+            }
+          ],
+          "publish_recommendation": "pass",
+          "storyId": "philosophy",
+          "edition": "senior"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [
+            {
+              "severity": "minor",
+              "span": "vocabulary term: potential errors",
+              "reason": "The term 'potential errors' is a two-word collocation rather than a single lexical item; the definition 'mistakes that could happen or be present' and Traditional Chinese '可能的錯誤' are accurate but the entry would be more useful as the single word 'potential' (adj.) or 'error' (n.) for B1 learners.",
+              "claim_ids": [],
+              "suggested_action": "Consider replacing the collocation with the headword 'potential' (definition: possible, likely to happen in the future; 可能的、潛在的) or 'error' (definition: a mistake; 錯誤) to better match B1 vocabulary goals."
+            }
+          ],
+          "publish_recommendation": "pass",
+          "storyId": "teachers-ai",
+          "edition": "senior"
+        }
+      ],
+      "files": {
+        "/preview-issues/2026-11-19/r3/DD_2026-11-19_elementary_r3_color.pdf": "dfba4879f53fffb18338c890a4da7f961896274477ee45797ee71729f3c06f29",
+        "/preview-issues/2026-11-19/r3/DD_2026-11-19_elementary_r3_ink.pdf": "dcd9cd71c35f84dee35741ea569ea629ae543b9bd2293e437a37069d9049f277",
+        "/preview-issues/2026-11-19/r3/assets/b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a-web.webp": "d31c14b0e53d72eea50bd7f9fb66ca4bb1afbebbc319549da00139ff7c44d5de",
+        "/preview-issues/2026-11-19/r3/assets/b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a-print.jpg": "434ddf64f1f2a9c51551b58b3327e4262ad29f38e52cfdc7570d3fac9045ac84",
+        "/preview-issues/2026-11-19/r3/assets/1affa0d9861ed284ba3d0c46253dcb177508ed022adb3f032cd9d000ebc8649b-web.webp": "82a77240ae82530d1fab59d4f64e3b4f540fbe8455a19f57ad8a67f56b144bf9",
+        "/preview-issues/2026-11-19/r3/assets/1affa0d9861ed284ba3d0c46253dcb177508ed022adb3f032cd9d000ebc8649b-print.jpg": "4dce4f3a86046ca9fa46459b164ec547cc78fc16151ce4741436e5e5c632d3bb",
+        "/preview-issues/2026-11-19/r3/assets/bdfe635365a122aff10d0a901022db5651c1019d0abff71eeb423168b79f1344-web.webp": "541168767267073e41df08d0bf1f72116181675354e68823e3d705ed1c873558",
+        "/preview-issues/2026-11-19/r3/assets/bdfe635365a122aff10d0a901022db5651c1019d0abff71eeb423168b79f1344-print.jpg": "e40d9068ed65ab607ed10edb9ace4006f1601425b1836116dce5c3c8b94c1f05",
+        "/preview-issues/2026-11-19/r3/DD_2026-11-19_junior_r3_color.pdf": "b4f8738d5167f1a1eaef568a485f1163a7a8f2dc071fa092543a1d3164aeff91",
+        "/preview-issues/2026-11-19/r3/DD_2026-11-19_junior_r3_ink.pdf": "5fc55665b700c3e52d3ab1de51f88ede8debef5a81febcfedbf5766b00aba37b",
+        "/preview-issues/2026-11-19/r3/assets/ed1974de7f0571b5e686d25052aec29afe88af0182f5b5563b738f97ecd5a8e7-web.webp": "2dec6e4e2246a66d52829b48c1c5511ff8cd6953f555320571d8b670f4779c95",
+        "/preview-issues/2026-11-19/r3/assets/ed1974de7f0571b5e686d25052aec29afe88af0182f5b5563b738f97ecd5a8e7-print.jpg": "764adb1cc25b53cedd36848bc713a9bc01f2fb82ac63f3766ad9a3dcfd80ea5b",
+        "/preview-issues/2026-11-19/r3/assets/109b6f225fa91da163c8a3500728972ca0a48cd7745c20a95a14998dce6ce661-web.webp": "b32890dc60c144f1cff4389531a8d5a6c924506a976729c5025531cadc65f80b",
+        "/preview-issues/2026-11-19/r3/assets/109b6f225fa91da163c8a3500728972ca0a48cd7745c20a95a14998dce6ce661-print.jpg": "b420de9328d97028ea6d3be405398ee2ec9817e1ee51c399d92d32a058e71c96",
+        "/preview-issues/2026-11-19/r3/DD_2026-11-19_senior_r3_color.pdf": "689a259c0d67124249ed2306e0f70e762945b6b61bec118c461266b8f0559cba",
+        "/preview-issues/2026-11-19/r3/DD_2026-11-19_senior_r3_ink.pdf": "45d5339427a570942155dab30f91460e3069100d61e99473c7842c9a89356239",
+        "/preview-issues/2026-11-19/r3/assets/88c40a9944933e904bf671f15139a422c125259996dc05c4c52cad17bab64c47-web.webp": "c1b2b1b003bfe938dee094fc34d1a4ffa599a3f294325bacfc890911bdf2b759",
+        "/preview-issues/2026-11-19/r3/assets/88c40a9944933e904bf671f15139a422c125259996dc05c4c52cad17bab64c47-print.jpg": "1aed31946e947a52a021268640329cef41bf07efa873b20b0f64d89199ba35c3",
+        "/preview-issues/2026-11-19/r3/assets/fbb200264579721f2062e5177bfede5ed214c7615965953cb70b056a4f722439-web.webp": "2cb3a9cbb41b2f743e0088f3cb83e15944b39bb8f36831171e11106cc38f5640",
+        "/preview-issues/2026-11-19/r3/assets/fbb200264579721f2062e5177bfede5ed214c7615965953cb70b056a4f722439-print.jpg": "29e6197e143712fb1159a13efb480c5cda96c8524f2eda32cc197e4f36976f5f"
+      },
+      "imageManifests": [
+        {
+          "kind": "event_photo",
+          "alt": "Landsat satellite view of the Atacama Desert during the 2026 flowering season.",
+          "caption": "Satellite view, October 24, 2026; not a photograph taken today.",
+          "author": "Michala Garrison",
+          "publisher": "NASA Earth Observatory",
+          "credit": "NASA Earth Observatory / Michala Garrison · USGS Landsat data",
+          "licenseCode": "PUBLIC_DOMAIN",
+          "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+          "sourcePage": "https://science.nasa.gov/earth/earth-observatory/el-nino-rains-paint-the-atacama/",
+          "originalUrl": "https://assets.science.nasa.gov/dynamicimage/assets/science/esd/eo/images/iotd/2026/el-niño-rains-paint-the-atacama/atacamabloom_oli2_20261024_th.jpg?w=1200",
+          "rightsConfirmed": true,
+          "photographedAt": "2026-10-24",
+          "assetId": "b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a",
+          "sourceSha256": "b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a",
+          "sourceBytes": 184114,
+          "sourceMime": "image/jpeg",
+          "web": {
+            "path": "assets/b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a-web.webp",
+            "width": 1200,
+            "height": 800,
+            "sha256": "d31c14b0e53d72eea50bd7f9fb66ca4bb1afbebbc319549da00139ff7c44d5de"
+          },
+          "print": {
+            "path": "assets/b5576f7b887e69c8e3ef3df727885adf8f22b90e0eead934dc2fc909a5ca704a-print.jpg",
+            "width": 1200,
+            "height": 800,
+            "sha256": "434ddf64f1f2a9c51551b58b3327e4262ad29f38e52cfdc7570d3fac9045ac84"
+          }
+        },
+        {
+          "kind": "generated_illustration",
+          "alt": "Concept illustration of students discussing ideas. Not a photograph of the event.",
+          "caption": "AI 概念插畫，非事件照片。",
+          "author": "DayDay",
+          "publisher": "DayDay",
+          "credit": "DayDay",
+          "licenseCode": "GENERATED",
+          "rightsConfirmed": true,
+          "photographedAt": null,
+          "generation": {
+            "provider": "nvidia",
+            "model": "black-forest-labs/flux-3-image-klein",
+            "prompt": "A small diverse group of students sitting in a circle beside a globe, listening to each other thoughtfully in a welcoming library. cheerful gentle watercolor, bright warm colors, a few large recognizable shapes, very simple composition, generous clear space, friendly and inviting. Avoid dark backgrounds, heavy shadows, dense machinery and visual clutter. School-age editorial art, not a toddler cartoon. This is a conceptual illustration, not a documentary photo or reconstruction of an actual event. No text, letters, logos or invented factual diagrams. Keep key subjects in the central area for newspaper cropping.",
+            "generatedAt": "2026-11-19T12:31:56.529Z"
+          },
+          "assetId": "1affa0d9861ed284ba3d0c46253dcb177508ed022adb3f032cd9d000ebc8649b",
+          "sourceSha256": "1affa0d9861ed284ba3d0c46253dcb177508ed022adb3f032cd9d000ebc8649b",
+          "sourceBytes": 119114,
+          "sourceMime": "image/jpeg",
+          "web": {
+            "path": "assets/1affa0d9861ed284ba3d0c46253dcb177508ed022adb3f032cd9d000ebc8649b-web.webp",
+            "width": 1200,
+            "height": 821,
+            "sha256": "82a77240ae82530d1fab59d4f64e3b4f540fbe8455a19f57ad8a67f56b144bf9"
+          },
+          "print": {
+            "path": "assets/1affa0d9861ed284ba3d0c46253dcb177508ed022adb3f032cd9d000ebc8649b-print.jpg",
+            "width": 1216,
+            "height": 832,
+            "sha256": "4dce4f3a86046ca9fa46459b164ec547cc78fc16151ce4741436e5e5c632d3bb"
+          }
+        },
+        {
+          "kind": "generated_illustration",
+          "alt": "Concept illustration of a classroom AI picture-sorting activity. Not a photograph of the event.",
+          "caption": "AI 概念插畫，非事件照片。",
+          "author": "DayDay",
+          "publisher": "DayDay",
+          "credit": "DayDay",
+          "licenseCode": "GENERATED",
+          "rightsConfirmed": true,
+          "photographedAt": null,
+          "generation": {
+            "provider": "nvidia",
+            "model": "black-forest-labs/flux-3-image-klein",
+            "prompt": "A teacher and students looking at picture cards of fish and ocean litter beside a simple laptop, a conceptual learning activity about sorting pictures, no readable text on cards or screen. cheerful gentle watercolor, bright warm colors, a few large recognizable shapes, very simple composition, generous clear space, friendly and inviting. Avoid dark backgrounds, heavy shadows, dense machinery and visual clutter. School-age editorial art, not a toddler cartoon. This is a conceptual illustration, not a documentary photo or reconstruction of an actual event. No text, letters, logos or invented factual diagrams. Keep key subjects in the central area for newspaper cropping.",
+            "generatedAt": "2026-11-19T12:32:03.896Z"
+          },
+          "assetId": "bdfe635365a122aff10d0a901022db5651c1019d0abff71eeb423168b79f1344",
+          "sourceSha256": "bdfe635365a122aff10d0a901022db5651c1019d0abff71eeb423168b79f1344",
+          "sourceBytes": 176329,
+          "sourceMime": "image/jpeg",
+          "web": {
+            "path": "assets/bdfe635365a122aff10d0a901022db5651c1019d0abff71eeb423168b79f1344-web.webp",
+            "width": 1200,
+            "height": 821,
+            "sha256": "541168767267073e41df08d0bf1f72116181675354e68823e3d705ed1c873558"
+          },
+          "print": {
+            "path": "assets/bdfe635365a122aff10d0a901022db5651c1019d0abff71eeb423168b79f1344-print.jpg",
+            "width": 1216,
+            "height": 832,
+            "sha256": "e40d9068ed65ab607ed10edb9ace4006f1601425b1836116dce5c3c8b94c1f05"
+          }
+        },
+        {
+          "kind": "generated_illustration",
+          "alt": "Concept illustration of students discussing ideas. Not a photograph of the event.",
+          "caption": "AI 概念插畫，非事件照片。",
+          "author": "DayDay",
+          "publisher": "DayDay",
+          "credit": "DayDay",
+          "licenseCode": "GENERATED",
+          "rightsConfirmed": true,
+          "photographedAt": null,
+          "generation": {
+            "provider": "nvidia",
+            "model": "black-forest-labs/flux-3-image-klein",
+            "prompt": "A small diverse group of students sitting in a circle beside a globe, listening to each other thoughtfully in a welcoming library. clean illustrated editorial watercolor, moderate detail, clear focal point, lively but restrained colors, light background, simplified surroundings. Curious and approachable without looking childish or visually heavy. This is a conceptual illustration, not a documentary photo or reconstruction of an actual event. No text, letters, logos or invented factual diagrams. Keep key subjects in the central area for newspaper cropping.",
+            "generatedAt": "2026-11-19T12:32:10.694Z"
+          },
+          "assetId": "ed1974de7f0571b5e686d25052aec29afe88af0182f5b5563b738f97ecd5a8e7",
+          "sourceSha256": "ed1974de7f0571b5e686d25052aec29afe88af0182f5b5563b738f97ecd5a8e7",
+          "sourceBytes": 207014,
+          "sourceMime": "image/jpeg",
+          "web": {
+            "path": "assets/ed1974de7f0571b5e686d25052aec29afe88af0182f5b5563b738f97ecd5a8e7-web.webp",
+            "width": 1200,
+            "height": 821,
+            "sha256": "2dec6e4e2246a66d52829b48c1c5511ff8cd6953f555320571d8b670f4779c95"
+          },
+          "print": {
+            "path": "assets/ed1974de7f0571b5e686d25052aec29afe88af0182f5b5563b738f97ecd5a8e7-print.jpg",
+            "width": 1216,
+            "height": 832,
+            "sha256": "764adb1cc25b53cedd36848bc713a9bc01f2fb82ac63f3766ad9a3dcfd80ea5b"
+          }
+        },
+        {
+          "kind": "generated_illustration",
+          "alt": "Concept illustration of a classroom AI picture-sorting activity. Not a photograph of the event.",
+          "caption": "AI 概念插畫，非事件照片。",
+          "author": "DayDay",
+          "publisher": "DayDay",
+          "credit": "DayDay",
+          "licenseCode": "GENERATED",
+          "rightsConfirmed": true,
+          "photographedAt": null,
+          "generation": {
+            "provider": "nvidia",
+            "model": "black-forest-labs/flux-3-image-klein",
+            "prompt": "A teacher and students looking at picture cards of fish and ocean litter beside a simple laptop, a conceptual learning activity about sorting pictures, no readable text on cards or screen. clean illustrated editorial watercolor, moderate detail, clear focal point, lively but restrained colors, light background, simplified surroundings. Curious and approachable without looking childish or visually heavy. This is a conceptual illustration, not a documentary photo or reconstruction of an actual event. No text, letters, logos or invented factual diagrams. Keep key subjects in the central area for newspaper cropping.",
+            "generatedAt": "2026-11-19T12:32:18.174Z"
+          },
+          "assetId": "109b6f225fa91da163c8a3500728972ca0a48cd7745c20a95a14998dce6ce661",
+          "sourceSha256": "109b6f225fa91da163c8a3500728972ca0a48cd7745c20a95a14998dce6ce661",
+          "sourceBytes": 200992,
+          "sourceMime": "image/jpeg",
+          "web": {
+            "path": "assets/109b6f225fa91da163c8a3500728972ca0a48cd7745c20a95a14998dce6ce661-web.webp",
+            "width": 1200,
+            "height": 821,
+            "sha256": "b32890dc60c144f1cff4389531a8d5a6c924506a976729c5025531cadc65f80b"
+          },
+          "print": {
+            "path": "assets/109b6f225fa91da163c8a3500728972ca0a48cd7745c20a95a14998dce6ce661-print.jpg",
+            "width": 1216,
+            "height": 832,
+            "sha256": "b420de9328d97028ea6d3be405398ee2ec9817e1ee51c399d92d32a058e71c96"
+          }
+        },
+        {
+          "kind": "generated_illustration",
+          "alt": "Concept illustration of students discussing ideas. Not a photograph of the event.",
+          "caption": "AI 概念插畫，非事件照片。",
+          "author": "DayDay",
+          "publisher": "DayDay",
+          "credit": "DayDay",
+          "licenseCode": "GENERATED",
+          "rightsConfirmed": true,
+          "photographedAt": null,
+          "generation": {
+            "provider": "nvidia",
+            "model": "black-forest-labs/flux-3-image-klein",
+            "prompt": "A small diverse group of students sitting in a circle beside a globe, listening to each other thoughtfully in a welcoming library. refined editorial watercolor, richer detail and texture, natural proportions, sophisticated muted colors and balanced visual depth. Preserve the mature newspaper illustration style. This is a conceptual illustration, not a documentary photo or reconstruction of an actual event. No text, letters, logos or invented factual diagrams. Keep key subjects in the central area for newspaper cropping.",
+            "generatedAt": "2026-11-19T12:32:25.411Z"
+          },
+          "assetId": "88c40a9944933e904bf671f15139a422c125259996dc05c4c52cad17bab64c47",
+          "sourceSha256": "88c40a9944933e904bf671f15139a422c125259996dc05c4c52cad17bab64c47",
+          "sourceBytes": 327841,
+          "sourceMime": "image/jpeg",
+          "web": {
+            "path": "assets/88c40a9944933e904bf671f15139a422c125259996dc05c4c52cad17bab64c47-web.webp",
+            "width": 1200,
+            "height": 821,
+            "sha256": "c1b2b1b003bfe938dee094fc34d1a4ffa599a3f294325bacfc890911bdf2b759"
+          },
+          "print": {
+            "path": "assets/88c40a9944933e904bf671f15139a422c125259996dc05c4c52cad17bab64c47-print.jpg",
+            "width": 1216,
+            "height": 832,
+            "sha256": "1aed31946e947a52a021268640329cef41bf07efa873b20b0f64d89199ba35c3"
+          }
+        },
+        {
+          "kind": "generated_illustration",
+          "alt": "Concept illustration of a classroom AI picture-sorting activity. Not a photograph of the event.",
+          "caption": "AI 概念插畫，非事件照片。",
+          "author": "DayDay",
+          "publisher": "DayDay",
+          "credit": "DayDay",
+          "licenseCode": "GENERATED",
+          "rightsConfirmed": true,
+          "photographedAt": null,
+          "generation": {
+            "provider": "nvidia",
+            "model": "black-forest-labs/flux-3-image-klein",
+            "prompt": "A teacher and students looking at picture cards of fish and ocean litter beside a simple laptop, a conceptual learning activity about sorting pictures, no readable text on cards or screen. refined editorial watercolor, richer detail and texture, natural proportions, sophisticated muted colors and balanced visual depth. Preserve the mature newspaper illustration style. This is a conceptual illustration, not a documentary photo or reconstruction of an actual event. No text, letters, logos or invented factual diagrams. Keep key subjects in the central area for newspaper cropping.",
+            "generatedAt": "2026-11-19T12:32:33.336Z"
+          },
+          "assetId": "fbb200264579721f2062e5177bfede5ed214c7615965953cb70b056a4f722439",
+          "sourceSha256": "fbb200264579721f2062e5177bfede5ed214c7615965953cb70b056a4f722439",
+          "sourceBytes": 253328,
+          "sourceMime": "image/jpeg",
+          "web": {
+            "path": "assets/fbb200264579721f2062e5177bfede5ed214c7615965953cb70b056a4f722439-web.webp",
+            "width": 1200,
+            "height": 821,
+            "sha256": "2cb3a9cbb41b2f743e0088f3cb83e15944b39bb8f36831171e11106cc38f5640"
+          },
+          "print": {
+            "path": "assets/fbb200264579721f2062e5177bfede5ed214c7615965953cb70b056a4f722439-print.jpg",
+            "width": 1216,
+            "height": 832,
+            "sha256": "29e6197e143712fb1159a13efb480c5cda96c8524f2eda32cc197e4f36976f5f"
+          }
+        }
+      ],
+      "production": {
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "totalModelCalls": 65,
+        "totalTokens": 118420,
+        "costStatus": "cost_unknown",
+        "imageAttempts": 6,
+        "sourceRun": 44526172367,
+        "editorCorrections": 14,
+        "sourceSnapshots": 1
+      },
+      "pdfPaths": {
+        "elementary:color": "/preview-issues/2026-11-19/r3/DD_2026-11-19_elementary_r3_color.pdf",
+        "elementary:ink": "/preview-issues/2026-11-19/r3/DD_2026-11-19_elementary_r3_ink.pdf",
+        "junior:color": "/preview-issues/2026-11-19/r3/DD_2026-11-19_junior_r3_color.pdf",
+        "junior:ink": "/preview-issues/2026-11-19/r3/DD_2026-11-19_junior_r3_ink.pdf",
+        "senior:color": "/preview-issues/2026-11-19/r3/DD_2026-11-19_senior_r3_color.pdf",
+        "senior:ink": "/preview-issues/2026-11-19/r3/DD_2026-11-19_senior_r3_ink.pdf"
+      }
     }
   ],
   "releases": []
