@@ -13,7 +13,7 @@ The user selected Elementary H, Junior C, and keeping Senior unchanged.
 Junior uses the settings visible in the user's selected C preview. Elementary
 uses H's trial defaults. Web and PDF share these settings. Only the wordmark
 is compressed; the by DayDay signature and all article typography are retained.
-The trial page remains available and now records the approved C defaults.
+The font study is archived under `devtools/mastheads/` and is no longer shipped in the public reader.
 The following sections describe earlier rounds, superseded by this selection.
 
 ## Round 1
@@ -43,7 +43,7 @@ Licenses are preserved in `public/fonts/InstrumentSerif-OFL.txt` and
 ## Round 2: eight selectable alternatives
 
 The user found the first two substitutes insufficiently similar. The new
-`public/mastheads.html` study offers eight additional candidates in one layout,
+`devtools/mastheads/mastheads.html` study offers eight additional candidates in one layout,
 plus the two previous faces as baselines. It supports paper color, supported
 font weights, horizontal width, tracking, reset, URL/local selection retention,
 and copying the selected values. Unsupported weights are disabled rather than

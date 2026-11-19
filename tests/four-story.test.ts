@@ -15,7 +15,7 @@ test('four-story snapshots validate, split two per print page and retain legacy 
     assert.equal(editionSchema.safeParse(four).success,true);assert.deepEqual(validateIssue(four),[]);
     const pages=renderPrint(four,'color').split('<section class="print-page">').slice(1);
     assert.equal(pages.length,2);for(const page of pages)assert.equal((page.match(/class="print-article"/g)||[]).length,2);
-    assert.match(renderPrint({...four,isDemo:false},'color'),/REVIEW COPY · NOT PUBLISHED/);
+    assert.match(renderPrint({...four,isDemo:false},'color'),/試閱刊 · 尚未正式發布/);
     assert.equal(editionSchema.safeParse({...four,storyCount:8}).success,false);
     assert.equal(editionSchema.safeParse({...four,storyCount:undefined}).success,false);
   }

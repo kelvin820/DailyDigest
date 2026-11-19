@@ -21,7 +21,7 @@ try{
   await page.evaluate(async()=>{await document.fonts.ready;await Promise.all([...document.images].map(img=>img.decode()));});
   const state=await page.evaluate(()=>({overflow:document.documentElement.scrollWidth>innerWidth,stories:document.querySelectorAll('article.article').length,
    loaded:[...document.images].every(img=>img.complete&&img.naturalWidth>0),notice:document.querySelector('.notice').textContent}));
-  assert.equal(state.overflow,false);assert.equal(state.stories,4);assert.equal(state.loaded,true);assert.match(state.notice,/待審未發布/);
+  assert.equal(state.overflow,false);assert.equal(state.stories,4);assert.equal(state.loaded,true);assert.match(state.notice,/試閱刊.*尚未正式發布/);
   for(const article of issue.articles)assert.equal(await page.locator('.body-copy').filter({hasText:article.bodyParagraphs[0]}).count(),1);
   checks.push({edition:issue.edition,width,...state});
   if(width!==768)await page.screenshot({path:resolve(directory,'qa',issue.edition+'-'+width+'.png'),fullPage:true});

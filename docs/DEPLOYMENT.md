@@ -1,33 +1,30 @@
-# 部署指南（尚未部署）
+# Vercel 部署與驗收
 
-## 專案與可重現檢查
+原始碼：<https://github.com/kelvin820/DailyDigest>，production branch 為 `main`。
+使用 Node 24、pnpm 11.25.0，Next.js 自動偵測，build command 為 `pnpm build`。
+不要指定 static export 或覆蓋其他專案。
 
-在獨立 GitHub repo 使用 Node 24、pnpm 11.25.0。提交 pnpm-lock.yaml、pnpm-workspace.yaml（只允許 esbuild build script），CI 使用 frozen install。先跑 README 的 typecheck、lint、test、build、PDF、test:app、test:db。不要覆蓋其他網站。
+## 目前狀態
 
-## Supabase
+四篇 × 三版的真實來源試閱稿及六份兩頁 PDF 已完成；原始稿件、模型審閱與編輯紀錄保留在私有產物中。這不代表已正式出刊。閱讀頁只顯示必要的試閱狀態；試字工具已移至 `devtools/mastheads/`，不隨網站公開。
 
-在全新開發專案，依檔名排序套用 supabase/migrations/ 的 14 檔。前 3 檔保留原交付，其餘新增修訂、額度、intake、試讀與 auto。尚未對任何雲端 DB 執行。
+目前 Vercel 連接可看到 CKM team（`team_Cu8JbGAp3KG9B0jOFWasVnZI`），但先前建立專案回覆 403，尚未有已驗證的 Vercel 網址。私人 Sites 預覽不等於 Vercel 部署。
 
-關閉開放自行註冊，邀請家長、設定密碼與 email／SMTP；在 SQL Editor 以實際 Auth UUID 建立 site_members(admin/reader)，不以兒童 email 建帳。全部 bucket（issue-files/evidence/images）維持 private。只有 worker 取得 service-role；讀者與編輯室以 session + RLS／窄範圍 RPC 存取。
+## 網站與 runner 設定
 
-實測 anonymous、reader、inactive reader、admin：草稿、內部來源、jobs/settings、published payload、私有 PDF signed URL、修訂、核准、來源證據。腳本的本機 PostgreSQL stubs 不能取代這一層。
+集中設定與既有憑證見 [SETUP.md](SETUP.md)。不要在 repo、聊天或建置記錄貼 key。
 
-## Vercel
+- Vercel：匯入上述 repo，設定實際 HTTPS `APP_URL`、`NEXT_PUBLIC_SUPABASE_URL`、`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`。真實資料模式使用 `DEMO_MODE=false`。網站不直接呼叫 NVIDIA，不需要搬移既有 `LLM_API_KEY`。
+- GitHub runner：沿用已驗證的 Repository Secret `LLM_API_KEY`；設定 `SUPABASE_SERVICE_ROLE_KEY`、實際網站 URL 與額度。初期維持 review、draft only，自動出刊關閉。
+- 家長帳號延後。真實編輯室目前只需開發者自己的管理員身分；唯讀預覽不需要家長登入。
+- 既有 Supabase 已初始化十四份 migration；只套用有守衛的第十五份增量，不能重跑空專案初始化。Private Storage 與角色權限須另行驗收。
 
-匯入新 repo，Next.js，Node 24。先在隔離 preview 做 DEMO；正式私人站設定 DEMO_MODE=false、APP_URL=實際 HTTPS URL、NEXT_PUBLIC_SUPABASE_URL、NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY。網站不需要 LLM_API_KEY 或 Supabase service-role。
+`DEMO_MODE=true` 只會載入歷史八篇虛構樣刊，不能當作目前四篇真實來源試閱稿，也不能作為生成或正式出刊成功的證據。六份私有 PDF 與圖片不在 Git 原始碼中；部署前須確認所選資料模式和資產已備妥。
 
-需要編輯室派送時，另設 GITHUB_REPOSITORY、GITHUB_DEFAULT_BRANCH、只限該 repo 的 GITHUB_DISPATCH_TOKEN；live 驗收後設 DD_PIPELINE_ACCEPTED=true。未設定則顯示禁用，沒有假成功。
+## 驗收與啟用
 
-先驗收登入、最近一期／日期過期提示、三版、歷史、PDF private redirect、admin 權限；記錄 preview 與 production URL 到 STATUS。現在沒有部署 URL。
+先執行 typecheck、lint、unit tests、build，確認三版閱讀、手機版面、圖片及六份 PDF 下載；跨入真實資料模式後，再驗證 Supabase RLS、私有檔案與管理員操作。將實際部署 commit、環境、網址及結果記錄在交接文件。
 
-## 第一份 live 與排程
+第一期維持 review：核對來源、日期、分齡單字與插畫、六份 PDF、usage 和所有待修訂項目後，再核准發布。來源 intake 必須通過既有政策與 robots／摘錄授權檢查。
 
-GitHub production environment 的 Secrets：LLM_API_KEY（NVIDIA）、SUPABASE_SERVICE_ROLE_KEY。Variables：APP_URL、NEXT_PUBLIC_SUPABASE_URL、writer/reviewer 型號、預算與可確認的 token 單價。初始 PUBLISH_MODE=review。
-
-先用人工 APPROVED_FACTS_FILE 或核准完整來源政策後的 worker 完成一期 live E2E。核對來源、日期、三版、圖片類型、六份 PDF、實際 usage，再由管理者核准。人工入口預設 DRAFT_ONLY=true。
-
-自動來源另外需要：status=enabled、discovery_enabled/fetch_enabled=true、rewrite_policy=allowed、reviewed_at、robots_reviewed_at、robots_allowed=true，以及 evidence_policy=permanent_excerpt。啟用前人工確認條款與可永久保留必要摘錄的範圍；全文僅在記憶體處理。模型不能自己授權。
-
-真正通過後才把 GitHub variable DD_PIPELINE_ACCEPTED 設 true。daily-digest.yml 綁定 default branch、production environment、最小讀 repo 權限；台北 06:17 主跑／07:17 補跑。時間可能延遲，並非準點 SLA。手動輸入只放 env，再經 schema 驗證，不拼 shell。
-
-auto：三個不同日期的 live 期刊經家庭試讀，在各期管理頁記錄觀察；設定頁才能切 auto。再將 runner PUBLISH_MODE=auto，並允許 DRAFT_ONLY=false。敏感稿件仍留在 needs_review；不能繞過 hard gates。
+每日只保留台北 06:17 一個排程；通過真實端到端驗收前，不設定 `DD_PIPELINE_ACCEPTED=true`。三個不同日期的實際試讀及其餘發布條件完成後，才依原有守衛切換 auto。部署網站不會自動開啟出刊。

@@ -13,7 +13,7 @@ import {validatedPreviewCheckpoints} from '../lib/preview/checkpoints';
 import {downloadAsset,prepareAsset,type AssetRecord} from '../lib/media/prepare';
 import {selectIssueImages,applyAudienceImages,type ImageSelection} from '../lib/media/select';
 import {audienceConceptPrompt} from '../lib/media/audience';
-import {renderArticle,esc} from '../lib/render.mjs';
+import {renderReviewReader} from '../lib/preview/reader.mjs';
 import {editionKeys,editions} from '../config/editions';
 import {DAILY_STORY_COUNT} from '../config/issue-settings.mjs';
 import {renderIssues} from './render';
@@ -140,7 +140,7 @@ const report={editorialReviewRequired:editorialReviewHolds.length>0,editorialRev
     'Image reservation is serialized by the manual workflow and resumed artifacts; the hosted daily image budget is not yet verified.']};
 await save('checkpoints.json',records);await save('report.json',report);
 const css=(await readFile('app/globals.css','utf8')).replaceAll('/fonts/','fonts/');
-for(const issue of issues){const c=editions[issue.edition];await writeFile(resolve(directory,issue.edition+'.html'),`<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DayDay 四篇試產 · ${esc(c.label)}</title><style>${css}</style><body><main class="newspaper ${issue.edition}" style="--paper:${c.paper};--accent:${c.accent}"><nav>${editionKeys.map(e=>`<a href="${e}.html">${esc(editions[e].label)}</a>`).join(' · ')}</nav><header class="masthead"><div class="masthead-top">FOUR STORIES. EVERY DAY. YOUR LEVEL.</div><h1>${issue.edition==='senior'?'DAILY DIGEST':'<span class="masthead-wordmark">DAILY DIGEST</span>'}<span>by DayDay</span></h1><div class="dateline">${plan.issueDate} · ${esc(c.cefr)} · REVIEW COPY</div></header><div class="notice"><b>真實來源試產 · 待審未發布</b>每天四篇、同事件三種難度。NVIDIA 生成與模型複核；${appliedCorrections.length?'含編輯校稿，原稿與修正另存紀錄；':''}仍需開發者審閱。${editorialReviewHolds.length?'本期有 '+editorialReviewHolds.length+' 篇保留模型的輕微修訂建議；正式發布門檻尚未通過。':''}</div><p>${['color','ink'].map(mode=>pdfVerified?`<a href="DD_${plan.issueDate}_${issue.edition}_r1_${mode}.pdf">${mode==='color'?'彩色':'省墨'} PDF（兩頁）</a>`:'PDF 未通過').join(' · ')} · <a href="report.json">試產紀錄</a></p><section class="article-grid">${issue.articles.map(a=>'<article class="article">'+renderArticle(a)+'<p>正文 '+a.wordCount+' 字</p></article>').join('')}</section><footer>DayDay · 真實來源試產，不代表正式發布</footer></main><script src="media-fallback.js" defer></script></body></html>`);}
-if(issues.length){await cp('public/media-fallback.js',resolve(directory,'media-fallback.js'));await writeFile(resolve(directory,'index.html'),'<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=elementary.html"><a href="elementary.html">四篇待審刊</a>');}
+for(const issue of issues)await writeFile(resolve(directory,issue.edition+'.html'),renderReviewReader(issue,{css,pdfAvailable:pdfVerified}));
+if(issues.length){await cp('public/media-fallback.js',resolve(directory,'media-fallback.js'));await writeFile(resolve(directory,'index.html'),'<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=elementary.html"><a href="elementary.html">開啟 Daily Digest</a>');}
 console.log(JSON.stringify({status:report.status,errorCode,modelCalls:budget.calls,generatedArticles:report.generatedArticles,pdfVerified,published:false}));
 if(!complete)process.exitCode=1;

@@ -82,7 +82,7 @@ try {
   await restrictedPage.waitForFunction(()=>document.querySelector('progress')?.value===1);
   assert.equal(await restrictedPage.getByText(/瀏覽器未允許儲存/).count(),1);
   await restricted.close();checks.push('storage refusal keeps reading usable and shows persistence warning');
-  await page.goto(origin + '/issues'); assert.match(await page.locator('body').textContent(), /DEMO/);
+  await page.goto(origin + '/issues'); assert.match(await page.locator('body').textContent(), /虛構樣刊/);
   assert.equal((await fetch(origin + '/api/issues/2026-02-30')).status, 400);
   assert.equal((await fetch(origin + '/api/issues/latest?edition=__proto__').then(r => r.json())).issue.edition, 'elementary');
   assert.equal((await fetch(origin + '/issues/2026-11-17/stories/no-such-story')).status, 404);
