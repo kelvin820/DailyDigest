@@ -1,0 +1,145 @@
+{
+  "packetId": "2026-11-19-r3",
+  "basePacketId": "2026-11-19-r2",
+  "baseFingerprint": "d954994573cd268c95a69bdd1f1e28dbababc9a0bd4663101a9a5b536965d57b",
+  "revision": 3,
+  "corrections": [
+    {
+      "storyId": "horsehead",
+      "edition": "elementary",
+      "reason": "Use clear, transferable terms and remove the ambiguous weather-cloud gloss.",
+      "vocabulary": [
+        {
+          "term": "gas",
+          "definitionEn": "matter, such as air, that is not solid or liquid",
+          "meaningZhHant": "氣體"
+        },
+        {
+          "term": "glows",
+          "definitionEn": "shines with a steady light",
+          "meaningZhHant": "發光"
+        }
+      ]
+    },
+    {
+      "storyId": "philosophy",
+      "edition": "junior",
+      "reason": "Remove an unsupported geographical description of the participants.",
+      "bodyParagraphs": [
+        "UNESCO will hold a World Philosophy Day event in Paris on November 19, 2026. The main lecture is called Living the Earth Together. Philosopher Souleymane Bachir Diagne will give the talk at UNESCO Headquarters. A round-table discussion will follow the lecture. Three students will share their views on climate and artificial intelligence. The event brings together thinkers and decision-makers at UNESCO Headquarters."
+      ]
+    },
+    {
+      "storyId": "teachers-ai",
+      "edition": "junior",
+      "reason": "Replace source-processing commentary with the actual classroom exercise and correct the AI sense of bias.",
+      "bodyParagraphs": [
+        "UNESCO and CodeAI plan an online workshop for teachers on November 19, 2026. Teachers will explore how AI learns from examples. They will use an activity with pictures of fish and marine waste. Sorting the pictures can show how a system makes choices. The exercise also helps teachers look for errors and biases. No earlier programming knowledge is needed for the activity."
+      ],
+      "vocabulary": [
+        {
+          "term": "Sorting",
+          "definitionEn": "putting things into groups based on their features",
+          "meaningZhHant": "分類"
+        },
+        {
+          "term": "biases",
+          "definitionEn": "unfair patterns that can affect a computer system’s decisions",
+          "meaningZhHant": "偏誤"
+        }
+      ]
+    },
+    {
+      "storyId": "atacama",
+      "edition": "senior",
+      "reason": "Preserve winter-rain/spring-flowering chronology and remove unsupported seed duration and extra causal claims.",
+      "bodyParagraphs": [
+        "NASA's November 19 report describes flowers in Chile's Atacama Desert during spring 2026. Earlier rain helped dormant seeds wake and begin growing in the soil. The desert is normally one of the driest places on Earth. Landsat satellites recorded the landscape in September and October, showing the flowering season from space. Landsat 8 recorded the September view, while Landsat 9 supplied the October view. The November report looks back at the flowering seen in these September and October images. These observations show the colorful change in a normally dry desert landscape."
+      ],
+      "vocabulary": [
+        {
+          "term": "dormant",
+          "definitionEn": "alive but not growing or active for a period of time",
+          "meaningZhHant": "休眠的"
+        },
+        {
+          "term": "observations",
+          "definitionEn": "records of what someone notices or measures",
+          "meaningZhHant": "觀測紀錄"
+        }
+      ]
+    },
+    {
+      "storyId": "horsehead",
+      "edition": "senior",
+      "reason": "Remove invented multiple-telescope data, planet-formation and research-outcome claims.",
+      "bodyParagraphs": [
+        "NASA's astronomy feature for November 19 presents the Horsehead and Flame Nebulas. The Horsehead is a cloud of dust and gas with a shape that resembles a horse's head. The feature describes it as about five light-years tall and approximately 1,500 light-years away. These figures describe its size and distance, respectively. The dark horse-like form gives the object its familiar name. NASA presents the Horsehead together with the Flame Nebula in the same astronomy feature. This is a daily presentation of these objects, with the Horsehead's shape, material and distance explained for readers."
+      ],
+      "vocabulary": [
+        {
+          "term": "resembles",
+          "definitionEn": "looks like or has similar features to something else",
+          "meaningZhHant": "看起來像"
+        },
+        {
+          "term": "approximately",
+          "definitionEn": "close to a number or amount, but not exactly",
+          "meaningZhHant": "大約"
+        }
+      ]
+    },
+    {
+      "storyId": "philosophy",
+      "edition": "senior",
+      "reason": "Use distinct B1 vocabulary and keep the program as a scheduled event without asserting results or unsupported annual goals.",
+      "bodyParagraphs": [
+        "UNESCO's official program for World Philosophy Day on November 19, 2026, in Paris includes both a lecture and a round-table discussion. Philosopher Souleymane Bachir Diagne is scheduled to give a lecture titled Living the Earth Together. Three students are expected to share their perspectives in the discussion that follows. Their planned contributions concern issues including climate and artificial intelligence. The event is listed for UNESCO Headquarters in Paris, bringing together thinkers and decision-makers. By combining a lecture with student contributions, the scheduled program gives several voices a place in the conversation."
+      ],
+      "vocabulary": [
+        {
+          "term": "perspectives",
+          "definitionEn": "ways of thinking about or understanding an issue",
+          "meaningZhHant": "觀點"
+        },
+        {
+          "term": "contributions",
+          "definitionEn": "ideas or other things people add to a shared activity",
+          "meaningZhHant": "提供的意見"
+        }
+      ]
+    },
+    {
+      "storyId": "teachers-ai",
+      "edition": "senior",
+      "reason": "Correct the regional audience, omit invented registration timing, and describe the announced exercise.",
+      "bodyParagraphs": [
+        "UNESCO and CodeAI have scheduled an online workshop for teachers on November 19, 2026. It is aimed at teachers and education professionals in Latin America and the Caribbean. Participants are to try AI for Oceans, an activity using pictures of fish and marine waste. They will classify these images to explore how a machine learning model uses data. The exercise is also intended to reveal potential errors and biases in the system's decisions. No previous programming knowledge is required. UNESCO describes the session as a hands-on opportunity to learn about AI and consider its use in teaching."
+      ],
+      "vocabulary": [
+        {
+          "term": "classify",
+          "definitionEn": "put things into groups based on their shared features",
+          "meaningZhHant": "分類"
+        },
+        {
+          "term": "potential errors",
+          "definitionEn": "mistakes that could happen or be present",
+          "meaningZhHant": "可能的錯誤"
+        }
+      ]
+    }
+  ],
+  "evidenceAdditions": [
+    {
+      "storyId": "teachers-ai",
+      "quote": "Aimed at teachers and education professionals across Latin America and the Caribbean",
+      "claim": {
+        "claim_id": "claim-4",
+        "text": "The planned workshop is aimed at teachers and education professionals in Latin America and the Caribbean.",
+        "must_keep": false,
+        "status": "reported_plan"
+      }
+    }
+  ]
+}

@@ -1327,6 +1327,1348 @@
         "senior:color": "/preview-issues/2026-11-19/r2/DD_2026-11-19_senior_r2_color.pdf",
         "senior:ink": "/preview-issues/2026-11-19/r2/DD_2026-11-19_senior_r2_ink.pdf"
       }
+    },
+    {
+      "id": "2026-11-19-r1",
+      "issueDate": "2026-11-19",
+      "revision": 1,
+      "fingerprint": "78f960a80878d495216c2981b523e9df5ea0845974ad39e9ac4deea520973739",
+      "generatedAt": "2026-11-19T07:30:22.208Z",
+      "editions": [
+        {
+          "schemaVersion": "1.0",
+          "issueDate": "2026-11-19",
+          "revision": 1,
+          "edition": "elementary",
+          "targetCefr": "A1",
+          "templateVersion": "1.0",
+          "publishedAt": null,
+          "isDemo": false,
+          "reviewCopy": true,
+          "vocabularyPolicy": "tiered-v1",
+          "storyCount": 4,
+          "readingRules": {
+            "min": 40,
+            "max": 60,
+            "avg": 10,
+            "maxSentence": 15
+          },
+          "articles": [
+            {
+              "storyId": "trial-nicer",
+              "order": 1,
+              "category": "science",
+              "contentKind": "news",
+              "headline": "NASA Telescope on Space Station Ends Science Work",
+              "bodyParagraphs": [
+                "NASA says the NICER telescope on the space station has stopped its science work. It launched in 2017. It studied neutron stars with X-rays. Engineers think a motor inside failed. They plan to finish the data archive. They will remove the telescope later."
+              ],
+              "wordCount": 43,
+              "vocabulary": [
+                {
+                  "term": "telescope",
+                  "definitionEn": "a tool that looks at far away things in space",
+                  "meaningZhHant": "望遠鏡"
+                },
+                {
+                  "term": "neutron stars",
+                  "definitionEn": "very small, heavy stars made mostly of neutrons",
+                  "meaningZhHant": "中子星"
+                }
+              ],
+              "image": {
+                "assetId": "3a2066179e93da141e5632ccb2940a823b3fba8665415d37a6964748a2048d2d",
+                "alt": "elementary audience: AI-generated watercolor concept illustration, not a photograph of the news event.",
+                "caption": "AI 概念插畫 · 小學版，非事件照片。",
+                "kind": "generated_illustration",
+                "credit": "DayDay · NVIDIA black-forest-labs/flux-3-image-klein",
+                "rendition": {
+                  "webPath": "/preview-issues/2026-11-19/r1/assets/3a2066179e93da141e5632ccb2940a823b3fba8665415d37a6964748a2048d2d-web.webp",
+                  "printPath": "/preview-issues/2026-11-19/r1/assets/3a2066179e93da141e5632ccb2940a823b3fba8665415d37a6964748a2048d2d-print.jpg",
+                  "width": 1200,
+                  "height": 821
+                },
+                "focalPoint": {
+                  "x": 50,
+                  "y": 50
+                }
+              },
+              "sources": [
+                {
+                  "publisher": "NASA",
+                  "url": "https://www.nasa.gov/missions/station/nicer-status-updates/",
+                  "publishedAt": "2026-11-17T00:00:00Z"
+                }
+              ],
+              "eventDate": null
+            },
+            {
+              "storyId": "trial-quantum",
+              "order": 2,
+              "category": "technology",
+              "contentKind": "news",
+              "headline": "Scientists Use Light to Check Location",
+              "bodyParagraphs": [
+                "NIST researchers showed a new method in a lab. They use light particles to check a distant party's location. The team uses linked light particles and optical fibers. This method could help protect private information in future networks. Real-world use may be a decade or more away. This is not an available security product yet."
+              ],
+              "wordCount": 55,
+              "vocabulary": [
+                {
+                  "term": "particles",
+                  "definitionEn": "very small pieces of matter",
+                  "meaningZhHant": "粒子"
+                },
+                {
+                  "term": "networks",
+                  "definitionEn": "connected computers or systems",
+                  "meaningZhHant": "網路"
+                }
+              ],
+              "image": {
+                "assetId": "f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce",
+                "alt": "Two NIST researchers with safety glasses working beside laser equipment.",
+                "caption": "NIST researchers in the laboratory. Photo: Riley Wilson/NIST.",
+                "kind": "event_photo",
+                "credit": "Riley Wilson/NIST · image resized; original at source",
+                "licenseUrl": "https://www.nist.gov/open/license",
+                "sourcePage": "https://www.nist.gov/news-events/news/2026/11/quantum-physics-can-verify-persons-location-nist-researchers-show",
+                "rendition": {
+                  "webPath": "/preview-issues/2026-11-19/r1/assets/f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce-web.webp",
+                  "printPath": "/preview-issues/2026-11-19/r1/assets/f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce-print.jpg",
+                  "width": 960,
+                  "height": 641
+                },
+                "focalPoint": {
+                  "x": 50,
+                  "y": 50
+                }
+              },
+              "sources": [
+                {
+                  "publisher": "NIST",
+                  "url": "https://www.nist.gov/news-events/news/2026/11/quantum-physics-can-verify-persons-location-nist-researchers-show",
+                  "publishedAt": "2026-11-18T00:00:00Z"
+                }
+              ],
+              "eventDate": null
+            },
+            {
+              "storyId": "trial-voices",
+              "order": 3,
+              "category": "culture",
+              "contentKind": "news",
+              "headline": "Library of Congress Plans New Exhibition",
+              "bodyParagraphs": [
+                "The Library of Congress plans a new exhibition. Opening is planned for November 19, 2026. The show is in the Thomas Jefferson Building. The exhibition is called Voices of the Early Americas. It explores Indigenous histories and cultures. Over 200 objects will be on display. Contemporary poetry will also be included. Indigenous traditions continue today."
+              ],
+              "wordCount": 55,
+              "vocabulary": [
+                {
+                  "term": "exhibition",
+                  "definitionEn": "a public show of art or objects",
+                  "meaningZhHant": "展覽"
+                },
+                {
+                  "term": "Indigenous",
+                  "definitionEn": "relating to the original people of a place",
+                  "meaningZhHant": "原住民的"
+                }
+              ],
+              "image": {
+                "assetId": "177fcc1bfdcbd9858f223c46bd56a726bb61c68dfc2b47907b94923c0084ac8d",
+                "alt": "elementary audience: AI-generated watercolor concept illustration, not a photograph of the news event.",
+                "caption": "AI 概念插畫 · 小學版，非事件照片。",
+                "kind": "generated_illustration",
+                "credit": "DayDay · NVIDIA black-forest-labs/flux-3-image-klein",
+                "rendition": {
+                  "webPath": "/preview-issues/2026-11-19/r1/assets/177fcc1bfdcbd9858f223c46bd56a726bb61c68dfc2b47907b94923c0084ac8d-web.webp",
+                  "printPath": "/preview-issues/2026-11-19/r1/assets/177fcc1bfdcbd9858f223c46bd56a726bb61c68dfc2b47907b94923c0084ac8d-print.jpg",
+                  "width": 1200,
+                  "height": 821
+                },
+                "focalPoint": {
+                  "x": 50,
+                  "y": 50
+                }
+              },
+              "sources": [
+                {
+                  "publisher": "Library of Congress",
+                  "url": "https://newsroom.loc.gov/news/library-of-congress-to-unveil--voices-of-the-early-americas---featuring-rare-artifacts--maps-and-ind/s/5c73564c-f9f9-4270-ba24-355c36cca6bc",
+                  "publishedAt": "2026-11-16T00:00:00Z"
+                }
+              ],
+              "eventDate": null
+            },
+            {
+              "storyId": "trial-climate",
+              "order": 4,
+              "category": "nature",
+              "contentKind": "news",
+              "headline": "NOAA: October 2026 Was Very Warm",
+              "bodyParagraphs": [
+                "NOAA says October 2026 was very warm. The global surface temperature was 1.43 degrees Celsius above the twentieth-century average. This is the highest monthly departure in the 1850 to 2026 record. It is a global average, not every local place. All ten of the warmest Octobers have happened since 2015."
+              ],
+              "wordCount": 50,
+              "vocabulary": [
+                {
+                  "term": "global average",
+                  "definitionEn": "a number that represents the whole world together",
+                  "meaningZhHant": "全球平均值"
+                },
+                {
+                  "term": "departure",
+                  "definitionEn": "the amount something is different from the usual level",
+                  "meaningZhHant": "偏差"
+                }
+              ],
+              "image": {
+                "assetId": "nature",
+                "alt": "nature original category icon",
+                "caption": "Original category icon",
+                "kind": "icon",
+                "credit": "DayDay original artwork"
+              },
+              "sources": [
+                {
+                  "publisher": "NOAA NCEI",
+                  "url": "https://www.ncei.noaa.gov/news/global-climate-202610",
+                  "publishedAt": "2026-11-12T00:00:00Z"
+                }
+              ],
+              "eventDate": null
+            }
+          ]
+        },
+        {
+          "schemaVersion": "1.0",
+          "issueDate": "2026-11-19",
+          "revision": 1,
+          "edition": "junior",
+          "targetCefr": "A2",
+          "templateVersion": "1.0",
+          "publishedAt": null,
+          "isDemo": false,
+          "reviewCopy": true,
+          "vocabularyPolicy": "tiered-v1",
+          "storyCount": 4,
+          "readingRules": {
+            "min": 60,
+            "max": 90,
+            "avg": 14,
+            "maxSentence": 22
+          },
+          "articles": [
+            {
+              "storyId": "trial-nicer",
+              "order": 1,
+              "category": "science",
+              "contentKind": "news",
+              "headline": "NASA Ends NICER Telescope Science Work on Space Station",
+              "bodyParagraphs": [
+                "NASA says the NICER telescope on the International Space Station has stopped its science work. The instrument launched in 2017 to study neutron stars using X-ray light. Engineers believe an internal motor has failed. They plan to finish the data archive and later remove the telescope from the station. The mission lasted much longer than the first eighteen-month plan. Scientists will still use the collected data for new research."
+              ],
+              "wordCount": 69,
+              "vocabulary": [
+                {
+                  "term": "internal motor",
+                  "definitionEn": "a small engine inside a machine that makes parts move",
+                  "meaningZhHant": "內部馬達"
+                },
+                {
+                  "term": "data archive",
+                  "definitionEn": "a stored collection of scientific information for future use",
+                  "meaningZhHant": "資料檔案庫"
+                }
+              ],
+              "image": {
+                "assetId": "0641e358b72a2e9fe772dfcf06823530920dd0ba39effce0b2049d3389612906",
+                "alt": "junior audience: AI-generated watercolor concept illustration, not a photograph of the news event.",
+                "caption": "AI 概念插畫 · 國中版，非事件照片。",
+                "kind": "generated_illustration",
+                "credit": "DayDay · NVIDIA black-forest-labs/flux-3-image-klein",
+                "rendition": {
+                  "webPath": "/preview-issues/2026-11-19/r1/assets/0641e358b72a2e9fe772dfcf06823530920dd0ba39effce0b2049d3389612906-web.webp",
+                  "printPath": "/preview-issues/2026-11-19/r1/assets/0641e358b72a2e9fe772dfcf06823530920dd0ba39effce0b2049d3389612906-print.jpg",
+                  "width": 1200,
+                  "height": 821
+                },
+                "focalPoint": {
+                  "x": 50,
+                  "y": 50
+                }
+              },
+              "sources": [
+                {
+                  "publisher": "NASA",
+                  "url": "https://www.nasa.gov/missions/station/nicer-status-updates/",
+                  "publishedAt": "2026-11-17T00:00:00Z"
+                }
+              ],
+              "eventDate": null
+            },
+            {
+              "storyId": "trial-quantum",
+              "order": 2,
+              "category": "technology",
+              "contentKind": "news",
+              "headline": "NIST Tests Light Particles to Check Location",
+              "bodyParagraphs": [
+                "NIST researchers showed a new lab method using light particles. They use linked photons to check a distant party's location. The photons travel through optical fibers to verify position. This method could protect private information in future networks. Real-world use may be a decade or more away. This is not an available security product yet. The experiment is a first step toward safer communication."
+              ],
+              "wordCount": 64,
+              "vocabulary": [
+                {
+                  "term": "verify",
+                  "definitionEn": "to check that something is true or correct",
+                  "meaningZhHant": "核實；查證"
+                },
+                {
+                  "term": "protect",
+                  "definitionEn": "to keep someone or something safe",
+                  "meaningZhHant": "保護"
+                }
+              ],
+              "image": {
+                "assetId": "f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce",
+                "alt": "Two NIST researchers with safety glasses working beside laser equipment.",
+                "caption": "NIST researchers in the laboratory. Photo: Riley Wilson/NIST.",
+                "kind": "event_photo",
+                "credit": "Riley Wilson/NIST · image resized; original at source",
+                "licenseUrl": "https://www.nist.gov/open/license",
+                "sourcePage": "https://www.nist.gov/news-events/news/2026/11/quantum-physics-can-verify-persons-location-nist-researchers-show",
+                "rendition": {
+                  "webPath": "/preview-issues/2026-11-19/r1/assets/f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce-web.webp",
+                  "printPath": "/preview-issues/2026-11-19/r1/assets/f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce-print.jpg",
+                  "width": 960,
+                  "height": 641
+                },
+                "focalPoint": {
+                  "x": 50,
+                  "y": 50
+                }
+              },
+              "sources": [
+                {
+                  "publisher": "NIST",
+                  "url": "https://www.nist.gov/news-events/news/2026/11/quantum-physics-can-verify-persons-location-nist-researchers-show",
+                  "publishedAt": "2026-11-18T00:00:00Z"
+                }
+              ],
+              "eventDate": null
+            },
+            {
+              "storyId": "trial-voices",
+              "order": 3,
+              "category": "culture",
+              "contentKind": "news",
+              "headline": "Library of Congress Plans New Indigenous Exhibition",
+              "bodyParagraphs": [
+                "The Library of Congress will open a new exhibition on November 19, 2026. The show is called Voices of the Early Americas. It will be in the Thomas Jefferson Building. The exhibition explores Indigenous histories and cultures. It uses over 200 objects and contemporary poetry. Items include maps, manuscripts, and photographs. A Maya wooden box is also on display. The materials span more than 3,000 years of history."
+              ],
+              "wordCount": 68,
+              "vocabulary": [
+                {
+                  "term": "contemporary",
+                  "definitionEn": "belonging to the present time; modern",
+                  "meaningZhHant": "當代的"
+                },
+                {
+                  "term": "manuscripts",
+                  "definitionEn": "very old documents written by hand",
+                  "meaningZhHant": "手稿"
+                }
+              ],
+              "image": {
+                "assetId": "c6aa9407f3c16fdc06b05d2f7bf53212a8cbad2bce57d9759560fd654c90509c",
+                "alt": "junior audience: AI-generated watercolor concept illustration, not a photograph of the news event.",
+                "caption": "AI 概念插畫 · 國中版，非事件照片。",
+                "kind": "generated_illustration",
+                "credit": "DayDay · NVIDIA black-forest-labs/flux-3-image-klein",
+                "rendition": {
+                  "webPath": "/preview-issues/2026-11-19/r1/assets/c6aa9407f3c16fdc06b05d2f7bf53212a8cbad2bce57d9759560fd654c90509c-web.webp",
+                  "printPath": "/preview-issues/2026-11-19/r1/assets/c6aa9407f3c16fdc06b05d2f7bf53212a8cbad2bce57d9759560fd654c90509c-print.jpg",
+                  "width": 1200,
+                  "height": 821
+                },
+                "focalPoint": {
+                  "x": 50,
+                  "y": 50
+                }
+              },
+              "sources": [
+                {
+                  "publisher": "Library of Congress",
+                  "url": "https://newsroom.loc.gov/news/library-of-congress-to-unveil--voices-of-the-early-americas---featuring-rare-artifacts--maps-and-ind/s/5c73564c-f9f9-4270-ba24-355c36cca6bc",
+                  "publishedAt": "2026-11-16T00:00:00Z"
+                }
+              ],
+              "eventDate": null
+            },
+            {
+              "storyId": "trial-climate",
+              "order": 4,
+              "category": "nature",
+              "contentKind": "news",
+              "headline": "NOAA Reports a Very Warm October",
+              "bodyParagraphs": [
+                "NOAA reports that October 2026 was warmer than the twentieth-century average. The global surface temperature reached 1.43 degrees Celsius above the twentieth-century average. This number is a worldwide average, so local weather was different in many places. All ten of the warmest Octobers have happened since 2015. This comparison uses the twentieth-century average as a baseline. These figures describe the planet as a whole."
+              ],
+              "wordCount": 64,
+              "vocabulary": [
+                {
+                  "term": "baseline",
+                  "definitionEn": "a reference level used to compare other measurements",
+                  "meaningZhHant": "基準值"
+                },
+                {
+                  "term": "comparison",
+                  "definitionEn": "checking how things are alike or different",
+                  "meaningZhHant": "比較"
+                }
+              ],
+              "image": {
+                "assetId": "nature",
+                "alt": "nature original category icon",
+                "caption": "Original category icon",
+                "kind": "icon",
+                "credit": "DayDay original artwork"
+              },
+              "sources": [
+                {
+                  "publisher": "NOAA NCEI",
+                  "url": "https://www.ncei.noaa.gov/news/global-climate-202610",
+                  "publishedAt": "2026-11-12T00:00:00Z"
+                }
+              ],
+              "eventDate": null
+            }
+          ]
+        },
+        {
+          "schemaVersion": "1.0",
+          "issueDate": "2026-11-19",
+          "revision": 1,
+          "edition": "senior",
+          "targetCefr": "B1",
+          "templateVersion": "1.0",
+          "publishedAt": null,
+          "isDemo": false,
+          "reviewCopy": true,
+          "vocabularyPolicy": "tiered-v1",
+          "storyCount": 4,
+          "readingRules": {
+            "min": 90,
+            "max": 120,
+            "avg": 18,
+            "maxSentence": 28
+          },
+          "articles": [
+            {
+              "storyId": "trial-nicer",
+              "order": 1,
+              "category": "science",
+              "contentKind": "news",
+              "headline": "NASA Ends NICER Telescope Science Work on Space Station",
+              "bodyParagraphs": [
+                "NASA reports that the NICER telescope on the International Space Station has ended its science work. The instrument launched in 2017 and studied neutron stars using X-ray light. Engineers believe an internal motor failed inside the device. They are now planning to finish the data archive and remove the telescope from the station. The motor problem is still an assessment and not a confirmed diagnosis. Removal is a future plan and has not happened yet. NICER completed its main mission and gave scientists valuable information about dense stars. The telescope operated for several years beyond its original schedule."
+              ],
+              "wordCount": 98,
+              "vocabulary": [
+                {
+                  "term": "assessment",
+                  "definitionEn": "a careful judgement based on available information",
+                  "meaningZhHant": "評估"
+                },
+                {
+                  "term": "diagnosis",
+                  "definitionEn": "identifying the nature or cause of a problem",
+                  "meaningZhHant": "診斷；故障判定"
+                }
+              ],
+              "image": {
+                "assetId": "b86154a177a483a9503fbe1c320b28b19a7c4609de7f828f2dba67e45e5236da",
+                "alt": "senior audience: AI-generated watercolor concept illustration, not a photograph of the news event.",
+                "caption": "AI 概念插畫 · 高中版，非事件照片。",
+                "kind": "generated_illustration",
+                "credit": "DayDay · NVIDIA black-forest-labs/flux-3-image-klein",
+                "rendition": {
+                  "webPath": "/preview-issues/2026-11-19/r1/assets/b86154a177a483a9503fbe1c320b28b19a7c4609de7f828f2dba67e45e5236da-web.webp",
+                  "printPath": "/preview-issues/2026-11-19/r1/assets/b86154a177a483a9503fbe1c320b28b19a7c4609de7f828f2dba67e45e5236da-print.jpg",
+                  "width": 1200,
+                  "height": 821
+                },
+                "focalPoint": {
+                  "x": 50,
+                  "y": 50
+                }
+              },
+              "sources": [
+                {
+                  "publisher": "NASA",
+                  "url": "https://www.nasa.gov/missions/station/nicer-status-updates/",
+                  "publishedAt": "2026-11-17T00:00:00Z"
+                }
+              ],
+              "eventDate": null
+            },
+            {
+              "storyId": "trial-quantum",
+              "order": 2,
+              "category": "technology",
+              "contentKind": "news",
+              "headline": "NIST Lab Test Uses Light Particles to Check a Distant Location",
+              "bodyParagraphs": [
+                "NIST researchers demonstrated a laboratory method that uses light particles to check a distant party's location. The team sends entangled photons, or linked light particles, through optical fibers to measure position securely. Researchers developed this new protocol in a laboratory. Scientists say the approach could help protect private information in future networks. However, real-world use may be a decade or more away. The experiment remains in a controlled lab setting. It is not an available security product for consumers today. The result shows a laboratory possibility, rather than a service people can buy."
+              ],
+              "wordCount": 93,
+              "vocabulary": [
+                {
+                  "term": "entangled photons",
+                  "definitionEn": "light particles with strongly linked measurement results",
+                  "meaningZhHant": "糾纏光子"
+                },
+                {
+                  "term": "optical fibers",
+                  "definitionEn": "very thin glass threads that guide light signals",
+                  "meaningZhHant": "光纖"
+                }
+              ],
+              "image": {
+                "assetId": "f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce",
+                "alt": "Two NIST researchers with safety glasses working beside laser equipment.",
+                "caption": "NIST researchers in the laboratory. Photo: Riley Wilson/NIST.",
+                "kind": "event_photo",
+                "credit": "Riley Wilson/NIST · image resized; original at source",
+                "licenseUrl": "https://www.nist.gov/open/license",
+                "sourcePage": "https://www.nist.gov/news-events/news/2026/11/quantum-physics-can-verify-persons-location-nist-researchers-show",
+                "rendition": {
+                  "webPath": "/preview-issues/2026-11-19/r1/assets/f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce-web.webp",
+                  "printPath": "/preview-issues/2026-11-19/r1/assets/f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce-print.jpg",
+                  "width": 960,
+                  "height": 641
+                },
+                "focalPoint": {
+                  "x": 50,
+                  "y": 50
+                }
+              },
+              "sources": [
+                {
+                  "publisher": "NIST",
+                  "url": "https://www.nist.gov/news-events/news/2026/11/quantum-physics-can-verify-persons-location-nist-researchers-show",
+                  "publishedAt": "2026-11-18T00:00:00Z"
+                }
+              ],
+              "eventDate": null
+            },
+            {
+              "storyId": "trial-voices",
+              "order": 3,
+              "category": "culture",
+              "contentKind": "news",
+              "headline": "Library of Congress Plans New Exhibition on Indigenous History",
+              "bodyParagraphs": [
+                "The Library of Congress plans to open a new permanent exhibition on November 19, 2026. The display is called Voices of the Early Americas and will be located in the Thomas Jefferson Building. It explores Indigenous histories, cultures, and enduring traditions through over 200 objects. The materials span more than 3,000 years and include maps, manuscripts, photographs, and a Maya wooden box. Contemporary poetry is also featured to show living traditions. The exhibition uses rare artifacts to tell a long story of the Americas. Visitors can see how Indigenous peoples have shaped the continent for millennia."
+              ],
+              "wordCount": 96,
+              "vocabulary": [
+                {
+                  "term": "enduring",
+                  "definitionEn": "lasting for a long time; continuing to exist",
+                  "meaningZhHant": "持久的；長久的"
+                },
+                {
+                  "term": "millennia",
+                  "definitionEn": "periods of one thousand years each",
+                  "meaningZhHant": "千年；數千年"
+                }
+              ],
+              "image": {
+                "assetId": "5893051dab2eb8dbd269c2c940eb689d46740dd559026c951a713a4a03afb16e",
+                "alt": "senior audience: AI-generated watercolor concept illustration, not a photograph of the news event.",
+                "caption": "AI 概念插畫 · 高中版，非事件照片。",
+                "kind": "generated_illustration",
+                "credit": "DayDay · NVIDIA black-forest-labs/flux-3-image-klein",
+                "rendition": {
+                  "webPath": "/preview-issues/2026-11-19/r1/assets/5893051dab2eb8dbd269c2c940eb689d46740dd559026c951a713a4a03afb16e-web.webp",
+                  "printPath": "/preview-issues/2026-11-19/r1/assets/5893051dab2eb8dbd269c2c940eb689d46740dd559026c951a713a4a03afb16e-print.jpg",
+                  "width": 1200,
+                  "height": 821
+                },
+                "focalPoint": {
+                  "x": 50,
+                  "y": 50
+                }
+              },
+              "sources": [
+                {
+                  "publisher": "Library of Congress",
+                  "url": "https://newsroom.loc.gov/news/library-of-congress-to-unveil--voices-of-the-early-americas---featuring-rare-artifacts--maps-and-ind/s/5c73564c-f9f9-4270-ba24-355c36cca6bc",
+                  "publishedAt": "2026-11-16T00:00:00Z"
+                }
+              ],
+              "eventDate": null
+            },
+            {
+              "storyId": "trial-climate",
+              "order": 4,
+              "category": "nature",
+              "contentKind": "news",
+              "headline": "NOAA Compares October Temperatures With a Twentieth-Century Reference",
+              "bodyParagraphs": [
+                "NOAA reports that October 2026 was warmer than the twentieth-century average. The global surface temperature reached 1.43 degrees Celsius above the twentieth-century average. These measurements use a specific reference period to make the temperature comparison. The data comes from NOAA's National Centers for Environmental Information. All ten of the warmest Octobers have occurred since 2015. NOAA's figures describe a global average, not identical conditions in every location. The baseline used is the twentieth-century average, not preindustrial levels. The report places October's temperature in context by comparing it with a long-term reference."
+              ],
+              "wordCount": 91,
+              "vocabulary": [
+                {
+                  "term": "reference period",
+                  "definitionEn": "a set period used as a standard for comparison",
+                  "meaningZhHant": "參考時段；比較基準期"
+                },
+                {
+                  "term": "preindustrial",
+                  "definitionEn": "describing the period before large-scale industrial development",
+                  "meaningZhHant": "工業化前的"
+                }
+              ],
+              "image": {
+                "assetId": "nature",
+                "alt": "nature original category icon",
+                "caption": "Original category icon",
+                "kind": "icon",
+                "credit": "DayDay original artwork"
+              },
+              "sources": [
+                {
+                  "publisher": "NOAA NCEI",
+                  "url": "https://www.ncei.noaa.gov/news/global-climate-202610",
+                  "publishedAt": "2026-11-12T00:00:00Z"
+                }
+              ],
+              "eventDate": null
+            }
+          ]
+        }
+      ],
+      "facts": [
+        {
+          "story_id": "trial-nicer",
+          "event_key": "official-nicer-2026-11-17",
+          "primary_category": "science",
+          "content_kind": "news",
+          "published_at": "2026-11-17T00:00:00Z",
+          "published_at_precision": "date",
+          "event_date": null,
+          "sources": [
+            {
+              "source_id": "source-nicer",
+              "url": "https://www.nasa.gov/missions/station/nicer-status-updates/",
+              "publisher": "NASA",
+              "published_at": "2026-11-17T00:00:00Z",
+              "published_at_precision": "date",
+              "retrieved_at": "2026-11-18T23:08:55.907Z",
+              "read_at": "2026-11-18T23:08:55.907Z",
+              "rights_reviewed": true,
+              "independence_group": "NASA",
+              "evidence": "NASA’s NICER (Neutron star Interior Composition Explorer) telescope on the International Space Station has ended science operations.\nLaunched in 2017, NICER embarked on an initial 18-month prime mission."
+            }
+          ],
+          "claims": [
+            {
+              "claim_id": "claim-1",
+              "text": "NASA reports that NICER, a telescope on the International Space Station, has ended its science work.",
+              "supporting_source_ids": [
+                "source-nicer"
+              ],
+              "evidence_ref": "source-nicer",
+              "status": "reported",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-2",
+              "text": "NICER launched in 2017 and studied neutron stars and other objects using X-rays.",
+              "supporting_source_ids": [
+                "source-nicer"
+              ],
+              "evidence_ref": "source-nicer",
+              "status": "reported",
+              "must_keep": false
+            },
+            {
+              "claim_id": "claim-3",
+              "text": "Engineers think an internal motor failed. They are planning to complete the data archive and remove the telescope.",
+              "supporting_source_ids": [
+                "source-nicer"
+              ],
+              "evidence_ref": "source-nicer",
+              "status": "reported_plan",
+              "must_keep": false
+            }
+          ],
+          "uncertainties": [
+            "The motor failure is an engineering assessment, not a confirmed diagnosis. Removal is planned, not completed."
+          ],
+          "sensitivity": "low",
+          "is_demo": false
+        },
+        {
+          "story_id": "trial-quantum",
+          "event_key": "official-quantum-2026-11-18",
+          "primary_category": "technology",
+          "content_kind": "news",
+          "published_at": "2026-11-18T00:00:00Z",
+          "published_at_precision": "date",
+          "event_date": null,
+          "sources": [
+            {
+              "source_id": "source-quantum",
+              "url": "https://www.nist.gov/news-events/news/2026/11/quantum-physics-can-verify-persons-location-nist-researchers-show",
+              "publisher": "NIST",
+              "published_at": "2026-11-18T00:00:00Z",
+              "published_at_precision": "date",
+              "retrieved_at": "2026-11-18T23:08:56.142Z",
+              "read_at": "2026-11-18T23:08:56.142Z",
+              "rights_reviewed": true,
+              "independence_group": "NIST",
+              "evidence": "Although applying the technique to real-life situations is a decade or more away\nThe photons are used to securely verify the position of a distant party in a new protocol developed by NIST scientists."
+            }
+          ],
+          "claims": [
+            {
+              "claim_id": "claim-1",
+              "text": "NIST researchers demonstrated a laboratory method using light particles to check a distant party’s location.",
+              "supporting_source_ids": [
+                "source-quantum"
+              ],
+              "evidence_ref": "source-quantum",
+              "status": "reported",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-2",
+              "text": "Real-world use may be a decade or more away; this is not an available security product.",
+              "supporting_source_ids": [
+                "source-quantum"
+              ],
+              "evidence_ref": "source-quantum",
+              "status": "uncertain",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-3",
+              "text": "The team uses linked light particles called entangled photons and optical fibers. The method could help protect private information in future networks.",
+              "supporting_source_ids": [
+                "source-quantum"
+              ],
+              "evidence_ref": "source-quantum",
+              "status": "reported",
+              "must_keep": false
+            }
+          ],
+          "uncertainties": [
+            "This is a laboratory experiment. Real-life applications remain a decade or more away. Do not say it locates anyone anywhere."
+          ],
+          "sensitivity": "low",
+          "is_demo": false
+        },
+        {
+          "story_id": "trial-voices",
+          "event_key": "official-voices-2026-11-16",
+          "primary_category": "culture",
+          "content_kind": "news",
+          "published_at": "2026-11-16T00:00:00Z",
+          "published_at_precision": "date",
+          "event_date": null,
+          "sources": [
+            {
+              "source_id": "source-voices",
+              "url": "https://newsroom.loc.gov/news/library-of-congress-to-unveil--voices-of-the-early-americas---featuring-rare-artifacts--maps-and-ind/s/5c73564c-f9f9-4270-ba24-355c36cca6bc",
+              "publisher": "Library of Congress",
+              "published_at": "2026-11-16T00:00:00Z",
+              "published_at_precision": "date",
+              "retrieved_at": "2026-11-18T23:08:56.311Z",
+              "read_at": "2026-11-18T23:08:56.311Z",
+              "rights_reviewed": true,
+              "independence_group": "Library of Congress",
+              "evidence": "a new permanent exhibition opening to the public on Nov. 19\nThe exhibition uses over 200 artifacts, maps, manuscripts, paintings, photographs and contemporary poetry spanning more than 3,000 years"
+            }
+          ],
+          "claims": [
+            {
+              "claim_id": "claim-1",
+              "text": "The Library of Congress plans to open Voices of the Early Americas on November 19, 2026, in its Thomas Jefferson Building.",
+              "supporting_source_ids": [
+                "source-voices"
+              ],
+              "evidence_ref": "source-voices",
+              "status": "reported_plan",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-2",
+              "text": "The exhibition explores Indigenous histories, cultures and enduring traditions through over 200 objects and contemporary poetry.",
+              "supporting_source_ids": [
+                "source-voices"
+              ],
+              "evidence_ref": "source-voices",
+              "status": "reported",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-3",
+              "text": "Its materials span more than 3,000 years and include maps, manuscripts, photographs and a Maya wooden box.",
+              "supporting_source_ids": [
+                "source-voices"
+              ],
+              "evidence_ref": "source-voices",
+              "status": "reported",
+              "must_keep": false
+            }
+          ],
+          "uncertainties": [
+            "The November 16 release announces a planned opening. Do not claim the opening has already occurred. Indigenous traditions continue today."
+          ],
+          "sensitivity": "low",
+          "is_demo": false
+        },
+        {
+          "story_id": "trial-climate",
+          "event_key": "official-climate-2026-11-12",
+          "primary_category": "nature",
+          "content_kind": "news",
+          "published_at": "2026-11-12T00:00:00Z",
+          "published_at_precision": "date",
+          "event_date": null,
+          "sources": [
+            {
+              "source_id": "source-climate",
+              "url": "https://www.ncei.noaa.gov/news/global-climate-202610",
+              "publisher": "NOAA NCEI",
+              "published_at": "2026-11-12T00:00:00Z",
+              "published_at_precision": "date",
+              "retrieved_at": "2026-11-18T23:08:56.621Z",
+              "read_at": "2026-11-18T23:08:56.621Z",
+              "rights_reviewed": true,
+              "independence_group": "NOAA NCEI",
+              "evidence": "The global surface temperature in October 2026 was 2.57°F (1.43°C) above the 20th-century average\nall 10 of the warmest Octobers on record have occurred since 2015."
+            }
+          ],
+          "claims": [
+            {
+              "claim_id": "claim-1",
+              "text": "NOAA reports that October 2026 global surface temperature was 1.43 degrees Celsius above the twentieth-century average.",
+              "supporting_source_ids": [
+                "source-climate"
+              ],
+              "evidence_ref": "source-climate",
+              "status": "reported",
+              "must_keep": true
+            },
+            {
+              "claim_id": "claim-2",
+              "text": "This was the highest temperature departure for any month in NOAA’s 1850–2026 record. It is a global average, not every place’s local weather.",
+              "supporting_source_ids": [
+                "source-climate"
+              ],
+              "evidence_ref": "source-climate",
+              "status": "reported",
+              "must_keep": false
+            },
+            {
+              "claim_id": "claim-3",
+              "text": "All ten of the warmest Octobers in this record have occurred since 2015.",
+              "supporting_source_ids": [
+                "source-climate"
+              ],
+              "evidence_ref": "source-climate",
+              "status": "reported",
+              "must_keep": false
+            }
+          ],
+          "uncertainties": [
+            "A global average does not mean every place was equally warm. The baseline is the twentieth-century average, not preindustrial levels."
+          ],
+          "sensitivity": "low",
+          "is_demo": false
+        }
+      ],
+      "reviews": [
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [
+            {
+              "severity": "minor",
+              "span": "vocabulary term 'telescope'",
+              "reason": "The English definition 'a tool that looks at far away things in space' is simplistic and slightly imprecise for a scientific instrument; 'instrument used to observe distant objects in space' would be more accurate. The Traditional Chinese translation '望遠鏡' is correct.",
+              "claim_ids": [],
+              "suggested_action": "Refine the English definition for better precision while keeping A1 accessibility."
+            },
+            {
+              "severity": "minor",
+              "span": "vocabulary term 'neutron stars'",
+              "reason": "The English definition 'very small, heavy stars made mostly of neutrons' is accurate but 'heavy' is less precise than 'dense' or 'massive' in astrophysics context. The Traditional Chinese translation '中子星' is correct.",
+              "claim_ids": [],
+              "suggested_action": "Consider using 'dense' instead of 'heavy' for scientific accuracy at A1 level."
+            }
+          ],
+          "publish_recommendation": "pass",
+          "storyId": "trial-nicer",
+          "edition": "elementary"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [
+            {
+              "severity": "minor",
+              "span": "vocabulary term 'particles'",
+              "reason": "The definition 'very small pieces of matter' is a general physics definition. In the article's quantum context, 'particles' specifically refers to photons (light particles). The definition could be more precise for the context.",
+              "claim_ids": [
+                "claim-1",
+                "claim-3"
+              ],
+              "suggested_action": "Update definition to 'very small pieces of matter, such as photons (light particles)' or add a note about the quantum context."
+            },
+            {
+              "severity": "minor",
+              "span": "vocabulary term 'networks'",
+              "reason": "The definition 'connected computers or systems' is general IT. The article mentions 'future networks' in a quantum communication context, which may involve quantum networks. The definition is acceptable but could acknowledge the broader context.",
+              "claim_ids": [
+                "claim-3"
+              ],
+              "suggested_action": "Consider updating definition to 'connected computers or systems; in this context, future quantum communication networks' for better precision."
+            }
+          ],
+          "publish_recommendation": "pass",
+          "storyId": "trial-quantum",
+          "edition": "elementary"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [
+            {
+              "severity": "minor",
+              "span": "vocabulary term 'Indigenous'",
+              "reason": "The Traditional Chinese translation '原住民的' is an adjective form, but the English definition 'relating to the original people of a place' describes a relational concept. In Taiwan usage, '原住民' (noun) or '原住民族' (collective noun) is more natural for the general concept; '原住民的' may sound incomplete without a following noun.",
+              "claim_ids": [],
+              "suggested_action": "Change meaningZhHant to '原住民' or '原住民族' for a more natural standalone term, or add a note that it is an adjective."
+            }
+          ],
+          "publish_recommendation": "pass",
+          "storyId": "trial-voices",
+          "edition": "elementary"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [],
+          "publish_recommendation": "pass",
+          "storyId": "trial-climate",
+          "edition": "elementary"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [],
+          "publish_recommendation": "pass",
+          "storyId": "trial-nicer",
+          "edition": "junior"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [
+            {
+              "severity": "minor",
+              "span": "vocabulary term 'verify'",
+              "reason": "The term 'verify' is already in previousLevelTerms as 'particles' and 'networks' are listed, but 'verify' itself is not in previousLevelTerms. However, 'verify' is a common A2-level word and appropriate for the target level. No action needed.",
+              "claim_ids": [],
+              "suggested_action": "No change needed; term is appropriate for A2."
+            },
+            {
+              "severity": "minor",
+              "span": "vocabulary term 'protect'",
+              "reason": "The term 'protect' is a basic A2-level word and appropriate. Not in previousLevelTerms. No action needed.",
+              "claim_ids": [],
+              "suggested_action": "No change needed; term is appropriate for A2."
+            }
+          ],
+          "publish_recommendation": "pass",
+          "storyId": "trial-quantum",
+          "edition": "junior"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [
+            {
+              "severity": "minor",
+              "span": "The show is called Voices of the Early Americas.",
+              "reason": "The article uses 'The show is called' which is slightly informal; 'The exhibition is titled' would be more precise for news style.",
+              "claim_ids": [
+                "claim-1"
+              ],
+              "suggested_action": "Consider revising to 'The exhibition is titled Voices of the Early Americas.' for more formal tone."
+            }
+          ],
+          "publish_recommendation": "pass",
+          "storyId": "trial-voices",
+          "edition": "junior"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [
+            {
+              "severity": "minor",
+              "span": "vocabulary term: comparison",
+              "reason": "The term 'comparison' is a basic A1/A2 word that does not add meaningful learning value at the A2 target level. It is also not a key concept from the article's climate context.",
+              "claim_ids": [],
+              "suggested_action": "Replace 'comparison' with a more relevant A2-level term from the article such as 'record' (noun, meaning highest/lowest measured value) or 'average' (noun, meaning typical amount)."
+            }
+          ],
+          "publish_recommendation": "revise",
+          "storyId": "trial-climate",
+          "edition": "junior"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [
+            {
+              "severity": "minor",
+              "span": "The instrument launched in 2017 and studied neutron stars using X-ray light.",
+              "reason": "The article omits 'and other objects' from the source claim that NICER studied neutron stars and other objects using X-rays.",
+              "claim_ids": [
+                "claim-2"
+              ],
+              "suggested_action": "Consider adding 'and other objects' for completeness, though the core fact is accurate."
+            }
+          ],
+          "publish_recommendation": "pass",
+          "storyId": "trial-nicer",
+          "edition": "senior"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [],
+          "publish_recommendation": "pass",
+          "storyId": "trial-quantum",
+          "edition": "senior"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [],
+          "publish_recommendation": "pass",
+          "storyId": "trial-voices",
+          "edition": "senior"
+        },
+        {
+          "factual_status": "pass",
+          "level_fit": "suitable",
+          "suitability": "pass",
+          "issues": [
+            {
+              "severity": "minor",
+              "span": "The report places October's temperature in context by comparing it with a long-term reference.",
+              "reason": "The article does not explicitly state that October 2026 was the highest temperature departure for any month in NOAA's 1850–2026 record, as mentioned in claim-2. While claim-2 is not marked as must_keep, its omission may reduce the article's completeness.",
+              "claim_ids": [
+                "claim-2"
+              ],
+              "suggested_action": "Consider adding a sentence to mention the record-high temperature departure for any month, if space allows."
+            }
+          ],
+          "publish_recommendation": "pass",
+          "storyId": "trial-climate",
+          "edition": "senior"
+        }
+      ],
+      "files": {
+        "/preview-issues/2026-11-19/r1/DD_2026-11-19_elementary_r1_color.pdf": "f2d6c2e9a367e62fdc93e423ef5a99caddbfa43694df60fbb00762b18ed81629",
+        "/preview-issues/2026-11-19/r1/DD_2026-11-19_elementary_r1_ink.pdf": "2a7271018543f2da2d866c6b5d40ab5bf90ca39860e1e72e21e2bab8284156e5",
+        "/preview-issues/2026-11-19/r1/assets/3a2066179e93da141e5632ccb2940a823b3fba8665415d37a6964748a2048d2d-web.webp": "c99cb9f75bfe90a67e7518c163098135fc53f7e7c88933a71638b2cf1846a7b3",
+        "/preview-issues/2026-11-19/r1/assets/3a2066179e93da141e5632ccb2940a823b3fba8665415d37a6964748a2048d2d-print.jpg": "e7103050328315c07b8f0e9589d658fbae5ec400f63edb466003cbb81bd1efd1",
+        "/preview-issues/2026-11-19/r1/assets/f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce-web.webp": "5d46b53996ba26fbd44d366bbca38a2fbb4f7417fc3871dd099668a61ad99195",
+        "/preview-issues/2026-11-19/r1/assets/f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce-print.jpg": "76001bef348633372da44c0faab1ef66d87fdf53cfdd961e94cfb9041f2aec20",
+        "/preview-issues/2026-11-19/r1/assets/177fcc1bfdcbd9858f223c46bd56a726bb61c68dfc2b47907b94923c0084ac8d-web.webp": "04ff5239aaf799080b983896055f79c1cc795f5e7f8d35919c123ab8d8e5309d",
+        "/preview-issues/2026-11-19/r1/assets/177fcc1bfdcbd9858f223c46bd56a726bb61c68dfc2b47907b94923c0084ac8d-print.jpg": "33233f0815f769f9e725bfef7c4472684825844b292644e79fe7305c770b90d6",
+        "/preview-issues/2026-11-19/r1/DD_2026-11-19_junior_r1_color.pdf": "91b2014e4759e88c53d59dee7fadf96d15f1af46d03b848b384c85904557eff7",
+        "/preview-issues/2026-11-19/r1/DD_2026-11-19_junior_r1_ink.pdf": "1f4c7e359f17dfde1cd88393ec981e980d1816fd42e86fb338cdef94eb0cfad4",
+        "/preview-issues/2026-11-19/r1/assets/0641e358b72a2e9fe772dfcf06823530920dd0ba39effce0b2049d3389612906-web.webp": "9a0e16b15c3785af1a0bbb468142539edb773da14aefc6ad78255b495e42cda1",
+        "/preview-issues/2026-11-19/r1/assets/0641e358b72a2e9fe772dfcf06823530920dd0ba39effce0b2049d3389612906-print.jpg": "4b80345aca2e71c5bd7c0c97c7358ce211211c9f66e4c882de5781525859ee98",
+        "/preview-issues/2026-11-19/r1/assets/c6aa9407f3c16fdc06b05d2f7bf53212a8cbad2bce57d9759560fd654c90509c-web.webp": "b54c2f5ec962514b51f3de69819229d3219bd822b1bbe5deb5d888d872622d3f",
+        "/preview-issues/2026-11-19/r1/assets/c6aa9407f3c16fdc06b05d2f7bf53212a8cbad2bce57d9759560fd654c90509c-print.jpg": "fdee7392e38514cff7c1b47ee6129e1c550a7b08d6c3dc9afa9e12c93f809108",
+        "/preview-issues/2026-11-19/r1/DD_2026-11-19_senior_r1_color.pdf": "c67988cae8e39c397f365b76fadf71215f65e44f0b439d8e38865e19e5ab533a",
+        "/preview-issues/2026-11-19/r1/DD_2026-11-19_senior_r1_ink.pdf": "0b251c60b50b17c9926de254b900e16d998a8b9b021573ac6113705f906b4211",
+        "/preview-issues/2026-11-19/r1/assets/b86154a177a483a9503fbe1c320b28b19a7c4609de7f828f2dba67e45e5236da-web.webp": "26b0a36275c6fe157500d4afdf13a5e64a65e38a1e835e0590235767f737b24b",
+        "/preview-issues/2026-11-19/r1/assets/b86154a177a483a9503fbe1c320b28b19a7c4609de7f828f2dba67e45e5236da-print.jpg": "0f6c2b931863dc2cc85d2b295045109960b6b7f1a0689d5f77e080220640cf15",
+        "/preview-issues/2026-11-19/r1/assets/5893051dab2eb8dbd269c2c940eb689d46740dd559026c951a713a4a03afb16e-web.webp": "1025f534013ee297f4e30dad073db0349acfd215f724e983d036ccd63f7b0e23",
+        "/preview-issues/2026-11-19/r1/assets/5893051dab2eb8dbd269c2c940eb689d46740dd559026c951a713a4a03afb16e-print.jpg": "4c6b469f5fd3a674a4e875f490a325ee7d62ad8d7c220744afbcc09bff43448b"
+      },
+      "imageManifests": [
+        {
+          "kind": "generated_illustration",
+          "alt": "elementary audience: AI-generated watercolor concept illustration, not a photograph of the news event.",
+          "caption": "AI 概念插畫 · 小學版，非事件照片。",
+          "author": "DayDay / NVIDIA",
+          "publisher": "DayDay",
+          "credit": "DayDay · NVIDIA black-forest-labs/flux-3-image-klein",
+          "licenseCode": "GENERATED",
+          "rightsConfirmed": true,
+          "photographedAt": null,
+          "generation": {
+            "provider": "nvidia",
+            "model": "black-forest-labs/flux-3-image-klein",
+            "prompt": "A watercolor concept illustration of stars and a telescope, without technical equipment details. For elementary school readers: cheerful gentle watercolor, bright warm colors, a few large recognizable shapes, very simple composition, generous clear space, friendly and inviting. Avoid dark backgrounds, heavy shadows, dense machinery and visual clutter. School-age editorial art, not a toddler cartoon. This is a conceptual illustration, not a documentary photo or reconstruction of an actual event. No text, letters, logos or invented factual diagrams. Keep key subjects in the central area for newspaper cropping.",
+            "generatedAt": "2026-11-19T07:07:27.102Z"
+          },
+          "assetId": "3a2066179e93da141e5632ccb2940a823b3fba8665415d37a6964748a2048d2d",
+          "sourceSha256": "3a2066179e93da141e5632ccb2940a823b3fba8665415d37a6964748a2048d2d",
+          "sourceBytes": 75498,
+          "sourceMime": "image/jpeg",
+          "web": {
+            "path": "assets/3a2066179e93da141e5632ccb2940a823b3fba8665415d37a6964748a2048d2d-web.webp",
+            "width": 1200,
+            "height": 821,
+            "sha256": "c99cb9f75bfe90a67e7518c163098135fc53f7e7c88933a71638b2cf1846a7b3"
+          },
+          "print": {
+            "path": "assets/3a2066179e93da141e5632ccb2940a823b3fba8665415d37a6964748a2048d2d-print.jpg",
+            "width": 1216,
+            "height": 832,
+            "sha256": "e7103050328315c07b8f0e9589d658fbae5ec400f63edb466003cbb81bd1efd1"
+          }
+        },
+        {
+          "kind": "event_photo",
+          "alt": "Two NIST researchers with safety glasses working beside laser equipment.",
+          "caption": "NIST researchers in the laboratory. Photo: Riley Wilson/NIST.",
+          "author": "Riley Wilson/NIST",
+          "publisher": "NIST",
+          "credit": "Riley Wilson/NIST · image resized; original at source",
+          "licenseCode": "PUBLIC_DOMAIN",
+          "licenseUrl": "https://www.nist.gov/open/license",
+          "sourcePage": "https://www.nist.gov/news-events/news/2026/11/quantum-physics-can-verify-persons-location-nist-researchers-show",
+          "originalUrl": "https://www.nist.gov/sites/default/files/styles/960_x_960_limit/public/images/2026/11/17/QPV.jpg.webp?itok=_kI5dMfT",
+          "rightsConfirmed": true,
+          "photographedAt": null,
+          "assetId": "f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce",
+          "sourceSha256": "f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce",
+          "sourceBytes": 46354,
+          "sourceMime": "image/webp",
+          "web": {
+            "path": "assets/f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce-web.webp",
+            "width": 960,
+            "height": 641,
+            "sha256": "5d46b53996ba26fbd44d366bbca38a2fbb4f7417fc3871dd099668a61ad99195"
+          },
+          "print": {
+            "path": "assets/f1757cb31802ebfdc4616cca403cfe0cf43637bea7a2370c319128403e0cd2ce-print.jpg",
+            "width": 960,
+            "height": 641,
+            "sha256": "76001bef348633372da44c0faab1ef66d87fdf53cfdd961e94cfb9041f2aec20"
+          }
+        },
+        {
+          "kind": "generated_illustration",
+          "alt": "elementary audience: AI-generated watercolor concept illustration, not a photograph of the news event.",
+          "caption": "AI 概念插畫 · 小學版，非事件照片。",
+          "author": "DayDay / NVIDIA",
+          "publisher": "DayDay",
+          "credit": "DayDay · NVIDIA black-forest-labs/flux-3-image-klein",
+          "licenseCode": "GENERATED",
+          "rightsConfirmed": true,
+          "photographedAt": null,
+          "generation": {
+            "provider": "nvidia",
+            "model": "black-forest-labs/flux-3-image-klein",
+            "prompt": "A watercolor illustration of an open book and a folded map on a wooden reading table. For elementary school readers: cheerful gentle watercolor, bright warm colors, a few large recognizable shapes, very simple composition, generous clear space, friendly and inviting. Avoid dark backgrounds, heavy shadows, dense machinery and visual clutter. School-age editorial art, not a toddler cartoon. This is a conceptual illustration, not a documentary photo or reconstruction of an actual event. No text, letters, logos or invented factual diagrams. Keep key subjects in the central area for newspaper cropping.",
+            "generatedAt": "2026-11-19T07:07:35.123Z"
+          },
+          "assetId": "177fcc1bfdcbd9858f223c46bd56a726bb61c68dfc2b47907b94923c0084ac8d",
+          "sourceSha256": "177fcc1bfdcbd9858f223c46bd56a726bb61c68dfc2b47907b94923c0084ac8d",
+          "sourceBytes": 192007,
+          "sourceMime": "image/jpeg",
+          "web": {
+            "path": "assets/177fcc1bfdcbd9858f223c46bd56a726bb61c68dfc2b47907b94923c0084ac8d-web.webp",
+            "width": 1200,
+            "height": 821,
+            "sha256": "04ff5239aaf799080b983896055f79c1cc795f5e7f8d35919c123ab8d8e5309d"
+          },
+          "print": {
+            "path": "assets/177fcc1bfdcbd9858f223c46bd56a726bb61c68dfc2b47907b94923c0084ac8d-print.jpg",
+            "width": 1216,
+            "height": 832,
+            "sha256": "33233f0815f769f9e725bfef7c4472684825844b292644e79fe7305c770b90d6"
+          }
+        },
+        {
+          "kind": "generated_illustration",
+          "alt": "junior audience: AI-generated watercolor concept illustration, not a photograph of the news event.",
+          "caption": "AI 概念插畫 · 國中版，非事件照片。",
+          "author": "DayDay / NVIDIA",
+          "publisher": "DayDay",
+          "credit": "DayDay · NVIDIA black-forest-labs/flux-3-image-klein",
+          "licenseCode": "GENERATED",
+          "rightsConfirmed": true,
+          "photographedAt": null,
+          "generation": {
+            "provider": "nvidia",
+            "model": "black-forest-labs/flux-3-image-klein",
+            "prompt": "A watercolor concept illustration of stars and a telescope, without technical equipment details. For junior high readers: clean illustrated editorial watercolor, moderate detail, clear focal point, lively but restrained colors, light background, simplified surroundings. Curious and approachable without looking childish or visually heavy. This is a conceptual illustration, not a documentary photo or reconstruction of an actual event. No text, letters, logos or invented factual diagrams. Keep key subjects in the central area for newspaper cropping.",
+            "generatedAt": "2026-11-19T07:16:40.680Z"
+          },
+          "assetId": "0641e358b72a2e9fe772dfcf06823530920dd0ba39effce0b2049d3389612906",
+          "sourceSha256": "0641e358b72a2e9fe772dfcf06823530920dd0ba39effce0b2049d3389612906",
+          "sourceBytes": 136971,
+          "sourceMime": "image/jpeg",
+          "web": {
+            "path": "assets/0641e358b72a2e9fe772dfcf06823530920dd0ba39effce0b2049d3389612906-web.webp",
+            "width": 1200,
+            "height": 821,
+            "sha256": "9a0e16b15c3785af1a0bbb468142539edb773da14aefc6ad78255b495e42cda1"
+          },
+          "print": {
+            "path": "assets/0641e358b72a2e9fe772dfcf06823530920dd0ba39effce0b2049d3389612906-print.jpg",
+            "width": 1216,
+            "height": 832,
+            "sha256": "4b80345aca2e71c5bd7c0c97c7358ce211211c9f66e4c882de5781525859ee98"
+          }
+        },
+        {
+          "kind": "generated_illustration",
+          "alt": "junior audience: AI-generated watercolor concept illustration, not a photograph of the news event.",
+          "caption": "AI 概念插畫 · 國中版，非事件照片。",
+          "author": "DayDay / NVIDIA",
+          "publisher": "DayDay",
+          "credit": "DayDay · NVIDIA black-forest-labs/flux-3-image-klein",
+          "licenseCode": "GENERATED",
+          "rightsConfirmed": true,
+          "photographedAt": null,
+          "generation": {
+            "provider": "nvidia",
+            "model": "black-forest-labs/flux-3-image-klein",
+            "prompt": "A clean watercolor illustration of an open blank book and a folded map on a wooden table. The book pages are blank, without writing. Soft blue and green colors, light background and moderate detail. clean illustrated editorial watercolor, moderate detail, clear focal point, lively but restrained colors, light background, simplified surroundings. Curious and approachable without looking childish or visually heavy. This is a conceptual illustration, not a documentary photo or reconstruction of an actual event. No text, letters, logos or invented factual diagrams. Keep key subjects in the central area for newspaper cropping.",
+            "generatedAt": "2026-11-19T07:30:04.249Z"
+          },
+          "assetId": "c6aa9407f3c16fdc06b05d2f7bf53212a8cbad2bce57d9759560fd654c90509c",
+          "sourceSha256": "c6aa9407f3c16fdc06b05d2f7bf53212a8cbad2bce57d9759560fd654c90509c",
+          "sourceBytes": 125415,
+          "sourceMime": "image/jpeg",
+          "web": {
+            "path": "assets/c6aa9407f3c16fdc06b05d2f7bf53212a8cbad2bce57d9759560fd654c90509c-web.webp",
+            "width": 1200,
+            "height": 821,
+            "sha256": "b54c2f5ec962514b51f3de69819229d3219bd822b1bbe5deb5d888d872622d3f"
+          },
+          "print": {
+            "path": "assets/c6aa9407f3c16fdc06b05d2f7bf53212a8cbad2bce57d9759560fd654c90509c-print.jpg",
+            "width": 1216,
+            "height": 832,
+            "sha256": "fdee7392e38514cff7c1b47ee6129e1c550a7b08d6c3dc9afa9e12c93f809108"
+          }
+        },
+        {
+          "kind": "generated_illustration",
+          "alt": "senior audience: AI-generated watercolor concept illustration, not a photograph of the news event.",
+          "caption": "AI 概念插畫 · 高中版，非事件照片。",
+          "author": "DayDay / NVIDIA",
+          "publisher": "DayDay",
+          "credit": "DayDay · NVIDIA black-forest-labs/flux-3-image-klein",
+          "licenseCode": "GENERATED",
+          "rightsConfirmed": true,
+          "photographedAt": null,
+          "generation": {
+            "provider": "nvidia",
+            "model": "black-forest-labs/flux-3-image-klein",
+            "prompt": "A watercolor concept illustration of stars and a telescope, without technical equipment details. For senior high readers: refined editorial watercolor, richer detail and texture, natural proportions, sophisticated muted colors and balanced visual depth. Preserve the mature newspaper illustration style. This is a conceptual illustration, not a documentary photo or reconstruction of an actual event. No text, letters, logos or invented factual diagrams. Keep key subjects in the central area for newspaper cropping.",
+            "generatedAt": "2026-11-19T07:16:55.426Z"
+          },
+          "assetId": "b86154a177a483a9503fbe1c320b28b19a7c4609de7f828f2dba67e45e5236da",
+          "sourceSha256": "b86154a177a483a9503fbe1c320b28b19a7c4609de7f828f2dba67e45e5236da",
+          "sourceBytes": 252206,
+          "sourceMime": "image/jpeg",
+          "web": {
+            "path": "assets/b86154a177a483a9503fbe1c320b28b19a7c4609de7f828f2dba67e45e5236da-web.webp",
+            "width": 1200,
+            "height": 821,
+            "sha256": "26b0a36275c6fe157500d4afdf13a5e64a65e38a1e835e0590235767f737b24b"
+          },
+          "print": {
+            "path": "assets/b86154a177a483a9503fbe1c320b28b19a7c4609de7f828f2dba67e45e5236da-print.jpg",
+            "width": 1216,
+            "height": 832,
+            "sha256": "0f6c2b931863dc2cc85d2b295045109960b6b7f1a0689d5f77e080220640cf15"
+          }
+        },
+        {
+          "kind": "generated_illustration",
+          "alt": "senior audience: AI-generated watercolor concept illustration, not a photograph of the news event.",
+          "caption": "AI 概念插畫 · 高中版，非事件照片。",
+          "author": "DayDay / NVIDIA",
+          "publisher": "DayDay",
+          "credit": "DayDay · NVIDIA black-forest-labs/flux-3-image-klein",
+          "licenseCode": "GENERATED",
+          "rightsConfirmed": true,
+          "photographedAt": null,
+          "generation": {
+            "provider": "nvidia",
+            "model": "black-forest-labs/flux-3-image-klein",
+            "prompt": "A watercolor illustration of an open book and a folded map on a wooden reading table. For senior high readers: refined editorial watercolor, richer detail and texture, natural proportions, sophisticated muted colors and balanced visual depth. Preserve the mature newspaper illustration style. This is a conceptual illustration, not a documentary photo or reconstruction of an actual event. No text, letters, logos or invented factual diagrams. Keep key subjects in the central area for newspaper cropping.",
+            "generatedAt": "2026-11-19T07:17:04.206Z"
+          },
+          "assetId": "5893051dab2eb8dbd269c2c940eb689d46740dd559026c951a713a4a03afb16e",
+          "sourceSha256": "5893051dab2eb8dbd269c2c940eb689d46740dd559026c951a713a4a03afb16e",
+          "sourceBytes": 306776,
+          "sourceMime": "image/jpeg",
+          "web": {
+            "path": "assets/5893051dab2eb8dbd269c2c940eb689d46740dd559026c951a713a4a03afb16e-web.webp",
+            "width": 1200,
+            "height": 821,
+            "sha256": "1025f534013ee297f4e30dad073db0349acfd215f724e983d036ccd63f7b0e23"
+          },
+          "print": {
+            "path": "assets/5893051dab2eb8dbd269c2c940eb689d46740dd559026c951a713a4a03afb16e-print.jpg",
+            "width": 1216,
+            "height": 832,
+            "sha256": "4c6b469f5fd3a674a4e875f490a325ee7d62ad8d7c220744afbcc09bff43448b"
+          }
+        }
+      ],
+      "production": {
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "totalModelCalls": 63,
+        "totalTokens": 127781,
+        "costStatus": "cost_unknown",
+        "imageAttempts": 7,
+        "sourceRun": 44479976061,
+        "editorCorrections": 7,
+        "sourceSnapshots": 1
+      },
+      "pdfPaths": {
+        "elementary:color": "/preview-issues/2026-11-19/r1/DD_2026-11-19_elementary_r1_color.pdf",
+        "elementary:ink": "/preview-issues/2026-11-19/r1/DD_2026-11-19_elementary_r1_ink.pdf",
+        "junior:color": "/preview-issues/2026-11-19/r1/DD_2026-11-19_junior_r1_color.pdf",
+        "junior:ink": "/preview-issues/2026-11-19/r1/DD_2026-11-19_junior_r1_ink.pdf",
+        "senior:color": "/preview-issues/2026-11-19/r1/DD_2026-11-19_senior_r1_color.pdf",
+        "senior:ink": "/preview-issues/2026-11-19/r1/DD_2026-11-19_senior_r1_ink.pdf"
+      }
     }
   ],
   "releases": []
