@@ -53,19 +53,23 @@
     ],
     "replacements": [
       {
+        "from": "NOAA reports that October 2026 was the warmest October since 1850.",
+        "to": "NOAA reports that October 2026 was warmer than the twentieth-century average."
+      },
+      {
         "from": "Scientists watch these records to learn about long-term climate trends.",
         "to": "This comparison uses the twentieth-century average as a baseline. These figures describe the planet as a whole."
       }
     ],
     "vocabulary": [
       {
-        "term": "reached",
-        "definitionEn": "went up to a particular level or amount",
-        "meaningZhHant": "達到"
+        "term": "baseline",
+        "definitionEn": "a reference level used to compare other measurements",
+        "meaningZhHant": "基準值"
       },
       {
         "term": "comparison",
-        "definitionEn": "looking at things to see how they differ",
+        "definitionEn": "checking how things are alike or different",
         "meaningZhHant": "比較"
       }
     ]
