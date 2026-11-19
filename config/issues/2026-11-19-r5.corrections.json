@@ -1,0 +1,26 @@
+{
+  "packetId": "2026-11-19-r5",
+  "basePacketId": "2026-11-19-r4",
+  "baseFingerprint": "595df76165e1bfa3347976796f5d266d322299ff18687dab7e23934319ff2489",
+  "revision": 5,
+  "corrections": [
+    {
+      "storyId": "horsehead",
+      "edition": "senior",
+      "reason": "Use the reviewer-suggested transferable noun and natural Taiwan adverb gloss without any word-level certification claim.",
+      "vocabulary": [
+        {
+          "term": "presentation",
+          "definitionEn": "a way of showing and explaining information to an audience",
+          "meaningZhHant": "介紹；呈現"
+        },
+        {
+          "term": "respectively",
+          "definitionEn": "in the same order as the things just mentioned",
+          "meaningZhHant": "分別"
+        }
+      ]
+    }
+  ],
+  "evidenceAdditions": []
+}
