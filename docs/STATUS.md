@@ -1,3 +1,13 @@
+# Git 版本化發刊與日曆（2026-11-19）
+
+本輪新增 `/review` 公開審查入口、GitHub 權限核准、不可變稿件版本、發布前圖片與 PDF 驗證，以及 `/issues` 的已出刊月曆和日期清單。原試閱保留於試閱存檔，不冒充已出刊。今天新聞採 NASA 與 UNESCO 的四個官方來源項目，三種程度各四篇，保留分齡配圖和使用者已選字體。來源、修訂與執行者記錄保存在版本化 catalog。
+
+本次依使用者要求由開發代理試發，核准方法明確記為 `developer_test_release`，不宣稱使用者已人工審閱。後續管理者在 GitHub 的核准工作流勾選已審閱後才記錄人工核准。操作見 [PUBLICATION_FLOW.md](PUBLICATION_FLOW.md)。
+
+目前使用 Git 與 Vercel 發刊，尚未寫入 Supabase、未開啟每日排程或郵件通知。沒有將這次網站換刊當作資料庫、私有 Storage 或自動來源流程的驗收。
+
+以下為先前紀錄。
+
 # 最新閱讀入口修正（2026-11-19）
 
 使用者已提供 Vercel 網址：https://daily-digest-wine-two.vercel.app/ 。原先首頁導向登入，與先不做帳號的決定不符；本輪將預設入口改為直接閱讀四篇真實來源試閱刊。三版、已讀進度、單篇與六份 PDF 不需 Supabase 或 API 憑證。`/login` 返回閱讀，管理頁不提供入口，管理 API 在唯讀模式拒絕操作。沒有啟用每日生成或正式發布。資料來源與檔案雜湊見 `content/reading-preview/`。

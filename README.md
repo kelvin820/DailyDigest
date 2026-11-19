@@ -1,9 +1,9 @@
 # DayDay Daily Digest
 Four stories. Every day. Your level.
 
-Vercel：<https://daily-digest-wine-two.vercel.app/>。預設直接閱讀四則真實來源試閱故事，可切換小學／國中／高中三版、記錄已讀及下載六份兩頁 PDF。**目前不需要登入或任何 API key；試閱刊尚未正式發布。**
+Vercel：<https://daily-digest-wine-two.vercel.app/>。預設直接閱讀最新已發布的四則新聞，可切換小學／國中／高中三版、記錄已讀及下載六份兩頁 PDF。**一般訪客不需要登入或 API key。新稿先進入審查頁，核准發布成功後才換首頁。**
 
-三版表頭維持使用者已選的字體；單字依程度另選，AI 插畫依讀者年齡調整。當前資料來自已完成的 NVIDIA 試產，沒有在開啟網頁時重新生成或寫入資料庫。原始模型回覆與審閱紀錄保留在私有 artifact；僅將可閱讀的定稿、核准圖片與 PDF 隨網站部署。來源及待審狀態見 [reading preview](content/reading-preview/README.md)，製作結果見 [FOUR_STORY_TRIAL_RESULT](docs/FOUR_STORY_TRIAL_RESULT.md)。
+三版表頭維持使用者已選的字體；單字依程度另選，AI 插畫依讀者年齡調整。當前內容來自 NVIDIA 生成、編輯校稿與模型複核，沒有在開啟網頁時重新生成或寫入資料庫。原始模型回覆與審閱紀錄保留在私有 artifact；僅將可閱讀的定稿、核准圖片與 PDF 隨網站部署。來源及待審狀態見 [reading preview](content/reading-preview/README.md)，製作結果見 [FOUR_STORY_TRIAL_RESULT](docs/FOUR_STORY_TRIAL_RESULT.md)。
 
 ## 審查與發刊
 
@@ -24,7 +24,7 @@ pnpm start
 # http://127.0.0.1:3000
 ```
 
-不設定環境變數時，直接載入四篇唯讀試閱刊。圖片與 PDF 已包含在 repo，無須另外生成。需要自訂時可複製 `.env.example`；`READING_MODE=public`、`DEMO_MODE=false`，不啟用生成或發布。家長帳號延後，`/login` 會回到閱讀頁。Supabase 與每日正式出刊的設定集中在 [SETUP](docs/SETUP.md)。
+不設定環境變數時，直接載入最新已發布的四篇刊物；第一期發布前保留原試閱刊。圖片與 PDF 已包含在 repo，無須另外生成。需要自訂時可複製 `.env.example`；`READING_MODE=public`、`DEMO_MODE=false`，不啟用生成或發布。家長帳號延後，`/login` 會回到閱讀頁。Supabase 與每日正式出刊的設定集中在 [SETUP](docs/SETUP.md)。
 
 以下為歷史八篇虛構樣刊的離線工具，與目前四篇試閱入口分開：
 
