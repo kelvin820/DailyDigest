@@ -21,6 +21,7 @@ jobs:
         env:
           DEMO_MODE: 'true'
       - run: pnpm exec playwright install --with-deps chromium
+      - run: node scripts/qa-pdf-runtime-trace.mjs
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
