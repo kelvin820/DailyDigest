@@ -8,6 +8,7 @@ import {renderPrint} from '../render.mjs';
 import {checkPrintLayout} from './print-checks.mjs';
 import {printPdfOptions} from './options.mjs';
 import {recoverClosedBrowser} from './browser-retry';
+import {withPdfProfile} from './temporary-profile';
 import {editions,type Edition} from '../../config/editions';
 import {serviceDatabase} from '../editorial/web-store';
 import type {WebJob,WebPdf} from '../editorial/web-types';
@@ -25,11 +26,11 @@ export async function renderWebPdfs(job:WebJob,edition:Edition,upload?:(path:str
    currentMode=mode;
    const path=`web-editorial/${job.id}/${folder?folder+'/':''}${edition}-${mode}.pdf`;
    const existing=job.pdfs.find(p=>p.path===path);if(existing){results.push(existing);continue;}
-   const bytes=await recoverClosedBrowser(async attempt=>{
+   const bytes=await recoverClosedBrowser(async attempt=>withPdfProfile(async profile=>{
     stage='BROWSER';
     // Default contexts avoid the single-process Chromium incognito crash.
     // Each PDF gets a fresh browser rather than resetting a shared page.
-    const context=await chromium.launchPersistentContext('',process.env.VERCEL?
+    const context=await chromium.launchPersistentContext(profile,process.env.VERCEL?
      {args:serverChromium.args,executablePath:await serverChromium.executablePath(),headless:true}:
      {executablePath:process.env.DD_CHROME||undefined,headless:true});
     try{
@@ -57,7 +58,7 @@ export async function renderWebPdfs(job:WebJob,edition:Edition,upload?:(path:str
      await checkPrintLayout(page,editions[edition].minPrintSize,4);
      stage='OUTPUT';return await page.pdf({format:'A4',printBackground:true,preferCSSPageSize:true,...printPdfOptions(issue,mode)});
     }finally{await context.close().catch(()=>{});}
-   },attempt=>console.warn('pdf_browser_retry',{jobId:job.id,edition,mode,attempt}));
+   }),attempt=>console.warn('pdf_browser_retry',{jobId:job.id,edition,mode,attempt}));
    const pages=(await PDFDocument.load(bytes)).getPageCount();if(pages<1||bytes.length>4_000_000)throw Error('PDF_SIZE_OR_PAGES');
    stage='STORAGE';if(upload)await upload(path,bytes);else{
     const {error}=await serviceDatabase().storage.from('issue-files').upload(path,bytes,{contentType:'application/pdf',upsert:true});if(error)throw Error('PDF_STORAGE_FAILED');
