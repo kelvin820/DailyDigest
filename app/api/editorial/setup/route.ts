@@ -7,6 +7,7 @@ import {requestBody,webError} from '../../../../lib/editorial/web-api';
 import {withSetupDatabase,inspectDatabase,initializeDatabase} from '../../../../lib/editorial/web-setup';
 import {documentStore,serviceDatabase,WEB_PREFIX} from '../../../../lib/editorial/web-store';
 import {retryWebPdfs,advanceWebJob} from '../../../../lib/editorial/web-jobs';
+import {jobKey} from '../../../../lib/editorial/web-jobs';
 import type {WebJob} from '../../../../lib/editorial/web-types';
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
@@ -16,6 +17,7 @@ const schema=z.discriminatedUnion('action',[
  z.object({action:z.literal('initialize'),confirmedProjectUrl:z.url(),reviewed:z.literal(true)}).strict(),
  z.object({action:z.literal('verify')}).strict(),
  z.object({action:z.literal('jobs')}).strict(),
+ z.object({action:z.literal('job-detail'),id:z.uuid()}).strict(),
  z.object({action:z.literal('recover-pdfs'),id:z.uuid()}).strict(),
  z.object({action:z.literal('pdf-preview'),id:z.uuid(),edition:z.enum(['elementary','junior','senior']),mode:z.enum(['color','ink'])}).strict(),
 ]);
@@ -27,6 +29,7 @@ export async function POST(req:Request){try{
   if(!equalSecret(input.secret,editorSecret()))throw Error('UNAUTHORIZED');
   (await cookies()).set(EDITOR_COOKIE,editorToken(editorSecret()),{httpOnly:true,secure:process.env.VERCEL==='1'||new URL(req.url).protocol==='https:',sameSite:'strict',path:'/',maxAge:8*3600});
  }else await requireEditor();
+ if(input.action==='job-detail')return json({job:await documentStore().get<WebJob>(jobKey(input.id))});
  if(input.action==='pdf-preview'){
   const jobs=await documentStore().list<WebJob>(WEB_PREFIX+'job:'),job=jobs.find(j=>j.id===input.id),file=job?.pdfs.find(p=>p.edition===input.edition&&p.mode===input.mode);
   if(!file||file.path!==`web-editorial/${input.id}/${input.edition}-${input.mode}.pdf`)throw Error('NOT_FOUND');
