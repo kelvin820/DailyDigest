@@ -19,6 +19,7 @@ import {newsRoundKey,type NewsRound} from './news-config';
 import {readNewsArticle,extractNewsFact,assembleNewsFact,NewsEvidenceError} from './news';
 import {authorizedBackfill} from './backfill';
 import {promptExecutionHash as executionHash,resolvePromptSnapshot} from './prompt-snapshot';
+import {publicationEditions} from './event-date';
 
 export const jobKey=(id:string)=>WEB_PREFIX+'job:'+z.uuid().parse(id);
 export const releaseKey=(date:string)=>WEB_PREFIX+'release:'+z.iso.date().parse(date);
@@ -216,7 +217,7 @@ export async function publishWebJob(store:DocumentStore,id:string,fingerprint:st
  const key=releaseKey(job.issueDate),old=await store.get<WebRelease>(key);
  if(old?.jobId===id)return old;
  if(old&&old.createdAt>=job.createdAt)throw Error('NEWER_ISSUE_ALREADY_RELEASED');
- const releasedAt=publication?.releasedAt??new Date().toISOString(),release:WebRelease={version:(old?.version??0)+1,jobId:id,fingerprint,issueDate:job.issueDate,createdAt:job.createdAt,releasedAt,approvalMethod:publication?.approvalMethod??'web_manual',editions:job.editions.map(i=>({...i,reviewCopy:false,publishedAt:releasedAt})),pdfs:publication?.pdfs??job.pdfs};
+ const releasedAt=publication?.releasedAt??new Date().toISOString(),release:WebRelease={version:(old?.version??0)+1,jobId:id,fingerprint,issueDate:job.issueDate,createdAt:job.createdAt,releasedAt,approvalMethod:publication?.approvalMethod??'web_manual',editions:publicationEditions(job,releasedAt),pdfs:publication?.pdfs??job.pdfs};
  if(!(old?await store.compare(key,old.version,release):await store.create(key,release)))throw Error('PUBLICATION_CONFLICT');
  return release;
 }

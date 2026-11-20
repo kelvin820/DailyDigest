@@ -9,6 +9,7 @@ import {renderWebPdfs} from '../lib/pdf/vercel';
 import {verifyWebPdfs} from '../lib/editorial/web-files';
 import {campaignKey,prepareBackfillDay,reportBackfillDay,type BackfillCampaign} from '../lib/editorial/backfill';
 import {changeDocument} from '../lib/editorial/web-store';
+import {publicationEditions} from '../lib/editorial/event-date';
 export async function loadDailyStep(date:string){'use step';return scheduledPlan(documentStore(),date);}
 export async function prepareDailyStep(date:string){'use step';return prepareScheduledJob(documentStore(),date);}
 prepareDailyStep.maxRetries=0;
@@ -26,7 +27,7 @@ advanceEditionStep.maxRetries=0;
 export async function publicationStep(id:string){
  'use step';
  const job=await documentStore().get<WebJob>(jobKey(id));if(!job||!canPublishWebJob(job))throw Error('PUBLICATION_CHECKS_FAILED');
- await verifyWebPdfs(job);const releasedAt=new Date().toISOString(),final=structuredClone(job);final.editions=final.editions.map(i=>({...i,reviewCopy:false,publishedAt:releasedAt}));final.pdfs=[];
+ await verifyWebPdfs(job);const releasedAt=new Date().toISOString(),final=structuredClone(job);final.editions=publicationEditions(job,releasedAt);final.pdfs=[];
  const folder='published-'+randomUUID();for(const edition of editionKeys)final.pdfs.push(...await renderWebPdfs(final,edition,undefined,folder));
  return {pdfs:final.pdfs,releasedAt,fingerprint:jobFingerprint(job)};
 }

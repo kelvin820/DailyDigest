@@ -7,8 +7,9 @@ import {requestBody,webError} from '../../../../lib/editorial/web-api';
 import {withSetupDatabase,inspectDatabase,initializeDatabase} from '../../../../lib/editorial/web-setup';
 import {documentStore,serviceDatabase,WEB_PREFIX} from '../../../../lib/editorial/web-store';
 import {retryWebPdfs,retryWebGeneration,advanceWebJob} from '../../../../lib/editorial/web-jobs';
-import {jobKey} from '../../../../lib/editorial/web-jobs';
-import type {WebJob} from '../../../../lib/editorial/web-types';
+import {jobKey,releaseKey} from '../../../../lib/editorial/web-jobs';
+import type {WebJob,WebRelease} from '../../../../lib/editorial/web-types';
+import {hash} from '../../../../lib/pipeline/state.mjs';
 import {rebuildDraftPdfs,refreshApprovedPdfs} from '../../../../lib/editorial/pdf-layout-refresh';
 import {revalidatePath} from 'next/cache';
 export const runtime='nodejs';
@@ -38,8 +39,11 @@ export async function POST(req:Request){try{
  if(input.action==='rebuild-pdfs'){const job=await rebuildDraftPdfs(documentStore(),input.id);return json({id:job.id,status:job.status,usage:job.usage});}
  if(input.action==='refresh-approved-pdfs'){
   const {renderWebPdfs}=await import('../../../../lib/pdf/vercel');
-  const release=await refreshApprovedPdfs(documentStore(),input.id,(job,edition,folder)=>renderWebPdfs(job,edition,undefined,folder));
-  revalidatePath('/');revalidatePath('/issues/'+release.issueDate);return json({id:release.jobId,pdfs:release.pdfs,approvedTextPreserved:true});
+  const store=documentStore(),job=await store.get<WebJob>(jobKey(input.id)),before=job?await store.get<WebRelease>(releaseKey(job.issueDate)):null;
+  const release=await refreshApprovedPdfs(store,input.id,(job,edition,folder)=>renderWebPdfs(job,edition,undefined,folder));
+  const text=(r:WebRelease|null)=>r?.editions.map(e=>e.articles.map(a=>({headline:a.headline,body:a.bodyParagraphs,vocabulary:a.vocabulary})));
+  const bodies=(r:WebRelease|null)=>r?.editions.map(e=>e.articles.map(a=>a.bodyParagraphs));
+  revalidatePath('/');revalidatePath('/issues/'+release.issueDate);return json({id:release.jobId,pdfs:release.pdfs,approvedTextPreserved:hash(text(before))===hash(text(release)),approvedBodyPreserved:hash(bodies(before))===hash(bodies(release))});
  }
  if(input.action==='pdf-preview'){
   const jobs=await documentStore().list<WebJob>(WEB_PREFIX+'job:'),job=jobs.find(j=>j.id===input.id),file=job?.pdfs.find(p=>p.edition===input.edition&&p.mode===input.mode);

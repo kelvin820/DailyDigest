@@ -2,6 +2,7 @@ import {randomUUID,createHash} from 'node:crypto';
 import {load} from 'cheerio';
 import {XMLParser} from 'fast-xml-parser';
 import {z} from 'zod';
+import {verifiedEventDate} from './event-date';
 import {safeFetch} from '../content/safe-fetch.mjs';
 import {canonicalUrl,checkRobots,extractArticle} from '../content/sources.mjs';
 import {NvidiaProvider,type TextModelProvider} from '../providers/text';
@@ -103,7 +104,7 @@ export function assembleNewsFact(candidate:NewsCandidate,read:Awaited<ReturnType
   const quotes=[...new Set([...chosen.map(c=>c.quote),claim.quote])];if(quotes.join(' ').split(/\s+/).length<=100)chosen.push(claim);if(chosen.length===3)break;
  }
  if(chosen.length<2||!chosen.some(c=>c.core))throw new NewsEvidenceError(draft);
- const d={...draft,claims:chosen},quotes=[...new Set(chosen.map(c=>c.quote))];
+ const quotes=[...new Set(chosen.map(c=>c.quote))],d={...draft,claims:chosen,eventDate:verifiedEventDate(draft.eventDate,quotes.join('\n'))};
  const sourceId='source-'+candidate.id.slice(0,24),isCc=read.source.mode==='cc-by';
  return factSchema.parse({story_id:'news-'+candidate.id.slice(0,24),event_key:candidate.eventKey||candidate.id,primary_category:candidate.category,content_kind:(candidate.referenceDate?Date.parse(candidate.referenceDate+'T23:59:59+08:00'):Date.now())-Date.parse(candidate.publishedAt)<=72*3600000?'news':'knowledge',published_at:candidate.publishedAt,event_date:d.eventDate,is_demo:false,sensitivity:d.sensitivity,uncertainties:d.uncertainties,sources:[{source_id:sourceId,url:read.url,publisher:isCc?`${candidate.publisher} · ${read.author||'Global Voices contributors'} · adapted / CC BY 3.0`:candidate.publisher,published_at:candidate.publishedAt,retrieved_at:read.readAt,read_at:read.readAt,rights_reviewed:true,independence_group:candidate.publisher,evidence:quotes.join('\n'),...(isCc?{author:read.author||'Global Voices contributors',license_url:'https://creativecommons.org/licenses/by/3.0/',adapted:true}:{})}],claims:d.claims.map((c,i)=>({claim_id:'claim-'+(i+1),text:c.text,must_keep:c.core,status:c.status,supporting_source_ids:[sourceId],evidence_ref:sourceId}))});
 }

@@ -4,6 +4,7 @@ import {hash} from '../pipeline/state.mjs';
 import {jobKey,jobFingerprint,releaseKey,saveJob} from './web-jobs';
 import type {DocumentStore} from './web-store';
 import type {WebJob,WebRelease,WebPdf} from './web-types';
+import {publicationEditions,verifiedNewsDates} from './event-date';
 
 export async function rebuildDraftPdfs(store:DocumentStore,id:string){
  const job=await store.get<WebJob>(jobKey(id));if(!job)throw Error('NOT_FOUND');
@@ -15,12 +16,12 @@ export async function refreshApprovedPdfs(store:DocumentStore,id:string,render:R
  const job=await store.get<WebJob>(jobKey(id));if(!job)throw Error('NOT_FOUND');
  const key=releaseKey(job.issueDate),old=await store.get<WebRelease>(key);
  if(!old||old.jobId!==id||job.status!=='needs_review'||job.pdfs.length!==6)throw Error('PUBLICATION_CONFLICT');
- const approved=job.editions.map(e=>({...e,publishedAt:old.releasedAt,reviewCopy:false}));
+ const approved=publicationEditions(job,old.releasedAt);
  // A layout-only refresh cannot publish different or unapproved text.
- if(hash(approved)!==hash(old.editions))throw Error('REVIEW_VERSION_CHANGED');
- if(old.fingerprint===jobFingerprint(job))return old;
+ if(hash(approved)!==hash(verifiedNewsDates(old.editions,job.facts)))throw Error('REVIEW_VERSION_CHANGED');
+ if(old.fingerprint===jobFingerprint(job)&&hash(approved)===hash(old.editions))return old;
  const final={...job,editions:approved,pdfs:[] as WebPdf[]},folder='published-'+randomUUID();
  for(const edition of editionKeys)final.pdfs.push(...await render(final,edition,folder));
- const release={...old,version:old.version+1,pdfs:final.pdfs,fingerprint:jobFingerprint(job),pdfLayoutUpdatedAt:new Date().toISOString()};
+ const release={...old,version:old.version+1,editions:approved,pdfs:final.pdfs,fingerprint:jobFingerprint(job),pdfLayoutUpdatedAt:new Date().toISOString()};
  if(!await store.compare(key,old.version,release))throw Error('PUBLICATION_CONFLICT');return release;
 }
