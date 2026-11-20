@@ -1,0 +1,141 @@
+import {randomUUID} from 'node:crypto';
+import {readFile} from 'node:fs/promises';
+import {z} from 'zod';
+import {editionKeys,editions} from '../../config/editions';
+import {editionSchema} from '../schemas/edition';
+import {publicationCatalog} from '../publications/catalog';
+import {benchmarkRuns} from './benchmarks';
+import {sourceLibrary,sourceChoices} from './library';
+import {resolveRegeneration,regenerateOneStory} from './regeneration';
+import {produceEditions} from '../pipeline/editorial';
+import {hash} from '../pipeline/state.mjs';
+import {NvidiaProvider,type TextModelProvider,type GenerationRequest} from '../providers/text';
+import {webBudget} from './web-budget';
+import {WEB_PREFIX,type DocumentStore} from './web-store';
+import {webGenerationSchema,type WebJob,type WebRelease,type Checkpoint} from './web-types';
+import {learningTermKey} from '../content/vocabulary.mjs';
+import {isLengthReminder} from './readability';
+
+export const jobKey=(id:string)=>WEB_PREFIX+'job:'+z.uuid().parse(id);
+export const releaseKey=(date:string)=>WEB_PREFIX+'release:'+z.iso.date().parse(date);
+export const jobFingerprint=(job:WebJob)=>hash({editions:job.editions,reviews:job.reviews,facts:job.facts,pdfs:job.pdfs});
+const promptFiles=async()=>({writer:await readFile('prompts/writer.v2.txt','utf8'),reviewer:await readFile('prompts/reviewer.v1.txt','utf8')});
+const executionHash=(prompts:Awaited<ReturnType<typeof promptFiles>>)=>hash({prompts,editions,contract:'vercel-web-editorial-v1'});
+function event(job:WebJob,message:string){job.events.push({at:new Date().toISOString(),message});job.events=job.events.slice(-120);}
+export async function saveJob(store:DocumentStore,job:WebJob){const old=job.version;job.version++;job.updatedAt=new Date().toISOString();if(!await store.compare(jobKey(job.id),old,job)){job.version=old;throw Error('JOB_CONFLICT');}}
+
+export async function createWebJob(store:DocumentStore,id:string,raw:unknown){
+ jobKey(id);const input=webGenerationSchema.parse(raw),existing=await store.get<WebJob>(jobKey(id));
+ if(existing){if(hash(existing.input)!==hash(input))throw Error('IDEMPOTENCY_CONFLICT');return existing;}
+ if(!process.env.LLM_API_KEY?.trim())throw Error('LLM_NOT_CONFIGURED');
+ const prompts=await promptFiles(),now=new Date().toISOString(),model=process.env.WRITER_MODEL||'nvidia/nemotron-3-ultra-550b-a55b',reviewerModel=process.env.REVIEWER_MODEL||model;
+ let facts:WebJob['facts'],context:WebJob['context'],issueDate:string,reviews:WebJob['reviews']=[];
+ if(input.kind==='generate'){
+  issueDate=input.issueDate;
+  const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+  if(issueDate>today)throw Error('FUTURE_ISSUE_DATE');
+  const choices=sourceChoices(issueDate);
+  facts=input.sourceIds.map(id=>{if(!choices.some(s=>s.id===id))throw Error('SOURCE_OUTSIDE_ISSUE_WINDOW');return structuredClone(sourceLibrary.find(s=>s.id===id)!.fact);});
+ }else{
+  const request=input.request;
+  if(request.base.kind==='benchmark'&&z.uuid().safeParse(request.base.id).success){
+   const parent=await store.get<WebJob>(jobKey(request.base.id));
+   if(!parent||parent.status!=='needs_review'||jobFingerprint(parent)!==request.base.fingerprint)throw Error('STALE_REGENERATION_BASE');
+   context={request,facts:structuredClone(parent.facts),drafts:parent.editions.flatMap(i=>i.articles.map(article=>({storyId:article.storyId,edition:i.edition,article:structuredClone(article),writerMs:0,reviewerMs:0,writerCalls:0,reviewerCalls:0,errors:[],assessment:null,firstPass:false,reused:true}))),model,issueDate:parent.issueDate,index:parent.facts.findIndex(f=>f.story_id===request.storyId),fact:parent.facts.find(f=>f.story_id===request.storyId)!};
+   if(context.index<0)throw Error('UNKNOWN_REGENERATION_STORY');
+   // Route web snapshots through the same source-window and replacement checks.
+   const packet={...publicationCatalog.packets[0],id:'2000-01-01-r1',fingerprint:request.base.fingerprint,facts:parent.facts,editions:parent.editions,issueDate:parent.issueDate,production:{...publicationCatalog.packets[0].production,model}};
+   const resolved=resolveRegeneration({...request,base:{kind:'packet',id:packet.id,fingerprint:packet.fingerprint}},{packets:[packet],benchmarks:[],library:sourceLibrary});
+   context={...resolved,request};reviews=parent.reviews;
+  }else{
+   context=resolveRegeneration(request,{packets:publicationCatalog.packets,benchmarks:benchmarkRuns,library:sourceLibrary});
+   reviews=request.base.kind==='packet'?publicationCatalog.packets.find(p=>p.id===request.base.id)!.reviews:context.drafts.flatMap(d=>d.assessment?[{...d.assessment,storyId:d.storyId,edition:d.edition}]:[]);
+  }
+  facts=context.facts;issueDate=context.issueDate;context.model=model;
+ }
+ const imageSnapshots:WebJob['imageSnapshots']={};
+ for(const fact of facts)for(const edition of editionKeys){
+  const packet=[...publicationCatalog.packets].sort((a,b)=>b.generatedAt.localeCompare(a.generatedAt)).find(p=>p.facts.some(f=>f.story_id===fact.story_id&&f.event_key===fact.event_key&&f.sources[0].url===fact.sources[0].url));
+  const image=packet?.editions.find(i=>i.edition===edition)?.articles.find(a=>a.storyId===fact.story_id)?.image;
+  if(image)imageSnapshots[edition+':'+fact.story_id]=structuredClone(image);
+ }
+ const job:WebJob={version:1,id,createdAt:now,updatedAt:now,issueDate,revision:Math.floor(Date.now()/1000),status:'pending',kind:input.kind,input,facts,context,model,reviewerModel,promptHash:executionHash(prompts),imageSnapshots,checkpoints:{},activeStep:null,lease:null,editions:[],drafts:[],reviews,pdfs:[],error:null,events:[{at:now,message:'已儲存生成要求與來源快照'}],usage:{calls:0,inputTokens:0,outputTokens:0}};
+ if(!await store.create(jobKey(id),job))return createWebJob(store,id,raw);return job;
+}
+
+class NextStep extends Error {}
+export type WorkerOptions={provider?:TextModelProvider;render?:(job:WebJob,edition:typeof editionKeys[number])=>Promise<WebJob['pdfs']>};
+export async function advanceWebJob(store:DocumentStore,id:string,options:WorkerOptions={}){
+ const job=await store.get<WebJob>(jobKey(id));if(!job)throw Error('NOT_FOUND');
+ if(job.status==='needs_review'||job.status==='needs_attention')return job;
+ if(job.lease&&job.lease.expiresAt>Date.now())return job;
+ const owner=randomUUID();job.lease={owner,expiresAt:Date.now()+280000};job.status='running';
+ await saveJob(store,job);
+ try{
+  if(job.activeStep)throw Error('USAGE_RECONCILIATION_REQUIRED');
+  const prompts=await promptFiles();if(executionHash(prompts)!==job.promptHash)throw Error('GENERATION_PROMPTS_CHANGED');
+  let calls=0;
+  const budget=webBudget(store,id,async(input,output)=>{job.usage.calls++;job.usage.inputTokens+=input;job.usage.outputTokens+=output;await saveJob(store,job);});
+  const live=options.provider??new NvidiaProvider(process.env.LLM_API_KEY?.trim()||'',budget);
+  const provider:TextModelProvider={cacheIdentity:'vercel-web-v1',async generateStructured<T>(req:GenerationRequest<T>){
+   if(calls++)throw new NextStep();
+   const key=hash({task:req.task,system:req.system,data:req.data,model:req.model});
+   const target=(req.data as {target?:string})?.target||req.system.match(/Audience edition: ([a-z]+)/)?.[1]||'';
+   job.activeStep=key;event(job,'開始'+(req.task==='review'?'模型複核':'寫稿')+(target?' · '+target:''));await saveJob(store,job);
+   return live.generateStructured({...req,timeoutMs:45000});
+  }};
+  const checkpoint=async(key:string,value:Checkpoint)=>{job.checkpoints[key]=value;job.activeStep=null;event(job,'完成 '+key);await saveJob(store,job);};
+  if(!job.editions.length){
+   if(job.input.kind==='generate'){
+    const result=await produceEditions({facts:job.facts,issueDate:job.issueDate,revision:job.revision,provider,
+     writerModel:job.model,reviewerModel:job.reviewerModel,storyCount:4,lengthPolicy:'advisory',direction:job.input.direction,
+     store:{get:async key=>job.checkpoints[key],set:async(key,value)=>checkpoint(key,value as Checkpoint)}});
+    job.editions=result.editions.map(i=>({...i,reviewCopy:true,articles:i.articles.map(a=>({...a,image:job.imageSnapshots[i.edition+':'+a.storyId]||a.image}))}));job.reviews=result.reviews;
+   }else{
+    const context=structuredClone(job.context!);
+    const drafts=await regenerateOneStory(context,{provider,writer:prompts.writer,reviewer:prompts.reviewer,reviewerModel:job.reviewerModel,
+     measure:async<T>(key:string,input:unknown,run:()=>Promise<T>)=>{
+      const previous=job.checkpoints[key];if(previous){if(previous.inputHash!==hash(input)||previous.outputHash!==hash(previous.output))throw Error('CHECKPOINT_CHANGED');return previous.output as {reply:T;ms:number;calls:number};}
+      const start=Date.now(),reply=await run(),output={reply,ms:Date.now()-start,calls:1};
+      await checkpoint(key,{status:'success',inputHash:hash(input),outputHash:hash(output),output});return output;
+     }});
+    job.drafts=drafts;job.editions=editionKeys.map(edition=>{const c=editions[edition];return {schemaVersion:'1.0',issueDate:job.issueDate,revision:job.revision,edition,targetCefr:c.cefr,templateVersion:'newspaper-grid-2',storyCount:4,publishedAt:null,isDemo:false,reviewCopy:true,vocabularyPolicy:'tiered-v1',lengthPolicy:'advisory',readingRules:{min:c.min,max:c.max,avg:c.avg,maxSentence:c.sentenceMax},articles:drafts.filter(d=>d.edition===edition).map(d=>d.article!)};});
+    job.reviews=drafts.flatMap(d=>{const r=d.assessment??job.reviews.find(r=>r.storyId===d.storyId&&r.edition===d.edition);return r?[{...r,storyId:d.storyId,edition:d.edition}]:[];});
+   }
+   job.editions.forEach(i=>editionSchema.parse(i));event(job,'三版稿件已儲存，開始製作 PDF');await saveJob(store,job);
+  }else{
+   const edition=editionKeys.find(e=>job.pdfs.filter(p=>p.edition===e).length!==2);
+   if(edition){
+    const render=options.render??(await import('../pdf/vercel')).renderWebPdfs;
+    job.pdfs.push(...await render(job,edition));event(job,'完成 '+editions[edition].label+' 彩色與省墨 PDF');await saveJob(store,job);
+   }
+   if(job.pdfs.length===6){job.status='needs_review';event(job,'生成完成，等待人工審閱與核准');}
+  }
+ }catch(e){
+  if(!(e instanceof NextStep)){job.status='needs_attention';job.error=e instanceof Error&&/^[A-Z0-9_:.-]{1,180}$/.test(e.message)?e.message:'GENERATION_FAILED';event(job,'暫停：'+job.error);console.error('editorial_job_failed',{jobId:id,code:job.error});}
+ }finally{job.lease=null;await saveJob(store,job);}
+ return job;
+}
+
+export function canPublishWebJob(job:WebJob){
+ if(job.status!=='needs_review'||job.editions.length!==3||job.pdfs.length!==6||job.reviews.length!==12||job.activeStep)return false;
+ if(job.editions.some(i=>!editionSchema.safeParse(i).success)||job.drafts.some(d=>d.errors.some(e=>!isLengthReminder(e))))return false;
+ if(new Set(job.reviews.map(r=>r.storyId+':'+r.edition)).size!==12)return false;
+ for(const fact of job.facts){
+  const terms=job.editions.flatMap(i=>i.articles.filter(a=>a.storyId===fact.story_id).flatMap(a=>a.vocabulary.map(v=>learningTermKey(v.term))));
+  if(terms.length!==6||new Set(terms).size!==6)return false;
+  if(job.reviews.filter(r=>r.storyId===fact.story_id).length!==3)return false;
+ }
+ return job.reviews.every(r=>r.factual_status==='pass'&&r.level_fit==='suitable'&&r.suitability==='pass'&&r.publish_recommendation==='pass'&&!r.issues.some(i=>i.severity!=='minor'));
+}
+export async function publishWebJob(store:DocumentStore,id:string,fingerprint:string,reviewed:boolean,publication?:{pdfs:WebJob['pdfs'];releasedAt:string}){
+ const job=await store.get<WebJob>(jobKey(id));if(!job)throw Error('NOT_FOUND');
+ if(!reviewed||jobFingerprint(job)!==fingerprint)throw Error('REVIEW_VERSION_CHANGED');
+ if(!canPublishWebJob(job))throw Error('PUBLICATION_CHECKS_FAILED');
+ const key=releaseKey(job.issueDate),old=await store.get<WebRelease>(key);
+ if(old?.jobId===id)return old;
+ if(old&&old.createdAt>=job.createdAt)throw Error('NEWER_ISSUE_ALREADY_RELEASED');
+ const releasedAt=publication?.releasedAt??new Date().toISOString(),release:WebRelease={version:(old?.version??0)+1,jobId:id,fingerprint,issueDate:job.issueDate,createdAt:job.createdAt,releasedAt,approvalMethod:'web_manual',editions:job.editions.map(i=>({...i,reviewCopy:false,publishedAt:releasedAt})),pdfs:publication?.pdfs??job.pdfs};
+ if(!(old?await store.compare(key,old.version,release):await store.create(key,release)))throw Error('PUBLICATION_CONFLICT');
+ return release;
+}

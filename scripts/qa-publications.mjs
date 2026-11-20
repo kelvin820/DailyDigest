@@ -45,11 +45,9 @@ try{
    assert.equal(await page.locator('.article').count(),4);assert.equal(await page.locator('.review-publish').count(),0);
    for(const name of ['國中版','高中版','小學版']){await page.getByRole('button',{name:new RegExp(name)}).click();assert.equal(await page.locator('.article').count(),4);}
    const article=page.locator('.article').first(),control=article.locator('.story-regeneration');await control.locator('summary').first().click();
-   await control.getByLabel('想改善的地方').fill('以有來源的具體細節提升趣味性，保持事實與難度。');
-   await control.getByRole('button',{name:'建立重新生成要求',exact:true}).click();
-   const request=JSON.parse(await control.getByLabel('request_json',{exact:true}).inputValue());assert.equal(request.base.fingerprint,b.fingerprint);assert.equal(request.mode,'rewrite');assert.equal(request.editions.length,3);
-   await control.getByLabel('處理方式').selectOption('replace');await control.getByLabel('新主題類別').selectOption('games');
-   assert.ok(await control.getByText('這個類別目前待補來源。',{exact:false}).isVisible());assert.ok(await control.getByRole('button',{name:'建立重新生成要求',exact:true}).isDisabled());
+   await control.getByLabel('管理密碼',{exact:true}).waitFor();
+   assert.equal(await control.getByRole('button',{name:'解鎖',exact:true}).count(),1);
+   assert.equal(await control.getByRole('link',{name:/GitHub/}).count(),0);
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
    await page.screenshot({path:`output/publication-qa/benchmark-${b.id}-${width}.png`,fullPage:true});
   }

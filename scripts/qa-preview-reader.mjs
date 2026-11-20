@@ -40,7 +40,8 @@ try {
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
       assert.equal(await page.locator('input[type=password]').count(),0);
       assert.match(await page.locator('.notice').textContent(),/試閱刊.*尚未正式發布/);
-      assert.doesNotMatch(await page.locator('.utility').textContent(),/登入|編輯室|試字/);
+      assert.doesNotMatch(await page.locator('.utility').textContent(),/登入|試字/);
+      assert.equal(await page.locator('.utility a[href="/editor"]').count(),1);
       await page.screenshot({path:`output/preview-reader-qa/${edition}-${width}.png`,fullPage:true});
     }
     for(const mode of ['color','ink']){

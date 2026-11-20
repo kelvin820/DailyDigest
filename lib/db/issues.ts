@@ -2,6 +2,21 @@ import "server-only";import {demoMode,previewMode,membership} from "../auth/serv
 import {readingMode} from "../reader/mode.mjs";
 import {publishedIssue,publishedIssues} from "../publications/catalog";
 import {previewIssue,PREVIEW_DATE} from "../reader/preview";
-export async function getIssue(edition:Edition,date?:string){if(demoMode())return !date||date===DEMO_DATE?demoIssue(edition):null;if(readingMode()==="public"){const p=publishedIssue(edition,date);if(p||publishedIssues().length)return p;}if(previewMode())return !date||date===PREVIEW_DATE?previewIssue(edition):null;const {db}=await membership();let q=db.from("issues").select("issue_date,current_revision_id").not("current_revision_id","is",null).order("issue_date",{ascending:false}).limit(1);if(date)q=q.eq("issue_date",date);const {data,error}=await q;if(error)throw error;if(!data?.length)return null;const {data:p,error:pe}=await db.from("edition_payloads").select("payload").eq("revision_id",data[0].current_revision_id).eq("edition",edition).single();if(pe)throw pe;return editionSchema.parse(p.payload)}
-export async function listIssues(){if(demoMode())return [{issue_date:DEMO_DATE,isDemo:true}];if(readingMode()==="public")return publishedIssues().map(r=>({issue_date:r.editions[0].issueDate}));if(previewMode())return [];const {db}=await membership();const {data,error}=await db.from("issues").select("issue_date").not("current_revision_id","is",null).order("issue_date",{ascending:false});if(error)throw error;return data||[]}
+import {webPublishedIssue,webReleases} from '../editorial/web-public';
+export async function getIssue(edition:Edition,date?:string){
+ if(demoMode())return !date||date===DEMO_DATE?demoIssue(edition):null;
+ if(readingMode()==="public"){
+  const live=await webPublishedIssue(edition,date),bundled=publishedIssue(edition,date);
+  if(live&&(!bundled||live.issueDate>=bundled.issueDate))return live;
+  if(bundled||publishedIssues().length)return bundled;
+ }
+ if(previewMode())return !date||date===PREVIEW_DATE?previewIssue(edition):null;
+ const {db}=await membership();let q=db.from("issues").select("issue_date,current_revision_id").not("current_revision_id","is",null).order("issue_date",{ascending:false}).limit(1);if(date)q=q.eq("issue_date",date);const {data,error}=await q;if(error)throw error;if(!data?.length)return null;const {data:p,error:pe}=await db.from("edition_payloads").select("payload").eq("revision_id",data[0].current_revision_id).eq("edition",edition).single();if(pe)throw pe;return editionSchema.parse(p.payload);
+}
+export async function listIssues(){
+ if(demoMode())return [{issue_date:DEMO_DATE,isDemo:true}];
+ if(readingMode()==="public")return [...new Set([...(await webReleases()).map(r=>r.issueDate),...publishedIssues().map(r=>r.editions[0].issueDate)])].sort().reverse().map(issue_date=>({issue_date}));
+ if(previewMode())return [];
+ const {db}=await membership();const {data,error}=await db.from("issues").select("issue_date").not("current_revision_id","is",null).order("issue_date",{ascending:false});if(error)throw error;return data||[];
+}
 

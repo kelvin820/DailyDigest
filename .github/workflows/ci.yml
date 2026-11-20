@@ -33,6 +33,7 @@ jobs:
       - run: node scripts/qa-app.mjs
       - run: pnpm test:preview
       - run: pnpm test:publications
+      - run: pnpm test:web
       - run: node scripts/test-db.mjs
       - uses: actions/upload-artifact@v4
         with:

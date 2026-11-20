@@ -8,6 +8,7 @@ import {DEMO_DATE} from '../../../../../fixtures/issue';
 import {PREVIEW_DATE,previewIssue} from '../../../../../lib/reader/preview';
 import {json,apiError} from '../../../../../lib/api';
 import {validDate} from '../../../../../lib/content/metrics';
+import {webReleases} from '../../../../../lib/editorial/web-public';
 
 export async function GET(req:Request,{params}:{params:Promise<{date:string}>}) {
   try {
@@ -15,7 +16,11 @@ export async function GET(req:Request,{params}:{params:Promise<{date:string}>}) 
     if(!validDate(date))return json({error:'INVALID_DATE'},400);
     const u=new URL(req.url),edition=editionOf(u.searchParams.get('edition'));
     const mode=u.searchParams.get('mode')==='ink'?'ink':'color';
-    if(readingMode()==='public'){const path=publishedPdf(date,edition,mode);if(path)return new Response(null,{status:303,headers:{Location:path,'Cache-Control':'private, no-store'}});if(publishedIssues().length)return json({error:'NOT_FOUND'},404);}
+    if(readingMode()==='public'){
+      const release=(await webReleases()).find(r=>r.issueDate===date);
+      if(release)return new Response(null,{status:303,headers:{Location:`/api/editorial/files?id=${release.jobId}&edition=${edition}&mode=${mode}`,'Cache-Control':'private, no-store'}});
+      const path=publishedPdf(date,edition,mode);if(path)return new Response(null,{status:303,headers:{Location:path,'Cache-Control':'private, no-store'}});if(publishedIssues().length)return json({error:'NOT_FOUND'},404);
+    }
     if(previewMode()) {
       if(date!==PREVIEW_DATE)return json({error:'NOT_FOUND'},404);
       const issue=previewIssue(edition);

@@ -1,5 +1,7 @@
 # 本輪交接
 
+2026-11-20 接手：最新工作是 Vercel 網頁編輯室，先讀 `WEB_EDITORIAL.md` 和 `STATUS.md` 最上方。以下原交接包含過時的分支、部署、八篇及憑證待辦。使用者已在 Vercel 設定 NVIDIA、Supabase service role 與管理密碼；不可要求重新貼金鑰，也不可把日常生成導回 GitHub。
+
 工作目錄：本 source archive 的 dayday-daily-digest。本地分支 codex/continue-dayday，追蹤 origin/main；已推送備份至 https://github.com/kelvin820/DailyDigest 。私人靜態 DEMO 已發布至 https://dayday-digest-demo.kelvin820.chatgpt.site ，正式 Next.js／真實出刊尚未部署。
 
 先讀 STATUS.md、SETUP.md。NVIDIA 已決定，初始 Nano 型號已配好；下一步是安全設定使用者現有 key 與 Supabase／Vercel，以及 GitHub runner 設定，再做真實出刊與三期試讀，不能把 DEMO 或合成 DB 測試算作成功。

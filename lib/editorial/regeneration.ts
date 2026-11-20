@@ -48,7 +48,7 @@ export function draftErrors(data:Exclude<z.infer<typeof writerResponseSchema>,{f
  if(fact.claims.some(c=>c.must_keep&&!data.used_claim_ids.includes(c.claim_id))||[...data.used_claim_ids,...data.omitted_optional_claim_ids].some(id=>!fact.claims.some(c=>c.claim_id===id)))errors.push('必要事實或 claim ID 不符');
  return errors;
 }
-export async function regenerateOneStory(resolved:ReturnType<typeof resolveRegeneration>,{provider,writer,reviewer,measure}:{provider:TextModelProvider;writer:string;reviewer:string;measure:<T>(key:string,input:unknown,run:()=>Promise<T>)=>Promise<{reply:T;ms:number;calls:number}>}){
+export async function regenerateOneStory(resolved:ReturnType<typeof resolveRegeneration>,{provider,writer,reviewer,measure,reviewerModel=resolved.model}:{provider:TextModelProvider;writer:string;reviewer:string;reviewerModel?:string;measure:<T>(key:string,input:unknown,run:()=>Promise<T>)=>Promise<{reply:T;ms:number;calls:number}>}){
  const {request,fact,model}=resolved,drafts=resolved.drafts;
  for(const edition of editionKeys.filter(e=>request.editions.includes(e))){
   const c=editions[edition],slot=drafts.findIndex(d=>d.edition===edition&&d.storyId===request.storyId);if(slot<0)throw Error('MISSING_REGENERATION_SLOT');
@@ -62,7 +62,7 @@ export async function regenerateOneStory(resolved:ReturnType<typeof resolveRegen
   const checks=draftErrors(data,fact,edition,previous);d.errors=checks.filter(e=>!isLengthReminder(e));d.warnings=checks.filter(isLengthReminder);
   d.article=articleSchema.parse({storyId:fact.story_id,order:old.article?.order||resolved.index+1,category:fact.primary_category,contentKind:fact.content_kind,headline:data.headline,bodyParagraphs:data.body_paragraphs,wordCount:stats(data.body_paragraphs.join(' ')).count,vocabulary:data.vocabulary,image:request.mode==='rewrite'&&old.article?old.article.image:{assetId:fact.primary_category,alt:fact.primary_category+' original category illustration',caption:'原創分類圖示',kind:'icon',credit:'DayDay'},sources:fact.sources.map(s=>({publisher:s.publisher,url:s.url,publishedAt:s.published_at,publishedAtPrecision:s.published_at_precision})),eventDate:fact.event_date});
   const reviewSystem=reviewer+'\n'+editorialReviewPrompt+'\n'+advisoryReviewNote,reviewInput={fact,article:d.article,target:c.cefr,stats:stats(data.body_paragraphs.join(' ')),previousLevelTerms:previous};
-  const r=await measure('review-'+edition,{system:reviewSystem,input:reviewInput,model},()=>provider.generateStructured({task:'review',system:reviewSystem,data:reviewInput,schema:editorialReviewSchema,model,timeoutMs:60000,maxOutputTokens:1800}));
+  const r=await measure('review-'+edition,{system:reviewSystem,input:reviewInput,model:reviewerModel},()=>provider.generateStructured({task:'review',system:reviewSystem,data:reviewInput,schema:editorialReviewSchema,model:reviewerModel,timeoutMs:60000,maxOutputTokens:1800}));
   d.assessment=r.reply.data;d.reviewerMs=r.ms;d.reviewerCalls=r.calls;
   d.firstPass=!d.errors.length&&w.calls===1&&r.calls===1&&d.assessment.factual_status==='pass'&&d.assessment.level_fit==='suitable'&&d.assessment.suitability==='pass'&&d.assessment.publish_recommendation==='pass'&&!d.assessment.issues.some(i=>i.severity!=='minor');
  }

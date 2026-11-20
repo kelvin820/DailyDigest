@@ -1,5 +1,7 @@
 # 審閱、發布與已出刊日曆
 
+2026-11-20：日常流程已改用 `/editor` 網頁編輯室。生成在 Vercel 執行，稿件與發布存進 Supabase，網頁核准立即換刊；詳見 [WEB_EDITORIAL.md](WEB_EDITORIAL.md)。以下保留先前 Git 發刊操作作為歷史記錄。
+
 目前採 Git 版本化發刊：刊物及檔案有雜湊、版本與發布紀錄，由 Vercel 隨 Git commit 原子部署。沒有宣稱已寫入 Supabase。網站閱讀與審查頁目前公開，DayDay 帳號仍延後；變更首頁的權限由 GitHub 保護。
 
 ## 操作流程
