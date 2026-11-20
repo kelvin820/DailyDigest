@@ -25,5 +25,7 @@ export type WebJob={version:number;id:string;createdAt:string;updatedAt:string;i
  intakeCandidates?:NewsCandidate[];execution?:'workflow';workflowRunId?:string;
  imageStates?:Record<string,'running'|'done'|'failed'>;rejectedNewsIds?:string[];
  campaignId?:string;
+ additionalNewsCandidates?:NewsCandidate[];recoveryRounds?:string[];
+ sourceRecoveryVersion?:number;
 };
 export type WebRelease={version:number;jobId:string;fingerprint:string;issueDate:string;createdAt:string;releasedAt:string;approvalMethod:'web_manual'|'scheduled_auto';editions:EditionView[];pdfs:WebPdf[]};

@@ -15,7 +15,8 @@ export async function startDaily(store:DocumentStore,date:string){
  await changeDocument<NewsPlan>(store,newsPlanKey(date),()=>emptyNewsPlan(date),p=>{p.runId=runId;p.updatedAt=new Date().toISOString();});return runId;
 }
 export async function startBackfill(store:DocumentStore,id:string){
- let runId:string;try{runId=(await start(backfillWeekWorkflow,[id],{experimental_hook:{token:'dayday:backfill:'+id,experimental_minRetention:'7 days'}})).runId;}
+ const campaign=await store.get<BackfillCampaign>(campaignKey(id));if(!campaign)throw Error('NOT_FOUND');
+ let runId:string;try{runId=(await start(backfillWeekWorkflow,[id],{experimental_hook:{token:'dayday:backfill:'+id+':'+(campaign.attempt??1),experimental_minRetention:'7 days'}})).runId;}
  catch(e){if(!HookConflictError.is(e)||!e.conflictingRunId)throw e;runId=e.conflictingRunId;}
  await changeDocument<BackfillCampaign>(store,campaignKey(id),()=>{throw Error('NOT_FOUND');},c=>{c.runId=runId;});return runId;
 }

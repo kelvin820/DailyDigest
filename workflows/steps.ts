@@ -33,7 +33,7 @@ export async function publishDailyStep(id:string,publication:{pdfs:WebPdf[];rele
  'use step';
  const release=await publishScheduledJob(documentStore(),id,{...publication,releasedAt:new Date().toISOString()});revalidatePath('/');revalidatePath('/issues');revalidatePath('/issues/'+release.issueDate);return release.issueDate;
 }
-export async function loadBackfillStep(id:string){'use step';const c=await documentStore().get<BackfillCampaign>(campaignKey(id));if(!c||c.status!=='running')throw Error('BACKFILL_NOT_AUTHORIZED');return c.dates;}
+export async function loadBackfillStep(id:string){'use step';const c=await documentStore().get<BackfillCampaign>(campaignKey(id));if(!c||c.status!=='running')throw Error('BACKFILL_NOT_AUTHORIZED');return c.dates.filter(date=>!c.reports.some(r=>r.date===date&&r.status==='published'&&r.imagesDone===12));}
 export async function prepareBackfillStep(id:string,date:string){'use step';return prepareBackfillDay(documentStore(),id,date);}
 prepareBackfillStep.maxRetries=0;
 export async function reportBackfillStep(id:string,date:string,error?:string){'use step';await reportBackfillDay(documentStore(),id,date,error);}

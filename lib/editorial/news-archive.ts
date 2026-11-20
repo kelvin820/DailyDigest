@@ -20,7 +20,7 @@ export async function collectArchiveNews(settings:NewsSettings,date:string,fetch
  const dayStart=Date.parse(date+'T00:00:00+08:00'),start=Math.max(dayStart-86400000,Date.parse(minSourceDate+'T00:00:00+08:00')),end=Date.parse(date+'T23:59:59.999+08:00');
  const previous=new Date(dayStart-86400000+8*3600000).toISOString().slice(0,10);
  const indexes:{url:string;sourceId:string;category:NewsCategory;date:string}[]=[];
- const sections:[string,string,NewsCategory][]=[['guardian-world','world','world'],['guardian-culture','culture','culture'],['guardian-life','lifeandstyle','culture'],['guardian-tech','technology','technology'],['guardian-discovery','science','science'],['guardian-discovery','environment','nature']];
+ const sections:[string,string,NewsCategory][]=[['guardian-culture','culture','culture'],['guardian-culture','film','culture'],['guardian-culture','music','culture'],['guardian-culture','books','culture'],['guardian-culture','artanddesign','culture'],['guardian-life','lifeandstyle','culture'],['guardian-life','travel','culture'],['guardian-life','food','culture'],['guardian-tech','technology','technology'],['guardian-tech','games','technology'],['guardian-discovery','science','science'],['guardian-discovery','environment','nature'],['guardian-world','world','world']];
  for(const [sourceId,section,category] of sections.filter(([id,,c])=>settings.sourceIds.includes(id)&&settings.topicIds.includes(c))){
   for(const day of [date,previous])indexes.push({url:`https://www.theguardian.com/${section}/${day.slice(0,4)}/${months[Number(day.slice(5,7))-1]}/${day.slice(8)}/all`,sourceId,category,date:day});
  }
@@ -31,7 +31,7 @@ export async function collectArchiveNews(settings:NewsSettings,date:string,fetch
  const unique=[...new Map(cards.map(c=>[c.url,c])).values()],balanced:typeof cards=[];
  for(let n=0;n<12;n++)for(const [,section,category] of sections){const c=unique.filter(c=>c.category===category&&c.url.includes('/'+section+'/'))[n];if(c&&!balanced.some(b=>b.url===c.url))balanced.push(c);}
  const candidates:NewsCandidate[]=[];
- for(let i=0;i<Math.min(balanced.length,60);i+=3){const result=await Promise.allSettled(balanced.slice(i,i+3).map(async c=>{
+ for(let i=0;i<Math.min(balanced.length,84)&&candidates.length<30;i+=3){const result=await Promise.allSettled(balanced.slice(i,i+3).map(async c=>{
   const r=await read(c.url,['www.theguardian.com']),dates=articleDates(r.text);if(!dates.publishedAt)throw Error('HISTORICAL_DATE_UNKNOWN');
   const at=Date.parse(dates.publishedAt);if(at<start||at>end||dates.modifiedAt&&Date.parse(dates.modifiedAt)>end)return null;
   return {id:digest(c.url),sourceId:c.sourceId,publisher:'The Guardian',title:c.title,url:c.url,publishedAt:dates.publishedAt,excerpt:c.excerpt,category:c.category,referenceDate:date};

@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
-import {parseNewsFeed,validateShortlist,refreshNewsRound,selectNews,extractNewsFact} from '../lib/editorial/news';
+import {parseNewsFeed,validateShortlist,refreshNewsRound,selectNews,extractNewsFact,originalQuote} from '../lib/editorial/news';
 import {defaultNewsSettings,newsSources,newsSettingsSchema,newsRoundKey,newsPlanKey,saveNewsSettings,scheduleTimes,type NewsCandidate,type NewsRound,type NewsPlan} from '../lib/editorial/news-config';
 import {prepareScheduledJob,publishScheduledJob} from '../lib/editorial/news-schedule';
 import {importReviewPacket,advanceWebJob,jobKey,jobFingerprint,releaseKey} from '../lib/editorial/web-jobs';
@@ -63,6 +63,13 @@ test('fact extraction rejects invented evidence and keeps unknown event dates un
  const provider=(evidence:string):TextModelProvider=>({async generateStructured(r){return {data:r.schema.parse({claims:[{text:'Researchers reported a finding.',quote:evidence,core:true,status:'reported'},{text:'The study involved animals.',quote:evidence,core:false,status:'reported'}],eventDate:null,uncertainties:[],sensitivity:'low'}),usage:{input_tokens:10,output_tokens:10}};}});
  const fact=await extractNewsFact(c,read,provider(quote),'synthetic');assert.equal(fact.event_date,null);assert.equal(fact.sources[0].evidence,quote);
  await assert.rejects(()=>extractNewsFact(c,read,provider('This invented quote does not occur anywhere in the actual article.'),'synthetic'),/NEWS_EVIDENCE_MISMATCH/);
+});
+test('typographic quote matching restores the exact original source span without accepting paraphrases',()=>{
+ const original='Children’s exposure to wood-burning could be as significant as traffic exhaust.';
+ assert.equal(originalQuote('😊 A source paragraph. '+original,"Children's exposure to wood-burning could be as significant as traffic exhaust."),original);
+ const wrapped='Researchers reported a new finding\n\nafter several weeks of careful observations.';
+ assert.equal(originalQuote(wrapped,'Researchers reported a new finding after several weeks of careful observations.'),wrapped);
+ assert.equal(originalQuote(original,"Children's exposure to wood-burning is much greater than traffic exhaust."),null);
 });
 test('automatic release requires the exact generated version and all reviews, is labelled automatic, and cannot overwrite an existing issue',async()=>{
  const store=new Memory(),base=publicationCatalog.packets.find(p=>p.id==='2026-11-19-r5')!,id=randomUUID();await importReviewPacket(store,id,base.id,base.fingerprint);

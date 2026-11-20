@@ -16,7 +16,7 @@ import {webGenerationSchema,type WebJob,type WebRelease,type Checkpoint} from '.
 import {learningTermKey} from '../content/vocabulary.mjs';
 import {isLengthReminder} from './readability';
 import {newsRoundKey,type NewsRound} from './news-config';
-import {readNewsArticle,extractNewsFact,NewsEvidenceError} from './news';
+import {readNewsArticle,extractNewsFact,assembleNewsFact,NewsEvidenceError} from './news';
 import {authorizedBackfill} from './backfill';
 
 export const jobKey=(id:string)=>WEB_PREFIX+'job:'+z.uuid().parse(id);
@@ -80,7 +80,7 @@ export async function createWebJob(store:DocumentStore,id:string,raw:unknown){
 class NextStep extends Error {}
 export async function retryWebGeneration(store:DocumentStore,id:string){
  const job=await store.get<WebJob>(jobKey(id));if(!job)throw Error('NOT_FOUND');
- if(job.status!=='needs_attention'||job.editions.length||job.activeStep||!Object.keys(job.checkpoints).length||!(job.error==='GENERATION_FAILED'||job.error?.startsWith('NEEDS_REVIEW:')))throw Error('GENERATION_RETRY_NOT_READY');
+ if(job.status!=='needs_attention'||job.editions.length||job.activeStep||!Object.keys(job.checkpoints).length||!(job.error==='GENERATION_FAILED'||job.error==='MODEL_SCHEMA_INVALID'||job.error?.startsWith('NEEDS_REVIEW:')))throw Error('GENERATION_RETRY_NOT_READY');
  if(job.lease&&job.lease.expiresAt>Date.now())throw Error('JOB_CONFLICT');
  job.status='pending';job.error=null;event(job,'保留成功回應，依具體稿件檢查繼續；新模型步驟會計入用量');await saveJob(store,job);return job;
 }
@@ -110,7 +110,11 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
   const prompts=await promptFiles();if(!job.editions.length&&executionHash(prompts)!==job.promptHash)throw Error('GENERATION_PROMPTS_CHANGED');
   let calls=0;const batchStarted=Date.now(),maxSteps=Math.max(1,Math.min(3,options.maxModelSteps??1));
   const budget=webBudget(store,id,async(input,output)=>{job.usage.calls++;job.usage.inputTokens+=input;job.usage.outputTokens+=output;},undefined,job.campaignId?{id:job.campaignId,issueDate:job.issueDate}:undefined);
-  const live=options.provider??new NvidiaProvider(process.env.LLM_API_KEY?.trim()||'',budget);
+  const live=options.provider??new NvidiaProvider(process.env.LLM_API_KEY?.trim()||'',budget,async raw=>{
+   const key='invalid:'+job.activeStep+':'+raw.attempt,value={status:'success' as const,inputHash:hash({task:raw.task,model:raw.model}),output:raw,outputHash:hash(raw)};
+   const prior=job.checkpoints[key];if(prior&&prior.outputHash!==value.outputHash)job.checkpoints['archived:'+key+':'+prior.outputHash]=prior;
+   job.checkpoints[key]=value;event(job,'已保存無法解析的模型回覆，保留用量與診斷');await saveJob(store,job);
+  });
   const provider:TextModelProvider={cacheIdentity:'vercel-web-v1',async generateStructured<T>(req:GenerationRequest<T>){
    if(calls>=maxSteps||calls>0&&Date.now()-batchStarted>=30000)throw new NextStep();calls++;
    const key=hash({task:req.task,system:req.system,data:req.data,model:req.model});
@@ -125,7 +129,7 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
     if(job.input.kind!=='news'||!job.input.autoSelect)throw Error(code);
     job.rejectedNewsIds??=[];job.rejectedNewsIds.push(candidate.id);
     const round=await store.get<NewsRound>(newsRoundKey(job.input.roundId));
-    const next=round?.candidates.find(c=>!job.intakeCandidates!.some(i=>i.id===c.id)&&!job.rejectedNewsIds!.includes(c.id));
+    const next=[...(job.additionalNewsCandidates??[]),...(round?.candidates??[])].find(c=>!job.intakeCandidates!.some(i=>i.id===c.id)&&!job.rejectedNewsIds!.includes(c.id));
     if(!next)throw Error('NEWS_POOL_EXHAUSTED');
     job.intakeCandidates=job.intakeCandidates!.map(c=>c.id===candidate.id?next:c);event(job,'來源不可用，改選 shortlist 中的另一篇 · '+next.title);await saveJob(store,job);
    };
@@ -135,7 +139,9 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
     let read:Awaited<ReturnType<typeof readNewsArticle>>;
     try{read=await readNewsArticle(candidate);}catch{await replaceUnavailable('NEWS_ARTICLE_UNAVAILABLE');return job;}
     if(job.campaignId){const grant=await authorizedBackfill(store,job.campaignId,job.issueDate),end=Date.parse(job.issueDate+'T23:59:59.999+08:00'),start=Math.max(end-2*86400000+1,Date.parse(grant.dates[0]+'T00:00:00+08:00')),at=Date.parse(read.publishedAt||candidate.publishedAt);if(at<start||at>end||read.modifiedAt&&Date.parse(read.modifiedAt)>end){await replaceUnavailable('HISTORICAL_SOURCE_CHANGED');return job;}}
-    try{fact=await extractNewsFact(candidate,read,provider,job.model);}catch(error){
+    const rejected=job.checkpoints['intake-rejected:'+candidate.id];
+    if(rejected&&(rejected.inputHash!==hash(candidate)||rejected.outputHash!==hash(rejected.output)))throw Error('CHECKPOINT_CHANGED');
+    try{fact=rejected?assembleNewsFact(candidate,read,rejected.output):await extractNewsFact(candidate,read,provider,job.model);}catch(error){
      if(!(error instanceof NewsEvidenceError))throw error;
      await checkpoint('intake-rejected:'+candidate.id,{status:'success',inputHash:hash(candidate),outputHash:hash(error.draft),output:error.draft});
      await replaceUnavailable('NEWS_EVIDENCE_MISMATCH');return job;
@@ -180,7 +186,7 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
    if(job.pdfs.length===6){job.status='needs_review';event(job,'生成完成，等待人工審閱與核准');}
   }
  }catch(e){
-  if(!(e instanceof NextStep)){job.status='needs_attention';job.error=e instanceof Error&&(/^[A-Z0-9_:.-]{1,180}$/.test(e.message)||/^NEEDS_REVIEW:[A-Za-z0-9_-]{1,100}:(elementary|junior|senior)$/.test(e.message))?e.message:job.editions.length===3?'PDF_RUNTIME_FAILED':'GENERATION_FAILED';event(job,'暫停：'+job.error);console.error('editorial_job_failed',{jobId:id,code:job.error});if(job.editions.length===3&&e instanceof Error)console.error('pdf_worker_failed',{jobId:id,detail:e.message.replace(/https?:\/\/\S+/g,'[url]').slice(0,1400),stack:e.stack?.split('\n').slice(0,5).join('\n')});}
+  if(!(e instanceof NextStep)){job.status='needs_attention';job.error=e instanceof Error&&(/^[A-Z0-9_:.-]{1,180}$/.test(e.message)||/^NEEDS_REVIEW:[A-Za-z0-9_-]{1,100}:(elementary|junior|senior)$/.test(e.message))?e.message:job.editions.length===3?'PDF_RUNTIME_FAILED':'GENERATION_FAILED';if(job.error==='MODEL_SCHEMA_INVALID')job.activeStep=null;event(job,'暫停：'+job.error);console.error('editorial_job_failed',{jobId:id,code:job.error});if(job.editions.length===3&&e instanceof Error)console.error('pdf_worker_failed',{jobId:id,detail:e.message.replace(/https?:\/\/\S+/g,'[url]').slice(0,1400),stack:e.stack?.split('\n').slice(0,5).join('\n')});}
  }finally{job.lease=null;await saveJob(store,job);}
  return job;
 }
