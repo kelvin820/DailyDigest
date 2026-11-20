@@ -1,0 +1,11 @@
+'use client';
+import {useState} from 'react';
+import Link from 'next/link';
+import {editorialFetch} from './EditorGate';
+type Inspection={projectUrl:string;empty:boolean;initialized:boolean;editorTable:boolean;editorRls:boolean;publicTables:number;buckets:number};
+export function DatabaseSetup(){
+ const [secret,setSecret]=useState(''),[inspection,setInspection]=useState<Inspection|null>(null),[busy,setBusy]=useState(false),[message,setMessage]=useState(''),[confirmed,setConfirmed]=useState(false),[done,setDone]=useState(false);
+ async function inspect(){setBusy(true);setMessage('');try{setInspection(await editorialFetch('/api/editorial/setup',{method:'POST',body:JSON.stringify({action:'inspect',secret})}));setSecret('');}catch(e){setMessage((e as Error).message);}finally{setBusy(false);}}
+ async function initialize(){if(!inspection)return;setBusy(true);setMessage('');try{await editorialFetch('/api/editorial/setup',{method:'POST',body:JSON.stringify({action:'initialize',confirmedProjectUrl:inspection.projectUrl,reviewed:confirmed})});setDone(true);setMessage('資料庫已初始化，工作紀錄、權限與私有儲存空間已檢查。');}catch(e){setMessage((e as Error).message);}finally{setBusy(false);}}
+ return <section className="editor-create">{!inspection?<form className="editor-unlock" onSubmit={e=>{e.preventDefault();inspect();}}><label>編輯室管理密碼<input type="password" autoComplete="current-password" value={secret} maxLength={512} required onChange={e=>setSecret(e.target.value)}/></label><button disabled={busy}>{busy?'正在檢查…':'檢查新資料庫'}</button></form>:<><h2>確認連接目標</h2><p>Project URL：<strong>{inspection.projectUrl}</strong></p><p>目前資料表 {inspection.publicTables} 個、儲存空間 {inspection.buckets} 個。</p>{done?<><p role="status">{message}</p><Link className="review-publish" href="/editor">進入編輯室 →</Link></>:inspection.empty?<><p>這是一個空專案。初始化會建立刊物、審閱、工作紀錄與私有檔案儲存所需的資料結構。</p><label className="editor-confirm"><input type="checkbox" checked={confirmed} onChange={e=>setConfirmed(e.target.checked)}/>我確認這是剛建立的新 Supabase</label><button disabled={!confirmed||busy} onClick={initialize}>{busy?'正在初始化，請保留頁面…':'初始化這個新資料庫'}</button></>:inspection.initialized&&inspection.editorRls?<><p>已存在 DayDay 的資料結構，不需要重新初始化。</p><Link href="/editor">進入編輯室 →</Link></>:<p>專案已有其他資料，系統已停止初始化。請保留現有資料，再確認連接目標。</p>}</>}{message&&!done&&<p role="alert">{message}</p>}</section>;
+}

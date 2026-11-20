@@ -10,6 +10,11 @@ export function validEditorToken(token:string|undefined,secret:string,now=Date.n
  if(!token||!/^\d{13}\.[a-f0-9]{64}$/.test(token))return false;
  const expires=Number(token.split('.')[0]);return expires>now&&expires<=now+8*3600000+60000&&equalSecret(token,editorToken(secret,expires));
 }
+export function validSetupAuthorization(authorization:string|null,configured=process.env.EDITOR_SETUP_TOKEN,now=Date.now()){
+ if(!configured||!/^\d{13}\.[A-Za-z0-9_-]{43}$/.test(configured))return false;
+ const expires=Number(configured.split('.')[0]);
+ return expires>now&&expires<=now+30*60000&&!!authorization&&equalSecret(authorization,'Bearer '+configured);
+}
 export async function requireEditor(){if(!validEditorToken((await cookies()).get(EDITOR_COOKIE)?.value,editorSecret()))throw Error('UNAUTHORIZED');}
 export function editorOrigin(req:Request){
  const origin=req.headers.get('origin'),current=new URL(req.url).origin;

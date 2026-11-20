@@ -17,6 +17,10 @@ function databaseError(error:{code?:string;message?:string},status?:number){
  return Error('DATABASE_READ_FAILED');
 }
 export function databaseConfiguration(env:Record<string,string|undefined>=process.env){
+ const prefixedUrl=env.DAILY_DIGEST_SUPABASE_URL?.trim(),prefixedKey=env.DAILY_DIGEST_SUPABASE_SECRET_KEY?.trim();
+ // The newly connected resource uses the DAILY_DIGEST prefix. Never combine
+ // its URL or key with the older unprefixed integration still in the project.
+ if(prefixedUrl||prefixedKey)return {url:prefixedUrl,key:prefixedKey,source:'marketplace' as const};
  const marketplaceKey=env.SUPABASE_SECRET_KEY?.trim();
  return marketplaceKey?{url:env.SUPABASE_URL?.trim(),key:marketplaceKey,source:'marketplace' as const}:
   {url:env.NEXT_PUBLIC_SUPABASE_URL?.trim()||env.SUPABASE_URL?.trim(),key:env.SUPABASE_SERVICE_ROLE_KEY?.trim(),source:'legacy' as const};

@@ -1,6 +1,6 @@
 # Supabase 專案接續設定
 
-2026-11-20：使用者已建立 Vercel Marketplace 資源 `supabase-dayday-dailidigest`，接手時應以這個新資源的實際 Project URL 為目標，保留舊庫。Vercel 編輯室優先讀取整合自動提供的 `SUPABASE_URL`／`SUPABASE_SECRET_KEY`。新專案初始化產生器目前包含 15 份 migration，並明確授予 service_role 對工作紀錄表的 SELECT／INSERT／UPDATE 權限；需先確認新專案為空，不能對舊庫重跑初始化。以下為舊專案歷史紀錄。
+2026-11-20：已透過 Vercel CLI 確認 Marketplace 資源 `supabase-dayday-dailidigest`（`store_xrvsYjcFCPf6d8cC`）available，已連到 `ckm13/daily-digest`（`prj_AoSHUcgOzOtlJ1M1Nv47DfKKZ9XY`）。保留舊庫。Vercel 編輯室優先讀取整合自動提供的 `SUPABASE_URL`／`SUPABASE_SECRET_KEY`。正式環境 25 項設定為 Sensitive，CLI pull 只能得到佔位符；Development 沒有這些設定，所以不以 CLI 解密或複製金鑰初始化。新增 `/editor/setup`，在 Vercel 後端使用 PostgreSQL 連接並執行空庫檢查及 15 份 migration，含明確的 service_role 工作表授權。只接受同一 Marketplace 專案及管理密碼授權，不對舊庫重跑初始化。以下為舊專案歷史紀錄。
 
 使用者已提供 Project URL：`https://bqoqzxharmatphcqwldo.supabase.co`。
 

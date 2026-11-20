@@ -1,6 +1,15 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {editorToken,validEditorToken,equalSecret,editorOrigin} from '../lib/editorial/web-auth';
+import {editorToken,validEditorToken,equalSecret,editorOrigin,validSetupAuthorization} from '../lib/editorial/web-auth';
+
+test('setup automation accepts only its short-lived token and never serves as an editor cookie',()=>{
+ const now=Date.now(),token=String(now+15*60000)+'.'+'a'.repeat(43);
+ assert.equal(validSetupAuthorization('Bearer '+token,token,now),true);
+ assert.equal(validSetupAuthorization('Bearer wrong',token,now),false);
+ assert.equal(validSetupAuthorization('Bearer '+token,token,now+16*60000),false);
+ const distant=String(now+2*3600000)+'.'+'a'.repeat(43);assert.equal(validSetupAuthorization('Bearer '+distant,distant,now),false);
+ assert.equal(validEditorToken(token,'unrelated-editor-secret',now),false);
+});
 
 test('editor sessions expire and reject changed signatures, changed keys and distant expiration dates',()=>{
  const key='synthetic-long-editor-password-for-tests',now=Date.now(),token=editorToken(key,now+10000);

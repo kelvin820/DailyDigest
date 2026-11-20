@@ -7,6 +7,9 @@ test('Marketplace credentials form a consistent pair and take precedence over th
  assert.deepEqual(databaseConfiguration(old),{url:old.NEXT_PUBLIC_SUPABASE_URL,key:'legacy-key',source:'legacy'});
  assert.deepEqual(databaseConfiguration({...old,SUPABASE_URL:'https://new.supabase.co',SUPABASE_SECRET_KEY:' sb_secret_new '}),{url:'https://new.supabase.co',key:'sb_secret_new',source:'marketplace'});
  assert.deepEqual(databaseConfiguration({...old,SUPABASE_SECRET_KEY:'sb_secret_new'}),{url:undefined,key:'sb_secret_new',source:'marketplace'});
+ const both={...old,SUPABASE_URL:'https://older.supabase.co',SUPABASE_SECRET_KEY:'sb_secret_older',DAILY_DIGEST_SUPABASE_URL:'https://newest.supabase.co',DAILY_DIGEST_SUPABASE_SECRET_KEY:' sb_secret_newest '};
+ assert.deepEqual(databaseConfiguration(both),{url:both.DAILY_DIGEST_SUPABASE_URL,key:'sb_secret_newest',source:'marketplace'});
+ assert.deepEqual(databaseConfiguration({...both,DAILY_DIGEST_SUPABASE_SECRET_KEY:undefined}),{url:both.DAILY_DIGEST_SUPABASE_URL,key:undefined,source:'marketplace'});
 });
 
 test('the server rejects anon and publishable keys before using elevated database operations',()=>{

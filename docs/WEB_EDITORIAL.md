@@ -4,6 +4,8 @@
 
 ## 操作
 
+新 Supabase 第一次使用：開啟 `/editor/setup`，輸入既有編輯室管理密碼，檢查連接目標與空庫狀態，再勾選確認初始化。SQL 在 Vercel 後端使用 Marketplace 的 PostgreSQL 設定執行，不需要匯出 Sensitive 值。初始化核對 API／PostgreSQL 指向同一專案，使用驗證憑證的 TLS；整批 SQL 在交易中執行，非空專案會拒絕，失敗回滾。既有庫不會被清除。若需要自訂 CA，可設定 `SUPABASE_DB_CA`。
+
 1. 在編輯室選四篇已核對來源，確認刊物日期與編輯方向，按「生成三版刊物」。目前來源庫仍是已核對的底稿，不宣稱已完成自動新聞發現；過期、未來或缺少核對的來源會被拒絕。
    同一事件沿用已核准的照片與分齡插畫並凍結配圖快照；沒有核准配圖的故事使用明確標示的原創分類圖示。本次不增加自動生圖請求。
 2. 網頁持續呼叫後端，每次最多執行一個模型步驟。成功回應立即存進 Supabase。離開頁面會在目前步驟完成後暫停，重新開啟同一份工作可繼續。工作狀態不依賴瀏覽器記憶體或 Vercel 暫存檔案。
@@ -13,7 +15,7 @@
 
 ## 必要變數
 
-- Vercel Marketplace：`SUPABASE_URL` 與 `SUPABASE_SECRET_KEY`。編輯室優先使用這一組整合變數，避免殘留的舊手動設定覆蓋新資料庫；沒有 Marketplace secret 時才沿用 `NEXT_PUBLIC_SUPABASE_URL` 與 `SUPABASE_SERVICE_ROLE_KEY`。
+- 新 Vercel Marketplace 資源使用 `DAILY_DIGEST_SUPABASE_URL` 與 `DAILY_DIGEST_SUPABASE_SECRET_KEY`，這一組優先；初始化亦只使用同前綴的 PostgreSQL 連線。未設定這一組時才讀取 `SUPABASE_URL`／`SUPABASE_SECRET_KEY`，最後沿用 legacy `NEXT_PUBLIC_SUPABASE_URL`／`SUPABASE_SERVICE_ROLE_KEY`。每一組必須完整，避免新舊專案的設定混用。
 - `LLM_API_KEY`，沿用 NVIDIA；writer/reviewer 以各自環境變數覆寫，預設 Ultra。
 - `EDITOR_ACTION_SECRET`：至少 24 字元。只放 Vercel server 環境，不加 `NEXT_PUBLIC_`。使用者在網頁輸入後取得 8 小時 HttpOnly、SameSite=Strict 簽章 cookie；不把密碼放入 URL、localStorage 或 log。HTTPS 使用 Secure cookie。
 - `DAILY_BUDGET_USD`、`MAX_MODEL_CALLS`、`MAX_MODEL_TOKENS`、可選的輸入／輸出單價。未知單價不冒充免費或美元預算已實測。
