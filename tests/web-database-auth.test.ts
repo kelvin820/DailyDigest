@@ -1,0 +1,14 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {serviceFetch} from '../lib/editorial/web-store';
+
+test('opaque server API keys are sent only in apikey, while legacy JWT and actual session auth remain intact',async()=>{
+ const seen:Headers[]=[];
+ const fetcher:typeof fetch=async(_input,init)=>{seen.push(new Headers(init?.headers));return Response.json([]);};
+ await serviceFetch('sb_secret_synthetic',fetcher)('https://example.supabase.co/rest/v1/app_settings',{headers:{apikey:'sb_secret_synthetic',Authorization:'Bearer sb_secret_synthetic'}});
+ assert.equal(seen[0].get('apikey'),'sb_secret_synthetic');assert.equal(seen[0].has('authorization'),false);
+ await serviceFetch('legacy-jwt',fetcher)('https://example.supabase.co/rest/v1/app_settings',{headers:{apikey:'legacy-jwt',Authorization:'Bearer legacy-jwt'}});
+ assert.equal(seen[1].get('authorization'),'Bearer legacy-jwt');
+ await serviceFetch('sb_secret_synthetic',fetcher)('https://example.supabase.co/rest/v1/app_settings',{headers:{apikey:'sb_secret_synthetic',Authorization:'Bearer distinct-session-jwt'}});
+ assert.equal(seen[2].get('authorization'),'Bearer distinct-session-jwt');
+});

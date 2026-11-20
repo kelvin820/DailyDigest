@@ -16,6 +16,9 @@ const json=(res,data,status=200)=>{res.writeHead(status,{'Content-Type':'applica
 const db=createServer(async(req,res)=>{
  try{
   const url=new URL(req.url,'http://local'),chunks=[];for await(const c of req)chunks.push(c);const bytes=Buffer.concat(chunks);
+  if((url.pathname.startsWith('/rest/')||url.pathname.startsWith('/storage/'))&&!(req.method==='GET'&&url.pathname.startsWith('/storage/v1/object/sign/')&&url.searchParams.get('token')==='synthetic')){
+   if(req.headers.apikey!=='sb_secret_synthetic-database-key'||req.headers.authorization)return json(res,{code:'PGRST301'},401);
+  }
   if(url.pathname==='/rest/v1/app_settings'){
    const key=url.searchParams.get('key'),version=url.searchParams.get('value->>version');
    let found=[...rows].filter(([k,v])=>(!key||key.startsWith('eq.')&&k===key.slice(3)||key.startsWith('like.')&&k.startsWith(key.slice(5,-1)))&&(!version||String(v.version)===version.slice(3)));
@@ -42,7 +45,7 @@ await new Promise(r=>db.listen(0,'127.0.0.1',r));const dbOrigin='http://127.0.0.
 const preload=resolve('.runtime/editorial-model-preload.mjs');
 await writeFile(preload,`const base=${JSON.stringify(base)};const original=globalThis.fetch;globalThis.fetch=async(input,init)=>{if(String(input)==='https://integrate.api.nvidia.com/v1/chat/completions'){await original('${dbOrigin}/model-call');const b=JSON.parse(init.body),system=b.messages[0].content,data=JSON.parse(b.messages[1].content).untrusted_data;const review=!system.includes('Audience edition:'),edition=system.match(/Audience edition: ([a-z]+)/)?.[1]||'elementary',old=base.editions.find(i=>i.edition===edition).articles.find(a=>a.storyId===data.fact.story_id);const result=review?{factual_status:'pass',level_fit:'suitable',suitability:'pass',issues:[],publish_recommendation:'pass',readership:{interest:4,information:4,readability:4,reason:'Synthetic model response for integration QA',suggestion:''}}:{headline:'A Database Saved Newspaper Story',body_paragraphs:old.bodyParagraphs,vocabulary:old.vocabulary,used_claim_ids:data.fact.claims.filter(c=>c.must_keep).map(c=>c.claim_id),omitted_optional_claim_ids:[],editorial_flags:[]};return Response.json({id:'synthetic',usage:{prompt_tokens:100,completion_tokens:100},choices:[{finish_reason:'stop',message:{content:JSON.stringify(result)}}]});}return original(input,init);};`);
 const origin='http://127.0.0.1:4331';
-app=spawn(process.execPath,['--import',pathToFileURL(preload).href,'node_modules/next/dist/bin/next','start','--port','4331','--hostname','127.0.0.1'],{env:{...process.env,DEMO_MODE:'false',READING_MODE:'public',APP_URL:origin,EDITOR_ACTION_SECRET:'synthetic-editor-secret-for-local-qa',LLM_API_KEY:'synthetic-model-key',NEXT_PUBLIC_SUPABASE_URL:dbOrigin,SUPABASE_SERVICE_ROLE_KEY:'synthetic-database-key',DD_CHROME:process.env.DD_CHROME||'',VERCEL:''},stdio:['ignore','pipe','pipe']});
+app=spawn(process.execPath,['--import',pathToFileURL(preload).href,'node_modules/next/dist/bin/next','start','--port','4331','--hostname','127.0.0.1'],{env:{...process.env,DEMO_MODE:'false',READING_MODE:'public',APP_URL:origin,EDITOR_ACTION_SECRET:'synthetic-editor-secret-for-local-qa',LLM_API_KEY:'synthetic-model-key',NEXT_PUBLIC_SUPABASE_URL:dbOrigin,SUPABASE_SERVICE_ROLE_KEY:'sb_secret_synthetic-database-key',DD_CHROME:process.env.DD_CHROME||'',VERCEL:''},stdio:['ignore','pipe','pipe']});
 app.stdout.on('data',d=>logs+=d);app.stderr.on('data',d=>logs+=d);
 try{
  for(let i=0;;i++){try{if((await fetch(origin+'/api/editorial/status')).ok)break;}catch{}if(i>=100)throw Error('START_FAILED');await delay(200);}

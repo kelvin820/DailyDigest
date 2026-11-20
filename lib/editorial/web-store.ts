@@ -10,16 +10,26 @@ export interface DocumentStore {
  list<T>(prefix:string):Promise<T[]>;
 }
 function databaseError(error:{code?:string;message?:string},status?:number){
- if(status===401||status===403||['PGRST301','PGRST302','42501'].includes(error.code||''))return Error('DATABASE_AUTH_FAILED');
+ if(error.code==='42501')return Error('DATABASE_PERMISSION_DENIED');
+ if(status===401||status===403||['PGRST301','PGRST302'].includes(error.code||''))return Error('DATABASE_AUTH_FAILED');
  if(['PGRST205','42P01','42703'].includes(error.code||''))return Error('DATABASE_SCHEMA_MISSING');
  if(status===0||/fetch failed|network|timeout/i.test(error.message||''))return Error('DATABASE_UNREACHABLE');
  return Error('DATABASE_READ_FAILED');
 }
 export function databaseConfigured(){return !!(process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()&&process.env.SUPABASE_SERVICE_ROLE_KEY?.trim());}
+export function serviceFetch(key:string,fetcher:typeof fetch=fetch):typeof fetch {
+ return (input,init)=>{
+  const headers=new Headers(init?.headers);
+  // Opaque API keys belong in apikey, never in a JWT Bearer header. Preserve
+  // legacy service_role JWT behavior and any distinct actual session token.
+  if(key.startsWith('sb_secret_')&&headers.get('authorization')==='Bearer '+key)headers.delete('authorization');
+  return fetcher(input,{...init,headers,signal:AbortSignal.timeout(20000)});
+ };
+}
 export function serviceDatabase(){
  const url=process.env.NEXT_PUBLIC_SUPABASE_URL?.trim(),key=process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
  if(!url||!key)throw Error('DATABASE_NOT_CONFIGURED');
- return createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:(input,init)=>fetch(input,{...init,signal:AbortSignal.timeout(20000)})}});
+ return createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:serviceFetch(key)}});
 }
 export function documentStore():DocumentStore {
  const db=serviceDatabase();

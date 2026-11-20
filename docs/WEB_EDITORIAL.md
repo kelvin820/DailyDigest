@@ -20,6 +20,8 @@
 
 `GET /api/editorial/status` 只提供是否設定與資料庫連線是否成功，不回傳金鑰。新增或修改 Vercel 環境變數後需部署，才會進入該部署的執行環境。
 
+伺服器支援新版 `sb_secret_...` 與舊版 service_role JWT。新版只透過 `apikey` 傳送，避免被當成 JWT Bearer；舊 JWT 行為保留。相容處理依 Supabase 的 API keys 文件，且另有實際 transport headers 測試。診斷區分憑證拒絕、缺少資料表權限、schema 缺失和網路失敗；不回傳原始憑證或回應內容。
+
 ## 資料位置與版本
 
 沿用既有 migration 1 已建立且開啟 RLS 的 `app_settings` 文件表，不需要重跑初始化 SQL 或補新的 schema。所有新資料使用 `dayday:web:v1:` 命名空間，與原本 `publishing` 設定分開：
