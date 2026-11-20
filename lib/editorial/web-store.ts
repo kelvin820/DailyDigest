@@ -17,6 +17,10 @@ function databaseError(error:{code?:string;message?:string},status?:number){
  return Error('DATABASE_READ_FAILED');
 }
 export function databaseConfigured(){return !!(process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()&&process.env.SUPABASE_SERVICE_ROLE_KEY?.trim());}
+export function isServiceKey(key:string){
+ if(key.startsWith('sb_secret_'))return true;
+ try{return JSON.parse(Buffer.from(key.split('.')[1],'base64url').toString()).role==='service_role';}catch{return false;}
+}
 export function serviceFetch(key:string,fetcher:typeof fetch=fetch):typeof fetch {
  return (input,init)=>{
   const headers=new Headers(init?.headers);
@@ -29,6 +33,7 @@ export function serviceFetch(key:string,fetcher:typeof fetch=fetch):typeof fetch
 export function serviceDatabase(){
  const url=process.env.NEXT_PUBLIC_SUPABASE_URL?.trim(),key=process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
  if(!url||!key)throw Error('DATABASE_NOT_CONFIGURED');
+ if(!isServiceKey(key))throw Error('DATABASE_NOT_SERVICE_KEY');
  return createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:serviceFetch(key)}});
 }
 export function documentStore():DocumentStore {

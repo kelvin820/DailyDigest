@@ -26,6 +26,8 @@
 
 沿用既有 migration 1 已建立且開啟 RLS 的 `app_settings` 文件表，不需要重跑初始化 SQL 或補新的 schema。所有新資料使用 `dayday:web:v1:` 命名空間，與原本 `publishing` 設定分開：
 
+若診斷為 `DATABASE_PERMISSION_DENIED`，在同一個 Supabase 專案的 SQL Editor 執行 `supabase/patches/web-editorial-access.sql`。這是可重跑的窄範圍 service_role 授權補丁，僅授予 public schema 使用與 app_settings 的 SELECT／INSERT／UPDATE；不改 RLS、不開放匿名權限、不更動原 schema migration 歷史。
+
 - `job:<UUID>`：不可混用的來源／模型／Prompt 快照、請求、成功 checkpoints、執行租約、進度、錯誤、用量、待審三版與 PDF manifest。
 - `release:<YYYY-MM-DD>`：該日目前已核准版本的完整快照與人工核准方法 `web_manual`。舊工作仍保留，可追查；同一天不能用較舊工作覆蓋較新發布。
 - `usage:<台北日期>`：網頁生成共用的呼叫／token／已知金額預留帳本，跨 Function instance 生效。

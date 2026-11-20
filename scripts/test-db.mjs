@@ -49,6 +49,12 @@ try {
     }else sql(content);
     checks.push({ name: file, status: 'passed' });
   }
+  sql(await readFile('supabase/patches/web-editorial-access.sql','utf8'));
+  assert.equal(sql(`begin; set local role service_role;
+    insert into public.app_settings(key,value) values('dayday:web:grant-probe','{"version":1}');
+    update public.app_settings set value='{"version":2}' where key='dayday:web:grant-probe' and value->>'version'='1';
+    select value->>'version' from public.app_settings where key='dayday:web:grant-probe'; rollback;`).trim(),'2');
+  checks.push({name:'web editor service-role SELECT/INSERT/UPDATE grants, RLS retained',status:'passed'});
   const stories = JSON.parse(await readFile('fixtures/stories.json', 'utf8'));
   // Synthetic publication proofs exist only inside this throwaway test database.
   // They are deliberately NOT a live issue, source audit, or production seed.

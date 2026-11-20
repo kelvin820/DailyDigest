@@ -1,6 +1,11 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {serviceFetch} from '../lib/editorial/web-store';
+import {serviceFetch,isServiceKey} from '../lib/editorial/web-store';
+
+test('the server rejects anon and publishable keys before using elevated database operations',()=>{
+ const jwt=(role:string)=>'eyJhbGciOiJIUzI1NiJ9.'+Buffer.from(JSON.stringify({role})).toString('base64url')+'.synthetic';
+ assert.equal(isServiceKey(jwt('service_role')),true);assert.equal(isServiceKey(jwt('anon')),false);assert.equal(isServiceKey('sb_publishable_synthetic'),false);assert.equal(isServiceKey('sb_secret_synthetic'),true);assert.equal(isServiceKey('bad'),false);
+});
 
 test('opaque server API keys are sent only in apikey, while legacy JWT and actual session auth remain intact',async()=>{
  const seen:Headers[]=[];
