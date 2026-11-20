@@ -13,7 +13,7 @@
 
 ## 必要變數
 
-- `NEXT_PUBLIC_SUPABASE_URL` 與同一專案的 `SUPABASE_SERVICE_ROLE_KEY`。
+- Vercel Marketplace：`SUPABASE_URL` 與 `SUPABASE_SECRET_KEY`。編輯室優先使用這一組整合變數，避免殘留的舊手動設定覆蓋新資料庫；沒有 Marketplace secret 時才沿用 `NEXT_PUBLIC_SUPABASE_URL` 與 `SUPABASE_SERVICE_ROLE_KEY`。
 - `LLM_API_KEY`，沿用 NVIDIA；writer/reviewer 以各自環境變數覆寫，預設 Ultra。
 - `EDITOR_ACTION_SECRET`：至少 24 字元。只放 Vercel server 環境，不加 `NEXT_PUBLIC_`。使用者在網頁輸入後取得 8 小時 HttpOnly、SameSite=Strict 簽章 cookie；不把密碼放入 URL、localStorage 或 log。HTTPS 使用 Secure cookie。
 - `DAILY_BUDGET_USD`、`MAX_MODEL_CALLS`、`MAX_MODEL_TOKENS`、可選的輸入／輸出單價。未知單價不冒充免費或美元預算已實測。

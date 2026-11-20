@@ -2,7 +2,7 @@ import {createHash} from 'node:crypto';
 import {mkdir,readFile,readdir,writeFile} from 'node:fs/promises';
 import {dirname,resolve} from 'node:path';
 
-const project=new URL(process.argv[2]||process.env.NEXT_PUBLIC_SUPABASE_URL||'');
+const project=new URL(process.argv[2]||process.env.SUPABASE_URL||process.env.NEXT_PUBLIC_SUPABASE_URL||'');
 if(project.protocol!=='https:'||!(/^[a-z0-9]{20}\.supabase\.co$/).test(project.hostname)||project.username||project.password||project.search||project.hash||project.pathname!=='/')throw Error('SUPABASE_PROJECT_ORIGIN_REQUIRED');
 const files=(await readdir('supabase/migrations')).filter(name=>/^\d+_[a-z0-9_]+\.sql$/.test(name)).sort();
 if(!files.length)throw Error('MIGRATIONS_REQUIRED');
@@ -53,6 +53,11 @@ for(const file of files){
     `insert into dayday_private.schema_migrations(version,name,sha256) values(${literal(version)},${literal(words.join('_'))},${literal(sha)});\n-- END ${file}\n`);
 }
 parts.push(`
+-- Explicit server grants: new projects may not inherit service_role table grants.
+-- Browser roles remain protected by the existing RLS policies.
+grant usage on schema public to service_role;
+grant select, insert, update on table public.app_settings to service_role;
+
 do $dayday_verify$
 declare settings jsonb;
 begin

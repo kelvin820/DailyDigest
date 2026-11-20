@@ -1,6 +1,13 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {serviceFetch,isServiceKey} from '../lib/editorial/web-store';
+import {serviceFetch,isServiceKey,databaseConfiguration} from '../lib/editorial/web-store';
+
+test('Marketplace credentials form a consistent pair and take precedence over the old manually configured database',()=>{
+ const old={NEXT_PUBLIC_SUPABASE_URL:'https://old.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'legacy-key'};
+ assert.deepEqual(databaseConfiguration(old),{url:old.NEXT_PUBLIC_SUPABASE_URL,key:'legacy-key',source:'legacy'});
+ assert.deepEqual(databaseConfiguration({...old,SUPABASE_URL:'https://new.supabase.co',SUPABASE_SECRET_KEY:' sb_secret_new '}),{url:'https://new.supabase.co',key:'sb_secret_new',source:'marketplace'});
+ assert.deepEqual(databaseConfiguration({...old,SUPABASE_SECRET_KEY:'sb_secret_new'}),{url:undefined,key:'sb_secret_new',source:'marketplace'});
+});
 
 test('the server rejects anon and publishable keys before using elevated database operations',()=>{
  const jwt=(role:string)=>'eyJhbGciOiJIUzI1NiJ9.'+Buffer.from(JSON.stringify({role})).toString('base64url')+'.synthetic';
