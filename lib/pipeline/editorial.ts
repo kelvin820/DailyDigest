@@ -66,8 +66,9 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
         const result = await cachedStep(store, `${fact.story_id}:${edition}:write:${attempt}`, input,
           () => provider.generateStructured({ task: attempt ? 'revise' : 'write', system, data: { fact:writingFact, feedback:revisionFeedback, previousLevelTerms },
             schema: writerResponseSchema, model: writerModel, timeoutMs: 60_000, maxOutputTokens: 1800 }));
-        let data = writerResponseSchema.parse(result.data);
-        if ('failure' in data) throw Error('WRITER_' + data.failure.code.toUpperCase());
+        const writerOutput = writerResponseSchema.parse(result.data);
+        if ('failure' in writerOutput) throw Error('WRITER_' + writerOutput.failure.code.toUpperCase());
+        let data:z.infer<typeof writerSchema> = writerOutput;
         if(editDraft)data=writerSchema.parse(await editDraft({storyId:fact.story_id,edition,outputHash:hash(result),attempt,previousLevelTerms,data}));
         const ids = new Set(fact.claims.map(claim => claim.claim_id));
         if (data.used_claim_ids.some(id => !ids.has(id)) || data.omitted_optional_claim_ids.some(id => !ids.has(id))) {
