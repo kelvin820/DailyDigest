@@ -1,5 +1,16 @@
 # 網頁編輯室驗證 — 2026-11-20
 
+## 下午修復與正式驗收
+
+已在真正 Vercel Function → NVIDIA → Supabase 流程救回使用者第二次工作 `c47f9fec-013a-4939-b6a8-bbe878c79025`，刊物日期 2026-11-20。三版十二篇正文與十二份模型複核均已儲存；六份私有 PDF 全部成功生成、一頁四篇、細線分隔。狀態 `needs_review`、`canPublish=true`，尚未代替使用者核准發布。
+
+- 前兩次失敗實際停在第一篇小學稿：glossary 的 dormant／bloom 未以相同字形出現在正文。三次全文重寫未解決，舊錯誤又因含小寫 story ID 被概括成 GENERATION_FAILED。改為具體檢查回饋，以及只從正文實際字形選詞的獨立 glossary 修訂；正文保留，修訂與複核仍計入共用預算。舊 checkpoint 被取代時另存 archived key。
+- 真正進入 PDF 後，又發現部署缺少 `playwright-core/browsers.json`，錯誤發生於載入引擎之前。`a09b5e0` 補入完整 Playwright runtime；新增 `qa-pdf-runtime-trace.mjs` 檢查三條相關 Function trace 的 metadata、核心程式、Chromium、字體及 CSS，且禁止環境檔被追蹤。
+- 2026-11-20 下午（台北）讀回正式六份 PDF，SHA-256 與資料庫 manifest 全部相符。pypdf 驗證全部 headline、正文、三種 vocabulary 欄位、字體內嵌及最低正文 13／12／11pt 均通過；已目視三版整頁 PNG，無文字裁切、重疊或漏圖。產物與證據在 Git 忽略的 `output/pdf/production/`。
+- 第二次工作累計 35 次模型回應、53,166 input tokens、7,617 output tokens，包含原失敗及修復階段；PDF 重試未增加模型呼叫。第一個失敗工作原樣保留，不為了驗收而重複生成另一整期。未設定費率，沒有宣稱實際美元費用。
+- 本機瀏覽器端到端驗證另外模擬一次 Storage 500，按「只重試 PDF」後恢復並完成六份 PDF，模型呼叫維持兩次；新稿核准發布及歷史稿「審核通過並放行」均驗證到首頁／日曆／PDF 讀回。正式稿仍等待使用者審核。
+- 臨時維護授權只供本次資料診斷與恢復，沒有產生編輯室 session；完成後移除 `EDITOR_SETUP_TOKEN` 並部署撤銷。
+
 ## 本機已驗證
 
 - `pnpm test`：90 項通過，包含原管線與網頁工作、單篇隔離、冪等、租約／未知用量停止、共用預算、人工核准、Marketplace 變數配對、限時初始化授權、空庫初始化、詞彙單獨修訂及 PDF 重試測試。
@@ -22,4 +33,4 @@
 
 2026-11-20 09:40（台北）：正式 API 檢查得到空庫（0 public 表、0 buckets），隨即以單一交易完成 15 份 migration。初始化結果為 18 張 public 表、3 個私有 bucket、editorTable=true、editorRls=true。接著在真正 Supabase Data API 建立 health 文件、version=1→2 compare-and-swap 及讀回；真正 Storage 完成測試檔上傳、內容下載比對、signed URL 建立並刪除測試檔。四項檢查均為 true；正式 status 為 databaseConnected=true、databaseError=null、generationBackend=vercel。原資料庫未修改。
 
-本次只限 setup API 的短效授權不會建立管理 session，完成後移除設定並重新部署。此輪未呼叫正式 NVIDIA，也未生成或發布正式新刊；模型與完整 PDF 管線的驗證仍為上述隔離端到端測試。不能把正式 DB／Storage 成功誤記為正式模型生成已驗收。
+上午初始化時尚未呼叫正式 NVIDIA，當時僅確認 DB／Storage。下午追加的正式生成與 PDF 驗收見本頁開頭；正式工作仍停在待審狀態。

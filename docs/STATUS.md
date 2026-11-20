@@ -1,5 +1,7 @@
 # 網頁生成與資料庫發刊（2026-11-20）
 
+下午已完成真正 Vercel → NVIDIA → 新 Supabase → 私有 PDF 驗收：第二次失敗工作已救回為待審稿，十二篇／十二份複核與六份一頁 PDF 都已存入資料庫與 Storage，`canPublish=true`。新版 PDF 四篇同頁、細線分隔，不再要求兩頁。補上缺失的 Playwright runtime metadata、獨立單字修訂、只重試 PDF，以及審核區的網頁工作清單與「審核通過並放行／發布」。未替使用者發布正式稿；詳細證據見 [WEB_EDITORIAL_VERIFICATION.md](WEB_EDITORIAL_VERIFICATION.md)。
+
 新增 `/editor`：直接呼叫 Vercel 後端 NVIDIA、分步儲存 Supabase、製作六份 Chromium PDF、網頁人工核准與資料庫讀回首頁／日曆。單篇重生不再要求使用者複製 JSON 到 GitHub。沿用既有 `app_settings` 的受 RLS 保護命名空間與 `issue-files` 私有 bucket；沒有重跑初始化或放開匿名寫入。來源仍需已核對底稿，未宣稱自動新聞發現或每日自動出刊完成。工程、恢復限制及驗證入口見 [WEB_EDITORIAL.md](WEB_EDITORIAL.md)。正式部署和外部服務實測結果另外記錄，不能以本機 synthetic 測試代替。
 
 以下為歷史紀錄，涉及 GitHub 手動發刊的敘述已由網頁編輯室取代。
