@@ -10,7 +10,7 @@ import {setTimeout as delay} from 'node:timers/promises';
 import {chromium} from 'playwright';
 import {PDFDocument} from 'pdf-lib';
 const catalog=JSON.parse(await readFile('content/publications/catalog.json','utf8')),base=catalog.packets.find(p=>p.id==='2026-11-19-r5');
-const rows=new Map(),files=new Map(),checks=[],browserErrors=[];let logs='',app,browser,modelCalls=0;
+const rows=new Map(),files=new Map(),checks=[],browserErrors=[];let logs='',app,browser,modelCalls=0,pdfUploadFailures=1;
 await mkdir('output/web-editorial',{recursive:true});await mkdir('.runtime',{recursive:true});
 const json=(res,data,status=200)=>{res.writeHead(status,{'Content-Type':'application/json'});res.end(JSON.stringify(data));};
 const db=createServer(async(req,res)=>{
@@ -33,7 +33,7 @@ const db=createServer(async(req,res)=>{
     path=path.slice(5);
     if(req.method==='POST')return json(res,{signedURL:'/object/sign/'+path+'?token=synthetic'});
    }
-   if(req.method==='POST'){files.set(path,bytes);return json(res,{Key:path});}
+   if(req.method==='POST'){if(pdfUploadFailures-->0)return json(res,{error:'synthetic storage outage'},500);files.set(path,bytes);return json(res,{Key:path});}
    if(files.has(path)){res.writeHead(200,{'Content-Type':'application/pdf'});res.end(files.get(path));return;}
    return json(res,{error:'missing'},404);
   }
@@ -58,7 +58,8 @@ try{
  for(const width of [375,1440]){await page.setViewportSize({width,height:1000});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await page.screenshot({path:`output/web-editorial/desk-${width}.png`,fullPage:true});}
  checks.push('Editor unlock, source picker and responsive layouts');
  await page.goto(origin+'/review/'+base.id);const detail=page.locator('.story-regeneration').first();await detail.locator('summary').first().click();await detail.getByLabel('重生範圍').selectOption('current');await detail.getByLabel('想改善的地方').fill('請保留來源事實，改寫開頭。');await detail.getByRole('button',{name:'重新生成並儲存新稿'}).click();await page.waitForURL('**/editor/jobs/*');
- await page.getByRole('heading',{name:/待你審閱/}).waitFor({timeout:180000});
+ await page.getByRole('button',{name:'只重試 PDF，保留已生成稿件',exact:true}).waitFor({timeout:180000});assert.equal(modelCalls,2);await page.getByRole('button',{name:'只重試 PDF，保留已生成稿件',exact:true}).click();
+ await page.getByRole('heading',{name:/待你審閱/}).waitFor({timeout:180000});checks.push('A failed PDF upload resumes from the browser without another model call');
  const id=new URL(page.url()).pathname.split('/').at(-1),jobResponse=await page.request.get(origin+'/api/editorial/jobs/'+id),data=await jobResponse.json();
  assert.equal(data.job.status,'needs_review');assert.equal(data.job.pdfs.length,6);assert.equal(modelCalls,2);assert.equal(data.job.usage.calls,2);assert.ok(data.canPublish);assert.equal(files.size,6);
  assert.deepEqual(data.job.editions[1].articles,base.editions[1].articles);assert.deepEqual(data.job.editions[0].articles.slice(1),base.editions[0].articles.slice(1));checks.push('Browser → API → two model calls → database checkpoints → six backend PDFs');
