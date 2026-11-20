@@ -132,7 +132,7 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
    if(job.pdfs.length===6){job.status='needs_review';event(job,'生成完成，等待人工審閱與核准');}
   }
  }catch(e){
-  if(!(e instanceof NextStep)){job.status='needs_attention';job.error=e instanceof Error&&(/^[A-Z0-9_:.-]{1,180}$/.test(e.message)||/^NEEDS_REVIEW:[A-Za-z0-9_-]{1,100}:(elementary|junior|senior)$/.test(e.message))?e.message:'GENERATION_FAILED';event(job,'暫停：'+job.error);console.error('editorial_job_failed',{jobId:id,code:job.error});}
+  if(!(e instanceof NextStep)){job.status='needs_attention';job.error=e instanceof Error&&(/^[A-Z0-9_:.-]{1,180}$/.test(e.message)||/^NEEDS_REVIEW:[A-Za-z0-9_-]{1,100}:(elementary|junior|senior)$/.test(e.message))?e.message:job.editions.length===3?'PDF_RUNTIME_FAILED':'GENERATION_FAILED';event(job,'暫停：'+job.error);console.error('editorial_job_failed',{jobId:id,code:job.error});if(job.editions.length===3&&e instanceof Error)console.error('pdf_worker_failed',{jobId:id,detail:e.message.replace(/https?:\/\/\S+/g,'[url]').slice(0,1400),stack:e.stack?.split('\n').slice(0,5).join('\n')});}
  }finally{job.lease=null;await saveJob(store,job);}
  return job;
 }

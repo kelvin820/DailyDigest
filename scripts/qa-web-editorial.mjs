@@ -71,5 +71,8 @@ try{
  await page.goto(origin+'/?edition=elementary');await page.getByRole('heading',{name:'A Database Saved Newspaper Story'}).waitFor();
  const publicPdf=await fetch(origin+`/api/issues/${base.issueDate}/pdf?edition=elementary&mode=color`);assert.equal(publicPdf.status,200);checks.push('Web approval writes release snapshot; public home, calendar and PDF read the database');
  await page.goto(origin+'/issues');await page.getByRole('link',{name:base.issueDate+' 已出刊',exact:true}).waitFor();assert.deepEqual(browserErrors,[]);
+ await page.goto(origin+'/review/'+base.id);await page.getByRole('button',{name:'審核通過並放行',exact:true}).click();
+ await page.getByLabel('我已完成三版正文、來源、單字與配圖審核，同意放行').check();await page.getByRole('button',{name:'審核通過並放行',exact:true}).click();
+ await page.getByText('審核通過，已發布到首頁與日曆。',{exact:true}).waitFor({timeout:180000});assert.equal(modelCalls,2);checks.push('Archive review release button prepares PDFs and publishes the reviewed snapshot without model calls');
  await writeFile('output/web-editorial/verification.json',JSON.stringify({mode:'synthetic-local-services-real-next-browser-and-pdf',checks,modelCalls,files:files.size,browserErrors},null,2));console.log('PASS:',checks.join('; '));
 }catch(e){const pages=browser?.contexts().flatMap(c=>c.pages())||[];if(pages[0]){await pages[0].screenshot({path:'output/web-editorial/failure.png',fullPage:true});await writeFile('output/web-editorial/failure.txt',await pages[0].locator('body').innerText());}await writeFile('output/web-editorial/failure.log',logs+'\n'+e.stack);throw e;}finally{await browser?.close();app?.kill();db.close();}
