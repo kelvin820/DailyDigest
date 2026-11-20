@@ -1,0 +1,26 @@
+import {sleep} from 'workflow';
+import {advanceEditionStep,loadDailyStep,prepareDailyStep,recordDailyFailureStep,publicationStep,publishDailyStep} from './steps';
+
+export async function generateEditionWorkflow(id:string){
+ 'use workflow';
+ for(let i=0;i<100;i++){
+  const state=await advanceEditionStep(id);
+  if(state.status==='needs_review'||state.status==='needs_attention')return state;
+  await sleep('1s');
+ }
+ return {status:'needs_attention',error:'WORKFLOW_STEP_LIMIT'};
+}
+export async function dailyEditionWorkflow(date:string){
+ 'use workflow';
+ try{
+  const plan=await loadDailyStep(date);if(!plan.enabled)return {status:'disabled'};
+  await sleep(new Date(plan.prepareAt));
+  const selected=await prepareDailyStep(date);if(selected.skip)return {status:'already_released_or_disabled'};
+  const state=await generateEditionWorkflow(selected.id);
+  if(state.status!=='needs_review'){await recordDailyFailureStep(date,state.error||'GENERATION_INCOMPLETE');return state;}
+  // Render the final, non-preview PDFs before the publication deadline.
+  const publication=await publicationStep(selected.id);
+  await sleep(new Date(plan.publishAt));
+  await publishDailyStep(selected.id,publication);return {status:'published',id:selected.id};
+ }catch(error){await recordDailyFailureStep(date,error instanceof Error?error.message:'DAILY_PUBLICATION_FAILED');throw error;}
+}

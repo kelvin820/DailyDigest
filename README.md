@@ -1,9 +1,9 @@
 # DayDay Daily Digest
 Four stories. Every day. Your level.
 
-網頁編輯室：`/editor`。在網站直接生成三版刊物、重新生成單篇、查看進度與 log、製作六份 PDF 並核准發布；生成由 Vercel Functions 執行，稿件與發布紀錄存進 Supabase。操作與儲存方式見 [WEB_EDITORIAL](docs/WEB_EDITORIAL.md)。`EDITOR_ACTION_SECRET` 用於管理員解鎖；讀者不需登入。
+網頁編輯室：`/editor`。可勾選新聞來源與題材 pool，由 LLM 整理 8–10 篇 shortlist，手選四篇或採用 LLM 組合，再於背景製作三種程度、分齡插圖與六份 PDF。每日台北時間 08:00 自動出刊：提前 30 分鐘採用已儲存的四篇，未選滿時由 LLM 選題。Vercel Workflow 在關閉網頁後仍持續執行，稿件與發布紀錄存進 Supabase。操作與儲存方式見 [WEB_EDITORIAL](docs/WEB_EDITORIAL.md)。`EDITOR_ACTION_SECRET` 用於管理員解鎖；讀者不需登入。
 
-Vercel：<https://daily-digest-wine-two.vercel.app/>。預設直接閱讀最新已發布的四則新聞，可切換小學／國中／高中三版、記錄已讀及下載六份 PDF。**一般訪客不需要登入或 API key。新稿先進入審查頁，核准發布成功後才換首頁。**
+Vercel：<https://daily-digest-wine-two.vercel.app/>。預設直接閱讀最新已發布的四則新聞，可切換小學／國中／高中三版、記錄已讀及下載六份 PDF。**一般訪客不需要登入或 API key。手動生成先進審查頁；每日自動出刊必須通過來源、十二份模型複核、詞彙與六份 PDF 檢查，才更新首頁。**
 
 三版表頭維持使用者已選的字體；單字依程度另選，AI 插畫依讀者年齡調整。當前內容來自 NVIDIA 生成、編輯校稿與模型複核，沒有在開啟網頁時重新生成或寫入資料庫。原始模型回覆與審閱紀錄保留在私有 artifact；可閱讀稿件、原始比較稿、核准圖片與 PDF 隨網站部署，狀態明確區分待審與已發布。來源及待審狀態見 [reading preview](content/reading-preview/README.md)，製作結果見 [FOUR_STORY_TRIAL_RESULT](docs/FOUR_STORY_TRIAL_RESULT.md)。
 
@@ -11,9 +11,9 @@ Vercel：<https://daily-digest-wine-two.vercel.app/>。預設直接閱讀最新�
 
 [出刊審查](https://daily-digest-wine-two.vercel.app/review) · [已出刊日曆](https://daily-digest-wine-two.vercel.app/issues) · [操作流程](docs/PUBLICATION_FLOW.md)
 
-預設 `READING_MODE=public`：首頁讀取最新已發布刊物；第一期發布前保留原試閱刊。新稿先進審查頁，不會自行換首頁。核准目前沿用 GitHub 的發布權限，無須建立 DayDay 帳號。已出刊日曆只標示確實有發布紀錄的日期。
+預設 `READING_MODE=public`：首頁讀取最新已發布刊物；第一期發布前保留原試閱刊。編輯室管理密碼控制手動發布；使用者亦已授權每日自動選題與發布。已出刊日曆只標示確實有發布紀錄的日期。
 
-目前採 Git 版本化刊物與靜態檔案發刊，Vercel 隨 commit 更新；沒有將這個流程當作 Supabase 或自動排程驗收完成。
+日常出刊透過 Vercel 後端與 Supabase，不使用 GitHub Actions 或重新部署來換刊。Git catalog 保留歷史存檔與資料庫不可用時的閱讀備援。
 
 ## 本機閱讀
 

@@ -15,6 +15,8 @@ import {WEB_PREFIX,type DocumentStore} from './web-store';
 import {webGenerationSchema,type WebJob,type WebRelease,type Checkpoint} from './web-types';
 import {learningTermKey} from '../content/vocabulary.mjs';
 import {isLengthReminder} from './readability';
+import {newsRoundKey,type NewsRound} from './news-config';
+import {readNewsArticle,extractNewsFact,NewsEvidenceError} from './news';
 
 export const jobKey=(id:string)=>WEB_PREFIX+'job:'+z.uuid().parse(id);
 export const releaseKey=(date:string)=>WEB_PREFIX+'release:'+z.iso.date().parse(date);
@@ -36,6 +38,12 @@ export async function createWebJob(store:DocumentStore,id:string,raw:unknown){
   if(issueDate>today)throw Error('FUTURE_ISSUE_DATE');
   const choices=sourceChoices(issueDate);
   facts=input.sourceIds.map(id=>{if(!choices.some(s=>s.id===id))throw Error('SOURCE_OUTSIDE_ISSUE_WINDOW');return structuredClone(sourceLibrary.find(s=>s.id===id)!.fact);});
+ }else if(input.kind==='news'){
+  const round=await store.get<NewsRound>(newsRoundKey(input.roundId));
+  if(!round||round.status!=='ready'||round.issueDate!==input.issueDate||input.sourceIds.some(id=>!round.candidates.some(c=>c.id===id)))throw Error('INVALID_NEWS_SELECTION');
+  issueDate=round.issueDate;facts=[];
+  const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+  if(issueDate>today)throw Error('FUTURE_ISSUE_DATE');
  }else{
   const request=input.request;
   if(request.base.kind==='benchmark'&&z.uuid().safeParse(request.base.id).success){
@@ -59,7 +67,11 @@ export async function createWebJob(store:DocumentStore,id:string,raw:unknown){
   const image=packet?.editions.find(i=>i.edition===edition)?.articles.find(a=>a.storyId===fact.story_id)?.image;
   if(image)imageSnapshots[edition+':'+fact.story_id]=structuredClone(image);
  }
- const job:WebJob={version:1,id,createdAt:now,updatedAt:now,issueDate,revision:Math.floor(Date.now()/1000),status:'pending',kind:input.kind,input,facts,context,model,reviewerModel,promptHash:executionHash(prompts),imageSnapshots,checkpoints:{},activeStep:null,lease:null,editions:[],drafts:[],reviews,pdfs:[],error:null,events:[{at:now,message:'已儲存生成要求與來源快照'}],usage:{calls:0,inputTokens:0,outputTokens:0}};
+ const job:WebJob={version:1,id,createdAt:now,updatedAt:now,issueDate,revision:Math.floor(Date.now()/1000),status:'pending',kind:input.kind==='news'?'generate':input.kind,input,facts,context,model,reviewerModel,promptHash:executionHash(prompts),imageSnapshots,checkpoints:{},activeStep:null,lease:null,editions:[],drafts:[],reviews,pdfs:[],error:null,events:[{at:now,message:'已儲存生成要求與來源快照'}],usage:{calls:0,inputTokens:0,outputTokens:0}};
+ if(input.kind==='news'){
+  const round=(await store.get<NewsRound>(newsRoundKey(input.roundId)))!;
+  job.intakeCandidates=input.sourceIds.map(id=>structuredClone(round.candidates.find(c=>c.id===id)!));job.execution='workflow';job.imageStates={};
+ }
  if(!await store.create(jobKey(id),job))return createWebJob(store,id,raw);return job;
 }
 
@@ -101,12 +113,36 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
    if(calls>=maxSteps||calls>0&&Date.now()-batchStarted>=30000)throw new NextStep();calls++;
    const key=hash({task:req.task,system:req.system,data:req.data,model:req.model});
    const target=(req.data as {target?:string})?.target||req.system.match(/Audience edition: ([a-z]+)/)?.[1]||'';
-   job.activeStep=key;event(job,'開始'+(req.task==='review'?'模型複核':(req.data as {glossaryRepair?:boolean})?.glossaryRepair?'修訂學習單字':'寫稿')+(target?' · '+target:''));await saveJob(store,job);
+   job.activeStep=key;event(job,'開始'+(req.task==='facts'?'來源核對':req.task==='review'?'模型複核':(req.data as {glossaryRepair?:boolean})?.glossaryRepair?'修訂學習單字':'寫稿')+(target?' · '+target:''));await saveJob(store,job);
    return live.generateStructured({...req,timeoutMs:45000});
   }};
   const checkpoint=async(key:string,value:Checkpoint)=>{const previous=job.checkpoints[key];if(previous&&previous.outputHash!==value.outputHash)job.checkpoints['archived:'+key+':'+previous.outputHash]=previous;job.checkpoints[key]=value;job.activeStep=null;event(job,'完成 '+key);if(!key.includes(':accepted:'))await saveJob(store,job);};
-  if(!job.editions.length){
-   if(job.input.kind==='generate'){
+  if(job.input.kind==='news'&&job.facts.length<4){
+   const candidate=job.intakeCandidates!.find(c=>!job.facts.some(f=>f.story_id==='news-'+c.id.slice(0,24)))!;
+   const replaceUnavailable=async(code:string)=>{
+    if(job.input.kind!=='news'||!job.input.autoSelect)throw Error(code);
+    job.rejectedNewsIds??=[];job.rejectedNewsIds.push(candidate.id);
+    const round=await store.get<NewsRound>(newsRoundKey(job.input.roundId));
+    const next=round?.candidates.find(c=>!job.intakeCandidates!.some(i=>i.id===c.id)&&!job.rejectedNewsIds!.includes(c.id));
+    if(!next)throw Error('NEWS_POOL_EXHAUSTED');
+    job.intakeCandidates=job.intakeCandidates!.map(c=>c.id===candidate.id?next:c);event(job,'來源不可用，改選 shortlist 中的另一篇 · '+next.title);await saveJob(store,job);
+   };
+   const key='intake:'+candidate.id,cached=job.checkpoints[key];let fact:WebJob['facts'][number];
+   if(cached){if(cached.inputHash!==hash(candidate)||cached.outputHash!==hash(cached.output))throw Error('CHECKPOINT_CHANGED');fact=cached.output as typeof fact;}
+   else{
+    let read:Awaited<ReturnType<typeof readNewsArticle>>;
+    try{read=await readNewsArticle(candidate);}catch{await replaceUnavailable('NEWS_ARTICLE_UNAVAILABLE');return job;}
+    try{fact=await extractNewsFact(candidate,read,provider,job.model);}catch(error){
+     if(!(error instanceof NewsEvidenceError))throw error;
+     await checkpoint('intake-rejected:'+candidate.id,{status:'success',inputHash:hash(candidate),outputHash:hash(error.draft),output:error.draft});
+     await replaceUnavailable('NEWS_EVIDENCE_MISMATCH');return job;
+    }
+    await checkpoint(key,{status:'success',inputHash:hash(candidate),outputHash:hash(fact),output:fact});
+   }
+   if(fact.sensitivity==='high'){await replaceUnavailable('NEWS_SENSITIVE_STORY');return job;}
+   job.facts.push(fact);event(job,'已核對來源 '+job.facts.length+' / 4 · '+candidate.title);await saveJob(store,job);
+  }else if(!job.editions.length){
+   if(job.input.kind!=='regenerate'){
     const result=await produceEditions({facts:job.facts,issueDate:job.issueDate,revision:job.revision,provider,
      writerModel:job.model,reviewerModel:job.reviewerModel,storyCount:4,lengthPolicy:'advisory',direction:job.input.direction,
      store:{get:async key=>job.checkpoints[key],set:async(key,value)=>checkpoint(key,value as Checkpoint)}});
@@ -123,6 +159,14 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
     job.reviews=drafts.flatMap(d=>{const r=d.assessment??job.reviews.find(r=>r.storyId===d.storyId&&r.edition===d.edition);return r?[{...r,storyId:d.storyId,edition:d.edition}]:[];});
    }
    job.editions.forEach(i=>editionSchema.parse(i));event(job,'三版稿件已儲存，開始製作 PDF');await saveJob(store,job);
+  }else if(job.input.kind==='news'&&job.input.imageGeneration&&Object.keys(job.imageStates??{}).length<12){
+   const slot=editionKeys.flatMap(edition=>job.facts.map(fact=>({edition,fact,key:edition+':'+fact.story_id}))).find(s=>!job.imageStates?.[s.key])!;
+   job.imageStates??={};job.imageStates[slot.key]='running';event(job,'開始配圖 · '+slot.edition+' · '+slot.fact.story_id);await saveJob(store,job);
+   try{
+    const image=await (await import('./web-images')).generateWebImage(store,job,slot.edition,slot.fact);
+    job.imageSnapshots[slot.key]=image;job.editions.find(i=>i.edition===slot.edition)!.articles.find(a=>a.storyId===slot.fact.story_id)!.image=image;job.imageStates[slot.key]='done';event(job,'完成配圖 · '+slot.edition);
+   }catch(error){job.imageStates[slot.key]='failed';event(job,'配圖暫不可用，保留分類圖示 · '+slot.edition);console.warn('news_image_failed',{jobId:id,code:error instanceof Error&&/^[A-Z_0-9]+$/.test(error.message)?error.message:'IMAGE_FAILED'});}
+   await saveJob(store,job);
   }else{
    const edition=editionKeys.find(e=>job.pdfs.filter(p=>p.edition===e).length!==2);
    if(edition){
@@ -149,14 +193,14 @@ export function canPublishWebJob(job:WebJob){
  }
  return job.reviews.every(r=>r.factual_status==='pass'&&r.level_fit==='suitable'&&r.suitability==='pass'&&r.publish_recommendation==='pass'&&!r.issues.some(i=>i.severity!=='minor'));
 }
-export async function publishWebJob(store:DocumentStore,id:string,fingerprint:string,reviewed:boolean,publication?:{pdfs:WebJob['pdfs'];releasedAt:string}){
+export async function publishWebJob(store:DocumentStore,id:string,fingerprint:string,reviewed:boolean,publication?:{pdfs:WebJob['pdfs'];releasedAt:string;approvalMethod?:'scheduled_auto'}){
  const job=await store.get<WebJob>(jobKey(id));if(!job)throw Error('NOT_FOUND');
  if(!reviewed||jobFingerprint(job)!==fingerprint)throw Error('REVIEW_VERSION_CHANGED');
  if(!canPublishWebJob(job))throw Error('PUBLICATION_CHECKS_FAILED');
  const key=releaseKey(job.issueDate),old=await store.get<WebRelease>(key);
  if(old?.jobId===id)return old;
  if(old&&old.createdAt>=job.createdAt)throw Error('NEWER_ISSUE_ALREADY_RELEASED');
- const releasedAt=publication?.releasedAt??new Date().toISOString(),release:WebRelease={version:(old?.version??0)+1,jobId:id,fingerprint,issueDate:job.issueDate,createdAt:job.createdAt,releasedAt,approvalMethod:'web_manual',editions:job.editions.map(i=>({...i,reviewCopy:false,publishedAt:releasedAt})),pdfs:publication?.pdfs??job.pdfs};
+ const releasedAt=publication?.releasedAt??new Date().toISOString(),release:WebRelease={version:(old?.version??0)+1,jobId:id,fingerprint,issueDate:job.issueDate,createdAt:job.createdAt,releasedAt,approvalMethod:publication?.approvalMethod??'web_manual',editions:job.editions.map(i=>({...i,reviewCopy:false,publishedAt:releasedAt})),pdfs:publication?.pdfs??job.pdfs};
  if(!(old?await store.compare(key,old.version,release):await store.create(key,release)))throw Error('PUBLICATION_CONFLICT');
  return release;
 }

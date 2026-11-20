@@ -8,3 +8,5 @@ output/
 .runtime/
 *.tsbuildinfo
 .vercel
+/.swc
+.workflow-data/

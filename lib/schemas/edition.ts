@@ -21,7 +21,7 @@ export const articleSchema = z.object({
       width:z.number().int().positive().max(1200),height:z.number().int().positive().max(1200)}).strict().optional(),
     focalPoint:z.object({x:z.number().min(0).max(100),y:z.number().min(0).max(100)}).strict().optional(),
   }).strict(),
-  sources: z.array(z.object({ publisher: z.string().min(1), url: httpsUrl, publishedAt: z.iso.datetime(),publishedAtPrecision:z.enum(['date','datetime','month']).optional() }).strict()).min(1),
+  sources: z.array(z.object({ publisher: z.string().min(1), url: httpsUrl, publishedAt: z.iso.datetime(),publishedAtPrecision:z.enum(['date','datetime','month']).optional(),author:z.string().optional(),licenseUrl:httpsUrl.optional(),adapted:z.boolean().optional() }).strict()).min(1),
   eventDate: z.iso.date().nullable(), correctionNote: z.string().optional(),
   updateNote: z.string().min(1).max(300).optional(),
 }).strict();

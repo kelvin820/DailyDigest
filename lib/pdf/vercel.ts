@@ -44,13 +44,18 @@ export async function renderWebPdfs(job:WebJob,edition:Edition,upload?:(path:str
         return route.fulfill({body:await file(resolve('public/fonts',name)),contentType:'font/ttf'});
        }
        if(/^\/preview-issues\/[a-zA-Z0-9/_.-]+\.(?:jpg|webp)$/.test(asset))return route.fulfill({body:await file(resolve('public','.'+asset)),contentType:asset.endsWith('.jpg')?'image/jpeg':'image/webp'});
+       const stored=asset.match(/^\/api\/editorial\/assets\/([a-f0-9]{64})\/(web|print)$/);
+       if(stored){const path=`web-assets/${stored[1]}-${stored[2]==='web'?'web.webp':'print.jpg'}`;
+        if(!assets.has(path))assets.set(path,(async()=>{const {data,error}=await serviceDatabase().storage.from('issue-files').download(path);if(error||!data)throw Error('IMAGE_STORAGE_FAILED');return Buffer.from(await data.arrayBuffer());})());
+        return route.fulfill({body:await assets.get(path)!,contentType:stored[2]==='web'?'image/webp':'image/jpeg'});
+       }
       }catch{/* Failed assets are rejected by print checks. */}
       return route.abort();
      });
      stage='LAYOUT';
      await page.setContent('<!doctype html><html lang="zh-Hant"><head><base href="'+origin+'/"><meta charset="utf-8"><style>'+css+'</style></head><body>'+renderPrint(issue,mode)+'</body></html>',{waitUntil:'load'});
      await checkPrintLayout(page,editions[edition].minPrintSize,4);
-     stage='OUTPUT';return await page.pdf({format:'A4',printBackground:true,preferCSSPageSize:true,...printPdfOptions(issue)});
+     stage='OUTPUT';return await page.pdf({format:'A4',printBackground:true,preferCSSPageSize:true,...printPdfOptions(issue,mode)});
     }finally{await context.close().catch(()=>{});}
    },attempt=>console.warn('pdf_browser_retry',{jobId:job.id,edition,mode,attempt}));
    const pages=(await PDFDocument.load(bytes)).getPageCount();if(pages<1||bytes.length>4_000_000)throw Error('PDF_SIZE_OR_PAGES');

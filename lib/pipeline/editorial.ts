@@ -106,7 +106,7 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
           bodyParagraphs: data.body_paragraphs, wordCount: s.count, vocabulary: data.vocabulary,
           image: { assetId: fact.primary_category, alt: fact.primary_category + ' category illustration',
             caption: 'Original category illustration', kind: 'icon', credit: 'DayDay original artwork' },
-          sources: fact.sources.map(source => ({ publisher: source.publisher, url: source.url, publishedAt: source.published_at })),
+          sources: fact.sources.map(source => ({ publisher: source.publisher, url: source.url, publishedAt: source.published_at,...(source.adapted?{author:source.author,licenseUrl:source.license_url,adapted:true}:{}) })),
           eventDate: fact.event_date,...(fact.update_reason?{updateNote:fact.update_reason}:{}) });
         const reviewed = await cachedStep(store, `${fact.story_id}:${edition}:review:${attempt}`,
           { fact, article, target: c.cefr, stats: s, model: reviewerModel, promptVersion: 'reviewer.v1', prompt: reviewPrompt, provider: provider.cacheIdentity },
