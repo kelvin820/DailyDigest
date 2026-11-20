@@ -17,6 +17,7 @@ import {learningTermKey} from '../content/vocabulary.mjs';
 import {isLengthReminder} from './readability';
 import {newsRoundKey,type NewsRound} from './news-config';
 import {readNewsArticle,extractNewsFact,NewsEvidenceError} from './news';
+import {authorizedBackfill} from './backfill';
 
 export const jobKey=(id:string)=>WEB_PREFIX+'job:'+z.uuid().parse(id);
 export const releaseKey=(date:string)=>WEB_PREFIX+'release:'+z.iso.date().parse(date);
@@ -39,6 +40,7 @@ export async function createWebJob(store:DocumentStore,id:string,raw:unknown){
   const choices=sourceChoices(issueDate);
   facts=input.sourceIds.map(id=>{if(!choices.some(s=>s.id===id))throw Error('SOURCE_OUTSIDE_ISSUE_WINDOW');return structuredClone(sourceLibrary.find(s=>s.id===id)!.fact);});
  }else if(input.kind==='news'){
+  if(input.campaignId)await authorizedBackfill(store,input.campaignId,input.issueDate);
   const round=await store.get<NewsRound>(newsRoundKey(input.roundId));
   if(!round||round.status!=='ready'||round.issueDate!==input.issueDate||input.sourceIds.some(id=>!round.candidates.some(c=>c.id===id)))throw Error('INVALID_NEWS_SELECTION');
   issueDate=round.issueDate;facts=[];
@@ -70,7 +72,7 @@ export async function createWebJob(store:DocumentStore,id:string,raw:unknown){
  const job:WebJob={version:1,id,createdAt:now,updatedAt:now,issueDate,revision:Math.floor(Date.now()/1000),status:'pending',kind:input.kind==='news'?'generate':input.kind,input,facts,context,model,reviewerModel,promptHash:executionHash(prompts),imageSnapshots,checkpoints:{},activeStep:null,lease:null,editions:[],drafts:[],reviews,pdfs:[],error:null,events:[{at:now,message:'已儲存生成要求與來源快照'}],usage:{calls:0,inputTokens:0,outputTokens:0}};
  if(input.kind==='news'){
   const round=(await store.get<NewsRound>(newsRoundKey(input.roundId)))!;
-  job.intakeCandidates=input.sourceIds.map(id=>structuredClone(round.candidates.find(c=>c.id===id)!));job.execution='workflow';job.imageStates={};
+  job.intakeCandidates=input.sourceIds.map(id=>structuredClone(round.candidates.find(c=>c.id===id)!));job.execution='workflow';job.imageStates={};if(input.campaignId)job.campaignId=input.campaignId;
  }
  if(!await store.create(jobKey(id),job))return createWebJob(store,id,raw);return job;
 }
@@ -107,7 +109,7 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
   if(job.activeStep)throw Error('USAGE_RECONCILIATION_REQUIRED');
   const prompts=await promptFiles();if(!job.editions.length&&executionHash(prompts)!==job.promptHash)throw Error('GENERATION_PROMPTS_CHANGED');
   let calls=0;const batchStarted=Date.now(),maxSteps=Math.max(1,Math.min(3,options.maxModelSteps??1));
-  const budget=webBudget(store,id,async(input,output)=>{job.usage.calls++;job.usage.inputTokens+=input;job.usage.outputTokens+=output;});
+  const budget=webBudget(store,id,async(input,output)=>{job.usage.calls++;job.usage.inputTokens+=input;job.usage.outputTokens+=output;},undefined,job.campaignId?{id:job.campaignId,issueDate:job.issueDate}:undefined);
   const live=options.provider??new NvidiaProvider(process.env.LLM_API_KEY?.trim()||'',budget);
   const provider:TextModelProvider={cacheIdentity:'vercel-web-v1',async generateStructured<T>(req:GenerationRequest<T>){
    if(calls>=maxSteps||calls>0&&Date.now()-batchStarted>=30000)throw new NextStep();calls++;
@@ -132,6 +134,7 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
    else{
     let read:Awaited<ReturnType<typeof readNewsArticle>>;
     try{read=await readNewsArticle(candidate);}catch{await replaceUnavailable('NEWS_ARTICLE_UNAVAILABLE');return job;}
+    if(job.campaignId){const grant=await authorizedBackfill(store,job.campaignId,job.issueDate),end=Date.parse(job.issueDate+'T23:59:59.999+08:00'),start=Math.max(end-2*86400000+1,Date.parse(grant.dates[0]+'T00:00:00+08:00')),at=Date.parse(read.publishedAt||candidate.publishedAt);if(at<start||at>end||read.modifiedAt&&Date.parse(read.modifiedAt)>end){await replaceUnavailable('HISTORICAL_SOURCE_CHANGED');return job;}}
     try{fact=await extractNewsFact(candidate,read,provider,job.model);}catch(error){
      if(!(error instanceof NewsEvidenceError))throw error;
      await checkpoint('intake-rejected:'+candidate.id,{status:'success',inputHash:hash(candidate),outputHash:hash(error.draft),output:error.draft});

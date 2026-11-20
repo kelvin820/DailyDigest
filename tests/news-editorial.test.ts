@@ -9,6 +9,9 @@ import type {WebJob,WebRelease} from '../lib/editorial/web-types';
 import type {DocumentStore} from '../lib/editorial/web-store';
 import type {TextModelProvider} from '../lib/providers/text';
 import {publicationCatalog} from '../lib/publications/catalog';
+import {createBackfill,previousSevenDays,campaignKey,type BackfillCampaign} from '../lib/editorial/backfill';
+import {webBudget} from '../lib/editorial/web-budget';
+import {parseGuardianArchive,articleDates} from '../lib/editorial/news-archive';
 class Memory implements DocumentStore{
  rows=new Map<string,unknown>();
  async get<T>(key:string){return structuredClone(this.rows.get(key)??null) as T|null;}
@@ -71,4 +74,21 @@ test('automatic release requires the exact generated version and all reviews, is
  job.reviews[0].factual_status='pass';store.rows.set(jobKey(id),job);
  const release=await publishScheduledJob(store,id,publication);assert.equal(release.approvalMethod,'scheduled_auto');assert.ok(release.editions.every(i=>!i.reviewCopy&&i.publishedAt));
  assert.equal((await publishScheduledJob(store,id,publication)).releasedAt,release.releasedAt);assert.equal((await store.get<WebRelease>(releaseKey(job.issueDate)))!.jobId,id);
+});
+test('historical week uses the seven previous Taipei dates and grants cannot raise the normal daily budget',async()=>{
+ assert.deepEqual(previousSevenDays('2026-11-20'),['2026-11-13','2026-11-14','2026-11-15','2026-11-16','2026-11-17','2026-11-18','2026-11-19']);
+ const store=new Memory(),id=randomUUID(),grant=await createBackfill(store,id,'2026-11-20');assert.equal(grant.dates.length,7);
+ await assert.rejects(()=>createBackfill(store,randomUUID(),'2026-11-20'),/BACKFILL_ALREADY_EXISTS/);
+ const old=process.env.MAX_MODEL_CALLS;process.env.MAX_MODEL_CALLS='1';
+ try{
+  const normal=webBudget(store,'normal',async()=>{}),ticket=await normal.reserve(1,1);await normal.settle(ticket,{input_tokens:1,output_tokens:1});await assert.rejects(async()=>await normal.reserve(1,1),/BUDGET_EXCEEDED/);
+  const scoped=webBudget(store,'historical',async()=>{},undefined,{id,issueDate:'2026-11-13'});for(let i=0;i<2;i++){const t=await scoped.reserve(1,1);await scoped.settle(t,{input_tokens:1,output_tokens:1});}
+  await assert.rejects(async()=>await webBudget(store,'foreign-date',async()=>{},undefined,{id,issueDate:'2026-11-20'}).reserve(1,1),/BACKFILL_NOT_AUTHORIZED/);
+  grant.status='complete';store.rows.set(campaignKey(id),grant);await assert.rejects(async()=>await scoped.reserve(1,1),/BACKFILL_NOT_AUTHORIZED/);
+ }finally{if(old===undefined)delete process.env.MAX_MODEL_CALLS;else process.env.MAX_MODEL_CALLS=old;}
+});
+test('archive extraction keeps actual publication/modification metadata and rejects off-domain archive links',()=>{
+ const card=(url:string)=>'<div class="fc-item"><h3 class="fc-item__title"><a href="'+url+'">A discovery</a></h3><div class="fc-item__standfirst">Verified details</div></div>';
+ const cards=parseGuardianArchive(card('https://www.theguardian.com/science/2026/nov/13/discovery')+card('https://evil.example/science/2026/nov/13/discovery'),'2026-11-13','guardian-discovery','science');assert.equal(cards.length,1);
+ const dates=articleDates('<meta property="article:published_time" content="2026-11-13T10:00:00Z"><meta property="article:modified_time" content="2026-11-14T10:00:00Z">');assert.equal(dates.publishedAt,'2026-11-13T10:00:00.000Z');assert.equal(dates.modifiedAt,'2026-11-14T10:00:00.000Z');
 });

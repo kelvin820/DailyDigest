@@ -1,5 +1,5 @@
 import {sleep} from 'workflow';
-import {advanceEditionStep,loadDailyStep,prepareDailyStep,recordDailyFailureStep,publicationStep,publishDailyStep} from './steps';
+import {advanceEditionStep,loadDailyStep,prepareDailyStep,recordDailyFailureStep,publicationStep,publishDailyStep,loadBackfillStep,prepareBackfillStep,reportBackfillStep,finishBackfillStep} from './steps';
 
 export async function generateEditionWorkflow(id:string){
  'use workflow';
@@ -23,4 +23,17 @@ export async function dailyEditionWorkflow(date:string){
   await sleep(new Date(plan.publishAt));
   await publishDailyStep(selected.id,publication);return {status:'published',id:selected.id};
  }catch(error){await recordDailyFailureStep(date,error instanceof Error?error.message:'DAILY_PUBLICATION_FAILED');throw error;}
+}
+export async function backfillWeekWorkflow(campaignId:string){
+ 'use workflow';
+ const dates=await loadBackfillStep(campaignId);
+ // One issue at a time keeps shared provider rate limits and spending bounded.
+ for(const date of dates){
+  try{
+   const id=await prepareBackfillStep(campaignId,date),state=await generateEditionWorkflow(id);
+   if(state.status!=='needs_review'){await reportBackfillStep(campaignId,date,state.error||'GENERATION_INCOMPLETE');continue;}
+   const publication=await publicationStep(id);await publishDailyStep(id,publication);await reportBackfillStep(campaignId,date);
+  }catch(e){await reportBackfillStep(campaignId,date,e instanceof Error?e.message:'BACKFILL_FAILED');}
+ }
+ return (await finishBackfillStep(campaignId)).status;
 }

@@ -7,13 +7,15 @@ import {changeDocument,serviceDatabase,WEB_PREFIX,type DocumentStore} from './we
 import type {WebJob,WebFact} from './web-types';
 import type {ArticleView} from '../schemas/edition';
 import {taipeiDate} from '../content/metrics';
+import {authorizedBackfill} from './backfill';
 export const webAssetKey=(id:string)=>{if(!/^[a-f0-9]{64}$/.test(id))throw Error('INVALID_ASSET');return WEB_PREFIX+'asset:'+id;};
 export type WebAsset={version:number;jobId:string;id:string;webPath:string;printPath:string;image:ArticleView['image'];prompt:string;model:string;createdAt:string};
 export async function generateWebImage(store:DocumentStore,job:WebJob,edition:Edition,fact:WebFact){
  const day=taipeiDate(),slot=job.id+':'+edition+':'+fact.story_id;
- await changeDocument<{version:number;slots:string[]}>(store,WEB_PREFIX+'image-budget:'+day,()=>({version:0,slots:[]}),v=>{
+ const grant=job.campaignId?await authorizedBackfill(store,job.campaignId,job.issueDate):null;
+ await changeDocument<{version:number;slots:string[]}>(store,WEB_PREFIX+'image-budget:'+(job.campaignId?'backfill:'+job.campaignId:day),()=>({version:0,slots:[]}),v=>{
   if(v.slots.includes(slot))throw Error('IMAGE_ALREADY_ATTEMPTED');
-  const limit=Number(process.env.MAX_IMAGE_CALLS_PER_DAY)||16;if(v.slots.length>=limit)throw Error('IMAGE_BUDGET_EXCEEDED');v.slots.push(slot);
+  const limit=grant?.limits.images??(Number(process.env.MAX_IMAGE_CALLS_PER_DAY)||16);if(v.slots.length>=limit)throw Error('IMAGE_BUDGET_EXCEEDED');v.slots.push(slot);
  });
  const prompt=audienceConceptPrompt('Create a wide landscape conceptual editorial illustration for this factual story. Illustrate its central subject simply, without adding factual claims. '+fact.claims.filter(c=>c.must_keep).map(c=>c.text).join(' '),edition);
  const result=await generateNvidiaImage(process.env.NVIDIA_IMAGE_API_KEY?.trim()||process.env.LLM_API_KEY?.trim()||'',{prompt});

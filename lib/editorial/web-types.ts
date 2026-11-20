@@ -8,7 +8,7 @@ import type {NewsCandidate} from './news-config';
 
 export const webGenerationSchema=z.discriminatedUnion('kind',[
  z.object({kind:z.literal('generate'),issueDate:z.iso.date(),sourceIds:z.array(z.string().min(1).max(100)).length(4).refine(v=>new Set(v).size===4),direction:z.string().trim().max(1200).default('')}).strict(),
- z.object({kind:z.literal('news'),issueDate:z.iso.date(),roundId:z.uuid(),sourceIds:z.array(z.string().min(1).max(100)).length(4).refine(v=>new Set(v).size===4),direction:z.string().trim().max(1200).default(''),imageGeneration:z.boolean().default(true),autoSelect:z.boolean().default(false)}).strict(),
+ z.object({kind:z.literal('news'),issueDate:z.iso.date(),roundId:z.uuid(),sourceIds:z.array(z.string().min(1).max(100)).length(4).refine(v=>new Set(v).size===4),direction:z.string().trim().max(1200).default(''),imageGeneration:z.boolean().default(true),autoSelect:z.boolean().default(false),campaignId:z.uuid().optional()}).strict(),
  z.object({kind:z.literal('regenerate'),request:regenerationRequestSchema}).strict(),
 ]);
 export type WebGenerationInput=z.infer<typeof webGenerationSchema>;
@@ -24,5 +24,6 @@ export type WebJob={version:number;id:string;createdAt:string;updatedAt:string;i
  error:string|null;events:{at:string;message:string}[];usage:{calls:number;inputTokens:number;outputTokens:number};
  intakeCandidates?:NewsCandidate[];execution?:'workflow';workflowRunId?:string;
  imageStates?:Record<string,'running'|'done'|'failed'>;rejectedNewsIds?:string[];
+ campaignId?:string;
 };
 export type WebRelease={version:number;jobId:string;fingerprint:string;issueDate:string;createdAt:string;releasedAt:string;approvalMethod:'web_manual'|'scheduled_auto';editions:EditionView[];pdfs:WebPdf[]};
