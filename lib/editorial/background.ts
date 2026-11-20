@@ -10,7 +10,7 @@ export async function startEdition(store:DocumentStore,id:string){
  await store.create(WEB_PREFIX+'workflow:job:'+id,{version:1,runId});return runId;
 }
 export async function startDaily(store:DocumentStore,date:string){
- let runId:string;try{runId=(await start(dailyEditionWorkflow,[date],{experimental_hook:{token:'dayday:daily:'+date,experimental_minRetention:'7 days'}})).runId;}
+ let runId:string;try{runId=(await start(dailyEditionWorkflow,[date],{experimental_hook:{token:'dayday:daily:grid-rows-v2:'+date,experimental_minRetention:'7 days'}})).runId;}
  catch(e){if(!HookConflictError.is(e)||!e.conflictingRunId)throw e;runId=e.conflictingRunId;}
  await changeDocument<NewsPlan>(store,newsPlanKey(date),()=>emptyNewsPlan(date),p=>{p.runId=runId;p.updatedAt=new Date().toISOString();});return runId;
 }
