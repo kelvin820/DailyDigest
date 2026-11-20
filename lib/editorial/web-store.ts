@@ -9,6 +9,12 @@ export interface DocumentStore {
  compare<T extends {version:number}>(key:string,version:number,value:T):Promise<boolean>;
  list<T>(prefix:string):Promise<T[]>;
 }
+function databaseError(error:{code?:string;message?:string},status?:number){
+ if(status===401||status===403||['PGRST301','PGRST302','42501'].includes(error.code||''))return Error('DATABASE_AUTH_FAILED');
+ if(['PGRST205','42P01','42703'].includes(error.code||''))return Error('DATABASE_SCHEMA_MISSING');
+ if(status===0||/fetch failed|network|timeout/i.test(error.message||''))return Error('DATABASE_UNREACHABLE');
+ return Error('DATABASE_READ_FAILED');
+}
 export function databaseConfigured(){return !!(process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()&&process.env.SUPABASE_SERVICE_ROLE_KEY?.trim());}
 export function serviceDatabase(){
  const url=process.env.NEXT_PUBLIC_SUPABASE_URL?.trim(),key=process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
@@ -19,10 +25,10 @@ export function documentStore():DocumentStore {
  const db=serviceDatabase();
  function checked(key:string){if(!key.startsWith(WEB_PREFIX))throw Error('INVALID_DOCUMENT_NAMESPACE');return key;}
  return {
-  async get<T>(key:string){const {data,error}=await db.from('app_settings').select('value').eq('key',checked(key)).maybeSingle();if(error)throw Error('DATABASE_READ_FAILED');return data?.value as T??null;},
+  async get<T>(key:string){const {data,error,status}=await db.from('app_settings').select('value').eq('key',checked(key)).maybeSingle();if(error)throw databaseError(error,status);return data?.value as T??null;},
   async create(key,value){const {error}=await db.from('app_settings').insert({key:checked(key),value});if(error?.code==='23505')return false;if(error)throw Error('DATABASE_WRITE_FAILED');return true;},
   async compare(key,version,value){const {data,error}=await db.from('app_settings').update({value,updated_at:new Date().toISOString()}).eq('key',checked(key)).eq('value->>version',String(version)).select('key');if(error)throw Error('DATABASE_WRITE_FAILED');return !!data?.length;},
-  async list<T>(prefix:string){const {data,error}=await db.from('app_settings').select('value').like('key',checked(prefix)+'%').order('key').limit(1000);if(error)throw Error('DATABASE_READ_FAILED');return (data||[]).map(row=>row.value as T);},
+  async list<T>(prefix:string){const {data,error,status}=await db.from('app_settings').select('value').like('key',checked(prefix)+'%').order('key').limit(1000);if(error)throw databaseError(error,status);return (data||[]).map(row=>row.value as T);},
  };
 }
 export async function changeDocument<T extends {version:number}>(store:DocumentStore,key:string,initial:()=>T,change:(value:T)=>void):Promise<T>{

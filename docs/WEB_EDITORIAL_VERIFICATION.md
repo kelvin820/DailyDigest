@@ -15,3 +15,5 @@
 ## 線上驗證界線
 
 部署前舊版 `/api/editorial/status` 已確認 NVIDIA key 與 Supabase service key 存在；使用者後續回報已設定 `EDITOR_ACTION_SECRET`。新版本的 `databaseConnected` 會實際讀取既有文件表以驗證連線。正式編輯室解鎖與真實生成需在新部署上驗收；本頁不記錄管理密碼、API key 或 cookie。
+
+首次正式部署 `26abe78` 已成功，GitHub CI run `44647877802` 全部通過，包含新增網頁端到端測試。正式站編輯室回傳 200、NVIDIA／管理密碼變數存在；實際資料庫檢查回報 `databaseConnected=false`，因此不能宣稱正式生成與存檔已驗收。後續增加不含憑證的分類診斷，並在資料庫故障時保留公開閱讀的 Git 存檔。
