@@ -6,6 +6,7 @@ import serverChromium from '@sparticuz/chromium';
 import {PDFDocument} from 'pdf-lib';
 import {renderPrint} from '../render.mjs';
 import {checkPrintLayout} from './print-checks.mjs';
+import {printPdfOptions} from './options.mjs';
 import {recoverClosedBrowser} from './browser-retry';
 import {editions,type Edition} from '../../config/editions';
 import {serviceDatabase} from '../editorial/web-store';
@@ -49,7 +50,7 @@ export async function renderWebPdfs(job:WebJob,edition:Edition,upload?:(path:str
      stage='LAYOUT';
      await page.setContent('<!doctype html><html lang="zh-Hant"><head><base href="'+origin+'/"><meta charset="utf-8"><style>'+css+'</style></head><body>'+renderPrint(issue,mode)+'</body></html>',{waitUntil:'load'});
      await checkPrintLayout(page,editions[edition].minPrintSize,4);
-     stage='OUTPUT';return await page.pdf({format:'A4',printBackground:true,preferCSSPageSize:true});
+     stage='OUTPUT';return await page.pdf({format:'A4',printBackground:true,preferCSSPageSize:true,...printPdfOptions(issue)});
     }finally{await context.close().catch(()=>{});}
    },attempt=>console.warn('pdf_browser_retry',{jobId:job.id,edition,mode,attempt}));
    const pages=(await PDFDocument.load(bytes)).getPageCount();if(pages<1||bytes.length>4_000_000)throw Error('PDF_SIZE_OR_PAGES');

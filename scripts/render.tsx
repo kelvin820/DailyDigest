@@ -12,6 +12,7 @@ import { editionSchema, type EditionView } from '../lib/schemas/edition';
 import { hash } from '../lib/pipeline/state.mjs';
 import { localServer } from '../lib/pdf/local-server.mjs';
 import { checkPrintLayout } from '../lib/pdf/print-checks.mjs';
+import { printPdfOptions } from '../lib/pdf/options.mjs';
 
 export async function renderIssues(issues: EditionView[], outDir: string, options:{allowUncalibratedReviewDraft?:boolean}={}) {
   if (issues.length !== 3 || new Set(issues.map(p => p.edition)).size !== 3) throw Error('THREE_EDITIONS_REQUIRED');
@@ -46,7 +47,7 @@ export async function renderIssues(issues: EditionView[], outDir: string, option
         await page.goto(`${server.origin}/${name}.html`);
         const layout = await checkPrintLayout(page, editions[issue.edition].minPrintSize, issue.storyCount ?? 8);
         const path = resolve(outDir, name + '.pdf');
-        const pdf = await page.pdf({ path, format: 'A4', printBackground: true, preferCSSPageSize: true });
+        const pdf = await page.pdf({ path, format: 'A4', printBackground: true, preferCSSPageSize: true,...printPdfOptions(issue) });
         const pages=(await PDFDocument.load(pdf)).getPageCount();if(pages<1)throw Error('PDF_PAGE_COUNT');
         results.push({ edition: issue.edition, mode, pages, pagination:issue.storyCount===4?'natural':'fixed',qualityValidated:quality[issues.indexOf(issue)], noOverflow: true,
           textVerified: false, fontsEmbedded: false, revision: issue.revision,

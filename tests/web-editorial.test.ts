@@ -8,6 +8,7 @@ import type {WebJob} from '../lib/editorial/web-types';
 import type {TextModelProvider,GenerationRequest} from '../lib/providers/text';
 import {publicationCatalog} from '../lib/publications/catalog';
 import {sourceLibrary} from '../lib/editorial/library';
+import {rebuildDraftPdfs,refreshApprovedPdfs} from '../lib/editorial/pdf-layout-refresh';
 
 class MemoryStore implements DocumentStore {
  rows=new Map<string,unknown>();
@@ -20,6 +21,20 @@ const base=publicationCatalog.packets.find(p=>p.id==='2026-11-19-r5')!;
 const request=()=>({kind:'regenerate',request:{version:1,base:{kind:'packet',id:base.id,fingerprint:base.fingerprint},storyId:base.facts[0].story_id,mode:'rewrite',category:base.facts[0].primary_category,editions:['junior'],direction:'保留真實來源，讓敘事清楚。'}});
 function testProvider(){let calls=0;const provider:TextModelProvider={async generateStructured<T>(r:GenerationRequest<T>){calls++;const old=base.editions.find(i=>i.edition==='junior')!.articles[0];const output=r.task==='review'?{factual_status:'pass',level_fit:'suitable',suitability:'pass',issues:[],publish_recommendation:'pass',readership:{interest:4,information:4,readability:4,reason:'Synthetic test',suggestion:''}}:{headline:'A Saved Review Draft',body_paragraphs:old.bodyParagraphs,vocabulary:old.vocabulary,used_claim_ids:base.facts[0].claims.filter(c=>c.must_keep).map(c=>c.claim_id),omitted_optional_claim_ids:[],editorial_flags:[]};return {data:r.schema.parse(output),usage:{input_tokens:1,output_tokens:1}};}};return{provider,count:()=>calls};}
 const render:NonNullable<Parameters<typeof advanceWebJob>[2]>['render']=async(job,edition)=>['color','ink'].map(mode=>({path:`web-editorial/${job.id}/${edition}-${mode}.pdf`,edition,mode:mode as 'color'|'ink',pages:2,sha256:'a'.repeat(64)}));
+
+test('layout refresh preserves paid text and approved publication, and refuses changed text',async()=>{
+ const store=new MemoryStore(),id=randomUUID();await importReviewPacket(store,id,base.id,base.fingerprint);
+ for(let i=0;i<3;i++)await advanceWebJob(store,id,{render});
+ const original=(await store.get<WebJob>(jobKey(id)))!,oldRelease=await publishWebJob(store,id,jobFingerprint(original),true);
+ const restarted=await rebuildDraftPdfs(store,id);assert.equal(restarted.pdfs.length,0);assert.deepEqual(restarted.editions,original.editions);assert.deepEqual(restarted.usage,original.usage);
+ let rendered=0;const finalRender=async(job:WebJob,edition:'elementary'|'junior'|'senior',folder:string)=>{rendered++;return (await render!(job,edition)).map(p=>({...p,path:`web-editorial/${job.id}/${folder}/${edition}-${p.mode}.pdf`}));};
+ await assert.rejects(()=>refreshApprovedPdfs(store,id,finalRender),/PUBLICATION_CONFLICT/);
+ for(let i=0;i<3;i++)await advanceWebJob(store,id,{render:async(j,e)=>(await render!(j,e)).map(p=>({...p,sha256:'b'.repeat(64)}))});
+ const release=await refreshApprovedPdfs(store,id,finalRender);assert.equal(rendered,3);assert.deepEqual(release.editions,oldRelease.editions);assert.equal(release.releasedAt,oldRelease.releasedAt);assert.equal(release.version,oldRelease.version+1);assert.ok(release.pdfs.every(p=>p.path.includes('/published-')));
+ await refreshApprovedPdfs(store,id,finalRender);assert.equal(rendered,3);
+ const changed=(await store.get<WebJob>(jobKey(id)))!;changed.editions[0].articles[0].headline+=' changed';store.rows.set(jobKey(id),changed);
+ await assert.rejects(()=>refreshApprovedPdfs(store,id,finalRender),/REVIEW_VERSION_CHANGED/);assert.equal(rendered,3);
+});
 
 test('PDF recovery preserves paid model results and refuses jobs with unknown model usage',async()=>{
  process.env.LLM_API_KEY='synthetic-key';const store=new MemoryStore(),id=randomUUID(),api=testProvider();

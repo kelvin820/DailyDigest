@@ -59,3 +59,10 @@
 
 /* Allocate the whole sheet to four story areas; each keeps its own whitespace. */
 .flow-print .flow-page{display:flex;flex-direction:column}.flow-print .print-head{flex-shrink:0}.flow-print.four-stories .print-grid{flex:1;grid-template-rows:repeat(2,minmax(min-content,1fr))}
+
+/* Match the reader: headline, full-column image, then body text. */
+.flow-print.four-stories .print-article figure{float:none;clear:both;width:100%;margin:0 0 1mm}.flow-print.four-stories .print-article figure svg,.flow-print.four-stories .print-article .asset-visual img{display:block;width:100%;height:22mm;object-fit:cover}.flow-print.four-stories .print-article .body-copy{clear:both;line-height:1.16}.flow-print .print-article{padding-top:2mm;padding-bottom:2mm}.flow-print .print-article h2{font-size:14.5pt;margin:1mm 0}.flow-print.elementary .print-article .body-copy{font-size:13pt}.flow-print.junior .print-article .body-copy{font-size:12pt}.flow-print.senior .print-article .body-copy{font-size:11pt}
+
+/* Reserve a real page footer, with counters supplied by the PDF renderer. */
+.flow-print .print-foot{flex-shrink:0}
+@media print{.flow-print .flow-page{min-height:289mm;padding-bottom:0}.flow-print .print-foot{display:none}}
