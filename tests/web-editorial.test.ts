@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
-import {createWebJob,advanceWebJob,jobKey,jobFingerprint,canPublishWebJob,publishWebJob,releaseKey} from '../lib/editorial/web-jobs';
+import {createWebJob,advanceWebJob,retryWebPdfs,importReviewPacket,jobKey,jobFingerprint,canPublishWebJob,publishWebJob,releaseKey} from '../lib/editorial/web-jobs';
 import {changeDocument,type DocumentStore,WEB_PREFIX} from '../lib/editorial/web-store';
 import {webBudget} from '../lib/editorial/web-budget';
 import type {WebJob} from '../lib/editorial/web-types';
@@ -20,6 +20,27 @@ const base=publicationCatalog.packets.find(p=>p.id==='2026-11-19-r5')!;
 const request=()=>({kind:'regenerate',request:{version:1,base:{kind:'packet',id:base.id,fingerprint:base.fingerprint},storyId:base.facts[0].story_id,mode:'rewrite',category:base.facts[0].primary_category,editions:['junior'],direction:'保留真實來源，讓敘事清楚。'}});
 function testProvider(){let calls=0;const provider:TextModelProvider={async generateStructured<T>(r:GenerationRequest<T>){calls++;const old=base.editions.find(i=>i.edition==='junior')!.articles[0];const output=r.task==='review'?{factual_status:'pass',level_fit:'suitable',suitability:'pass',issues:[],publish_recommendation:'pass',readership:{interest:4,information:4,readability:4,reason:'Synthetic test',suggestion:''}}:{headline:'A Saved Review Draft',body_paragraphs:old.bodyParagraphs,vocabulary:old.vocabulary,used_claim_ids:base.facts[0].claims.filter(c=>c.must_keep).map(c=>c.claim_id),omitted_optional_claim_ids:[],editorial_flags:[]};return {data:r.schema.parse(output),usage:{input_tokens:1,output_tokens:1}};}};return{provider,count:()=>calls};}
 const render:NonNullable<Parameters<typeof advanceWebJob>[2]>['render']=async(job,edition)=>['color','ink'].map(mode=>({path:`web-editorial/${job.id}/${edition}-${mode}.pdf`,edition,mode:mode as 'color'|'ink',pages:2,sha256:'a'.repeat(64)}));
+
+test('PDF recovery preserves paid model results and refuses jobs with unknown model usage',async()=>{
+ process.env.LLM_API_KEY='synthetic-key';const store=new MemoryStore(),id=randomUUID(),api=testProvider();
+ await createWebJob(store,id,request());await advanceWebJob(store,id,{provider:api.provider});
+ const ready=await advanceWebJob(store,id,{provider:api.provider});assert.equal(api.count(),2);
+ const failed=await advanceWebJob(store,id,{render:async()=>{throw Error('PDF_BROWSER_FAILED');}});assert.equal(failed.status,'needs_attention');
+ await retryWebPdfs(store,id);for(let i=0;i<3;i++)await advanceWebJob(store,id,{provider:api.provider,render});
+ const done=(await store.get<WebJob>(jobKey(id)))!;assert.equal(done.status,'needs_review');assert.equal(api.count(),2);assert.deepEqual(done.editions,ready.editions);
+ done.status='needs_attention';done.activeStep='unknown';store.rows.set(jobKey(id),done);
+ await assert.rejects(()=>retryWebPdfs(store,id),/PDF_RETRY_NOT_READY/);
+});
+
+test('reviewed archive imports preserve exact content and produce PDF-only jobs without requiring a model key',async()=>{
+ delete process.env.LLM_API_KEY;const store=new MemoryStore(),id=randomUUID();
+ const job=await importReviewPacket(store,id,base.id,base.fingerprint);assert.deepEqual(job.editions,base.editions);assert.deepEqual(job.reviews,base.reviews);
+ assert.equal((await importReviewPacket(store,id,base.id,base.fingerprint)).id,id);
+ const noModel:TextModelProvider={async generateStructured(){throw Error('MODEL_MUST_NOT_RUN');}};
+ for(let i=0;i<3;i++)await advanceWebJob(store,id,{provider:noModel,render});
+ assert.equal((await store.get<WebJob>(jobKey(id)))!.status,'needs_review');
+ await assert.rejects(()=>importReviewPacket(store,randomUUID(),base.id,'a'.repeat(64)),/STALE_REGENERATION_BASE/);
+});
 
 test('database snapshots survive worker invocations, rewriting only the selected level; repeat requests are idempotent',async()=>{
  process.env.LLM_API_KEY='synthetic-key';const store=new MemoryStore(),id=randomUUID(),api=testProvider(),original=JSON.stringify(publicationCatalog);

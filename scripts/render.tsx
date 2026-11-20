@@ -64,6 +64,6 @@ export async function renderIssues(issues: EditionView[], outDir: string, option
 }
 if (process.argv[1]?.endsWith('render.tsx')) {
   await renderIssues(editionKeys.map(demoIssue), 'output/preview');
-  console.log('Verified six DEMO PDFs: two pages, full text, embedded fonts, body sizes and layout.');
+  console.log('Verified six DEMO PDFs: full text, embedded fonts, body sizes and layout; no fixed page count.');
 }
 

@@ -6,13 +6,18 @@ import {editorOrigin,editorSecret,equalSecret,editorToken,requireEditor,validSet
 import {requestBody,webError} from '../../../../lib/editorial/web-api';
 import {withSetupDatabase,inspectDatabase,initializeDatabase} from '../../../../lib/editorial/web-setup';
 import {documentStore,serviceDatabase,WEB_PREFIX} from '../../../../lib/editorial/web-store';
+import {retryWebPdfs,advanceWebJob} from '../../../../lib/editorial/web-jobs';
+import type {WebJob} from '../../../../lib/editorial/web-types';
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
-export const maxDuration=180;
+export const maxDuration=240;
 const schema=z.discriminatedUnion('action',[
  z.object({action:z.literal('inspect'),secret:z.string().min(1).max(512).optional()}).strict(),
  z.object({action:z.literal('initialize'),confirmedProjectUrl:z.url(),reviewed:z.literal(true)}).strict(),
  z.object({action:z.literal('verify')}).strict(),
+ z.object({action:z.literal('jobs')}).strict(),
+ z.object({action:z.literal('recover-pdfs'),id:z.uuid()}).strict(),
+ z.object({action:z.literal('pdf-preview'),id:z.uuid(),edition:z.enum(['elementary','junior','senior']),mode:z.enum(['color','ink'])}).strict(),
 ]);
 export async function POST(req:Request){try{
  editorOrigin(req);const input=schema.parse(await requestBody(req));
@@ -22,6 +27,20 @@ export async function POST(req:Request){try{
   if(!equalSecret(input.secret,editorSecret()))throw Error('UNAUTHORIZED');
   (await cookies()).set(EDITOR_COOKIE,editorToken(editorSecret()),{httpOnly:true,secure:process.env.VERCEL==='1'||new URL(req.url).protocol==='https:',sameSite:'strict',path:'/',maxAge:8*3600});
  }else await requireEditor();
+ if(input.action==='pdf-preview'){
+  const jobs=await documentStore().list<WebJob>(WEB_PREFIX+'job:'),job=jobs.find(j=>j.id===input.id),file=job?.pdfs.find(p=>p.edition===input.edition&&p.mode===input.mode);
+  if(!file||file.path!==`web-editorial/${input.id}/${input.edition}-${input.mode}.pdf`)throw Error('NOT_FOUND');
+  const {data,error}=await serviceDatabase().storage.from('issue-files').download(file.path);if(error||!data)throw Error('PDF_STORAGE_FAILED');
+  return new Response(await data.arrayBuffer(),{headers:{'Content-Type':'application/pdf','Cache-Control':'private, no-store'}});
+ }
+ if(input.action==='jobs'){
+  const jobs=await documentStore().list<WebJob>(WEB_PREFIX+'job:');return json({jobs:jobs.map(j=>({id:j.id,status:j.status,error:j.error,activeStep:j.activeStep,editions:j.editions.length,pdfs:j.pdfs.length,events:j.events,usage:j.usage}))});
+ }
+ if(input.action==='recover-pdfs'){
+  const store=documentStore(),jobs=await store.list<WebJob>(WEB_PREFIX+'job:'),old=jobs.find(j=>j.id===input.id);if(!old||old.editions.length!==3||old.activeStep)throw Error('PDF_RETRY_NOT_READY');
+  if(old.status==='needs_attention')await retryWebPdfs(store,input.id);
+  const job=await advanceWebJob(store,input.id);return json({id:job.id,status:job.status,error:job.error,pdfs:job.pdfs,usage:job.usage});
+ }
  if(input.action==='verify'){
   const id=randomUUID(),store=documentStore(),key=WEB_PREFIX+'health:'+id;
   if(!await store.create(key,{version:1,kind:'setup_verification',createdAt:new Date().toISOString()}))throw Error('SETUP_VERIFICATION_FAILED');

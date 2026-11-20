@@ -64,6 +64,20 @@ export async function createWebJob(store:DocumentStore,id:string,raw:unknown){
 }
 
 class NextStep extends Error {}
+export async function retryWebPdfs(store:DocumentStore,id:string){
+ const job=await store.get<WebJob>(jobKey(id));if(!job)throw Error('NOT_FOUND');
+ if(job.status!=='needs_attention'||job.editions.length!==3||job.activeStep||job.error==='USAGE_RECONCILIATION_REQUIRED')throw Error('PDF_RETRY_NOT_READY');
+ if(job.lease&&job.lease.expiresAt>Date.now())throw Error('JOB_CONFLICT');
+ job.editions.forEach(i=>editionSchema.parse(i));job.status='pending';job.error=null;
+ event(job,'保留已儲存稿件，只重試尚未完成的 PDF，不再呼叫模型');await saveJob(store,job);return job;
+}
+export async function importReviewPacket(store:DocumentStore,id:string,packetId:string,fingerprint:string){
+ const packet=publicationCatalog.packets.find(p=>p.id===packetId&&p.fingerprint===fingerprint);if(!packet)throw Error('STALE_REGENERATION_BASE');
+ jobKey(id);const old=await store.get<WebJob>(jobKey(id));if(old){if(old.context||hash(old.editions)!==hash(packet.editions))throw Error('IDEMPOTENCY_CONFLICT');return old;}
+ const now=new Date().toISOString(),prompts=await promptFiles();
+ const job:WebJob={version:1,id,createdAt:now,updatedAt:now,issueDate:packet.issueDate,revision:packet.revision,status:'pending',kind:'generate',input:{kind:'generate',issueDate:packet.issueDate,sourceIds:packet.facts.map(f=>f.story_id),direction:''},facts:structuredClone(packet.facts),editions:structuredClone(packet.editions),reviews:structuredClone(packet.reviews),drafts:[],pdfs:[],model:packet.production.model,reviewerModel:packet.production.model,promptHash:executionHash(prompts),imageSnapshots:{},checkpoints:{},activeStep:null,lease:null,error:null,usage:{calls:0,inputTokens:0,outputTokens:0},events:[{at:now,message:'已匯入審核稿與模型複核，使用現有正文製作 PDF，不呼叫模型'}]};
+ job.editions.forEach(i=>editionSchema.parse(i));if(!await store.create(jobKey(id),job))throw Error('JOB_CONFLICT');return job;
+}
 export type WorkerOptions={provider?:TextModelProvider;render?:(job:WebJob,edition:typeof editionKeys[number])=>Promise<WebJob['pdfs']>};
 export async function advanceWebJob(store:DocumentStore,id:string,options:WorkerOptions={}){
  const job=await store.get<WebJob>(jobKey(id));if(!job)throw Error('NOT_FOUND');
