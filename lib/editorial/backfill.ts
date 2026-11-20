@@ -4,6 +4,8 @@ import {taipeiDate} from '../content/metrics';
 import {changeDocument,WEB_PREFIX,type DocumentStore} from './web-store';
 import {defaultNewsSettings,type NewsSettings} from './news-config';
 import type {WebJob} from './web-types';
+import {hash} from '../pipeline/state.mjs';
+import {restoreCandidateSnapshot} from './candidate-snapshot';
 export type BackfillReport={date:string;status:'pending'|'generating'|'published'|'failed';jobId?:string;error?:string;pdfs?:number;modelCalls?:number;sourceDates?:string[];imagesDone?:number;imagesFailed?:number};
 export type BackfillCampaign={version:number;id:string;createdAt:string;status:'running'|'complete'|'needs_attention'|'cancelled';dates:string[];settings:NewsSettings;limits:{calls:number;tokens:number;images:number;usd:number};jobs:Record<string,string>;rounds:Record<string,string>;reports:BackfillReport[];runId?:string;attempt?:number};
 export const campaignKey=(id:string)=>WEB_PREFIX+'backfill:'+z.uuid().parse(id);
@@ -21,6 +23,20 @@ export async function prepareBackfillDay(store:DocumentStore,id:string,date:stri
  const grant=await authorizedBackfill(store,id,date);
  if(grant.jobs[date]){
   const job=await store.get<WebJob>(WEB_PREFIX+'job:'+grant.jobs[date]);if(!job)throw Error('NOT_FOUND');
+  // A refreshed shortlist can rank the same URL differently. Reuse only the
+  // exact original candidate snapshot, never weaken the paid checkpoint hash.
+  if(job.input.kind==='news'){
+   const cached=(c:import('./news-config').NewsCandidate)=>job.checkpoints['intake:'+c.id]??job.checkpoints['intake-rejected:'+c.id];
+   const candidates=[...(job.intakeCandidates??[]),...(job.additionalNewsCandidates??[])];
+   if(candidates.some(c=>cached(c)&&cached(c).inputHash!==hash(c))){
+    if(job.activeStep||job.lease&&job.lease.expiresAt>Date.now())throw Error('JOB_BUSY');
+    const {newsRoundKey}=await import('./news-config');
+    const rounds=await Promise.all([job.input.roundId,...(job.recoveryRounds??[])].map(id=>store.get<import('./news-config').NewsRound>(newsRoundKey(id))));
+    const snapshots=rounds.flatMap(r=>r?.candidates??[]),restore=(c:import('./news-config').NewsCandidate)=>cached(c)?restoreCandidateSnapshot(c,cached(c).inputHash,snapshots):c;
+    job.intakeCandidates=job.intakeCandidates?.map(restore);job.additionalNewsCandidates=job.additionalNewsCandidates?.map(restore);
+    await (await import('./web-jobs')).saveJob(store,job);
+   }
+  }
   if(job.editions.length||job.facts.length===4||job.sourceRecoveryVersion===2)return job.id;
   if(job.lease&&job.lease.expiresAt>Date.now())throw Error('JOB_BUSY');
   const ledger=await store.get<{reservations:{jobId:string;status:string}[]}>(WEB_PREFIX+'usage:backfill:'+id);
