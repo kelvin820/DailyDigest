@@ -1,6 +1,15 @@
 # Supabase 專案接續設定
 
-2026-11-20：已透過 Vercel CLI 確認 Marketplace 資源 `supabase-dayday-dailidigest`（`store_xrvsYjcFCPf6d8cC`）available，已連到 `ckm13/daily-digest`（`prj_AoSHUcgOzOtlJ1M1Nv47DfKKZ9XY`）。保留舊庫。Vercel 編輯室優先讀取整合自動提供的 `SUPABASE_URL`／`SUPABASE_SECRET_KEY`。正式環境 25 項設定為 Sensitive，CLI pull 只能得到佔位符；Development 沒有這些設定，所以不以 CLI 解密或複製金鑰初始化。新增 `/editor/setup`，在 Vercel 後端使用 PostgreSQL 連接並執行空庫檢查及 15 份 migration，含明確的 service_role 工作表授權。只接受同一 Marketplace 專案及管理密碼授權，不對舊庫重跑初始化。以下為舊專案歷史紀錄。
+2026-11-20：已完成新庫初始化與線上存取驗證。
+
+- Marketplace 資源 `supabase-dayday-dailidigest`（`store_xrvsYjcFCPf6d8cC`）available，連至 `ckm13/daily-digest`（`prj_AoSHUcgOzOtlJ1M1Nv47DfKKZ9XY`）。
+- 新 Project URL：`https://oaeihtxvtljnpzuxqtvc.supabase.co`。其整合變數加有 `DAILY_DIGEST_` 前綴；編輯室優先使用這組完整設定，沒有與舊庫混用。
+- 在 Vercel Function 中，以核對過同專案的 PostgreSQL 連線檢查到 public 表及 buckets 均為 0，才以單一交易完成 15 份 migration。結果為 18 張 public 表、3 個私有 bucket、app_settings 已啟用 RLS。
+- Supabase 官方下載的 Root 2021 CA 已設為 `SUPABASE_DB_CA`，TLS 同時驗證憑證與主機名。憑證下載來源與官方 dashboard 一致：`https://supabase-downloads.s3-ap-southeast-1.amazonaws.com/prod/ssl/prod-ca-2021.crt`，SHA-256 `807025ad50d4ed219d2c9c7d299c004f824eb00cf7f65afef607d07b72e6cafa`。
+- 線上 REST 文件建立、version compare-and-swap 更新、讀回及私有 Storage 上傳／下載／簽名 URL 建立均通過；測試檔案已移除，保留 health 文件作驗證紀錄。`/api/editorial/status` 回報 databaseConnected=true、databaseError=null。
+- 本次初始化使用只限 setup API 的 15 分鐘授權，不授予編輯室 session，完成後移除 `EDITOR_SETUP_TOKEN` 並重新部署。Sensitive 的正式金鑰沒有匯出到本機或聊天。
+
+日常操作入口為 `/editor`；已初始化的新庫不用再執行 SQL。`/editor/setup` 保留供管理密碼授權的檢查，遇到非空庫會拒絕再次初始化。舊專案未更動。以下為舊專案歷史紀錄，並非新庫網址。
 
 使用者已提供 Project URL：`https://bqoqzxharmatphcqwldo.supabase.co`。
 

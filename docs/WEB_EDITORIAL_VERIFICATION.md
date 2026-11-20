@@ -18,4 +18,8 @@
 
 首次正式部署 `26abe78` 已成功，GitHub CI run `44647877802` 全部通過，包含新增網頁端到端測試。正式站編輯室回傳 200、NVIDIA／管理密碼變數存在；實際資料庫檢查回報 `databaseConnected=false`，因此不能宣稱正式生成與存檔已驗收。後續增加不含憑證的分類診斷，並在資料庫故障時保留公開閱讀的 Git 存檔。
 
-後續已確認 Vercel 原生資源 `supabase-dayday-dailidigest` 已連至 `daily-digest`，網站已選用 Marketplace secret／URL。初始化頁 `/editor/setup` 在 Vercel 內使用 Sensitive PostgreSQL 設定，核對專案、空庫及管理密碼後才執行 SQL；本機僅使用模擬 client 驗證拒絕非空庫、拒絕目標不符與失敗回滾。正式資料庫初始化及真實生成仍須在網站完成後另記結果，不能把頁面部署當作初始化已成功。
+後續已確認 Vercel 原生資源 `supabase-dayday-dailidigest` 已連至 `daily-digest`，新整合使用 `DAILY_DIGEST_` 前綴。`4393f67` 修正新舊變數優先順序並部署初始化工具；後端使用 Sensitive PostgreSQL 設定，核對 API URL／DB 的 project ref 一致及空庫狀態。補入 Supabase 官方 CA 後，以驗證憑證與主機名的 TLS 成功連到 `oaeihtxvtljnpzuxqtvc`。
+
+2026-11-20 09:40（台北）：正式 API 檢查得到空庫（0 public 表、0 buckets），隨即以單一交易完成 15 份 migration。初始化結果為 18 張 public 表、3 個私有 bucket、editorTable=true、editorRls=true。接著在真正 Supabase Data API 建立 health 文件、version=1→2 compare-and-swap 及讀回；真正 Storage 完成測試檔上傳、內容下載比對、signed URL 建立並刪除測試檔。四項檢查均為 true；正式 status 為 databaseConnected=true、databaseError=null、generationBackend=vercel。原資料庫未修改。
+
+本次只限 setup API 的短效授權不會建立管理 session，完成後移除設定並重新部署。此輪未呼叫正式 NVIDIA，也未生成或發布正式新刊；模型與完整 PDF 管線的驗證仍為上述隔離端到端測試。不能把正式 DB／Storage 成功誤記為正式模型生成已驗收。
