@@ -38,6 +38,8 @@ test('missing glossary terms receive actionable repair feedback and successful r
  let calls=0,broken=false,repairs=0;
  const provider:TextModelProvider={async generateStructured(input){
   calls++;if(input.task==='review')return {data:input.schema.parse(goodReview),usage:{input_tokens:1,output_tokens:1}};
+  const repair=input.data as {glossaryRepair?:boolean;body?:string;candidates?:string[];rejectedTerms?:string[]};
+  if(repair.glossaryRepair){repairs++;assert.deepEqual(repair.rejectedTerms,['unseenwordone','unseenwordtwo']);assert.match(input.system,/Do not rewrite the article/);return {data:input.schema.parse({vocabulary:repair.candidates!.slice(0,2).map(term=>({term,definitionEn:'Synthetic definition',meaningZhHant:'測試詞義'}))}),usage:{input_tokens:1,output_tokens:1}};}
   const {fact,previousLevelTerms=[],feedback}=input.data as {fact:typeof facts[number];previousLevelTerms:string[];feedback?:{validation?:{missing_vocabulary_terms:string[]}}};
   const edition=input.system.match(/Audience edition: (elementary|junior|senior)/)![1] as 'elementary'|'junior'|'senior',a=demoIssue(edition).articles.find(a=>a.storyId===fact.story_id)!;
   let terms=[...new Set(a.bodyParagraphs.join(' ').match(/[A-Za-z]{4,}/g))].filter(t=>!previousLevelTerms.some(p=>learningTermKey(p)===learningTermKey(t))).slice(0,2);
@@ -173,10 +175,12 @@ test('provider waits for durable reservation, accounts timeout, and never calls 
   assert.equal(requests, 1);
 });
 
-test('repeated glossary terms across levels trigger revision instead of silently reusing the beginner glossary',async()=>{
-  let juniorWrites=0;
+test('repeated glossary terms are repaired separately while article bodies and cross-level uniqueness are retained',async()=>{
+  let juniorWrites=0,glossaryRepairs=0;
   const provider:TextModelProvider={async generateStructured(input){
     if(input.task==='review')return{data:input.schema.parse(goodReview),usage:{input_tokens:0,output_tokens:0}};
+    const repair=input.data as {glossaryRepair?:boolean;candidates:string[];previousLevelTerms:string[]};
+    if(repair.glossaryRepair){glossaryRepairs++;assert.ok(repair.candidates.every(t=>!repair.previousLevelTerms.some(p=>learningTermKey(p)===learningTermKey(t))));return{data:input.schema.parse({vocabulary:repair.candidates.slice(0,2).map(term=>({term,definitionEn:'Synthetic definition',meaningZhHant:'測試詞義'}))}),usage:{input_tokens:0,output_tokens:0}};}
     const {fact,previousLevelTerms}=input.data as {fact:typeof facts[number];previousLevelTerms:string[]};
     const edition=input.system.match(/Audience edition: (elementary|junior|senior)/)?.[1] as 'elementary'|'junior'|'senior';
     const a=demoIssue(edition).articles.find(a=>a.storyId===fact.story_id)!;
@@ -184,8 +188,12 @@ test('repeated glossary terms across levels trigger revision instead of silently
     return{data:input.schema.parse({headline:a.headline,body_paragraphs:a.bodyParagraphs,vocabulary:a.vocabulary,
       used_claim_ids:['core'],omitted_optional_claim_ids:[],editorial_flags:[]}),usage:{input_tokens:0,output_tokens:0}};
   }};
-  await assert.rejects(produceEditions({...options,facts:facts.slice(0,4),provider,store:memoryStore()}),/NEEDS_REVIEW:demo-1:junior/);
-  assert.equal(juniorWrites,3);
+  const result=await produceEditions({...options,facts:facts.slice(0,4),provider,store:memoryStore()});
+  assert.equal(juniorWrites,4);assert.ok(glossaryRepairs>0);
+  for(const [index,fact] of facts.slice(0,4).entries()){
+    const terms=result.editions.flatMap(e=>e.articles[index].vocabulary.map(v=>learningTermKey(v.term)));assert.equal(new Set(terms).size,6);
+    for(const e of result.editions)assert.deepEqual(e.articles[index].bodyParagraphs,demoIssue(e.edition).articles.find(a=>a.storyId===fact.story_id)!.bodyParagraphs);
+  }
 });
 
 test('manual trial can retain minor-only review holds, while major issues and publication remain blocked',async()=>{

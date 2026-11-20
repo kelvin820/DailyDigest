@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { z } from 'zod';
 import { editions, editionKeys } from '../../config/editions';
-import { articleSchema, editionSchema, type ArticleView } from '../schemas/edition';
+import { articleSchema, editionSchema, vocabularySchema, type ArticleView } from '../schemas/edition';
 import { factSchema, writerResponseSchema, writerSchema, reviewSchema } from '../schemas/editorial';
 import type { TextModelProvider } from '../providers/text';
 import { stats } from '../content/metrics';
@@ -76,6 +76,20 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
         const body = data.body_paragraphs.join(' '), s = stats(body);
         const mustKeep = fact.claims.every(claim => !claim.must_keep || data.used_claim_ids.includes(claim.claim_id));
         const lengthPass = lengthPolicy==='advisory'||(s.count >= c.min && s.count <= c.max && s.average <= c.avg && s.max <= c.sentenceMax);
+        const glossaryInvalid=data.vocabulary.some(v=>!containsTerm(body,v.term)||previousLevelTerms.some(term=>learningTermKey(term)===learningTermKey(v.term)))||new Set(data.vocabulary.map(v=>learningTermKey(v.term))).size!==2;
+        if(lengthPolicy==='advisory'&&mustKeep&&glossaryInvalid){
+          // Repair the glossary separately; a valid article must not be rewritten
+          // repeatedly just because the writer keeps returning absent root forms.
+          const candidates=[...new Set(body.match(/[A-Za-z]+(?:['’-][A-Za-z]+)*/g)||[])].filter(term=>term.length>=3&&!previousLevelTerms.some(old=>learningTermKey(old)===learningTermKey(term))).slice(0,180);
+          if(candidates.length<2)throw Error('VOCABULARY_CANDIDATES_MISSING');
+          const glossary=z.object({vocabulary:z.array(vocabularySchema.extend({term:z.enum(candidates as [string,...string[]])})).length(2).refine(values=>new Set(values.map(v=>learningTermKey(v.term))).size===2)}).strict();
+          const repaired=await cachedStep(store,`${fact.story_id}:${edition}:vocabulary:${attempt}`,
+            {body,candidates,previousLevelTerms,target:c.cefr,model:writerModel,contract:'exact-body-glossary-v1',provider:provider.cacheIdentity},
+            ()=>provider.generateStructured({task:'revise',model:writerModel,timeoutMs:45000,maxOutputTokens:700,schema:glossary,
+              system:'Repair only an English-learning glossary. Do not rewrite the article. Choose two useful, distinct learning terms from the exact allowed spellings in the supplied body. Avoid proper names and trivial function words. Choose accessible concrete terms for A1, useful process words for A2, and precise transferable vocabulary for B1. Give a short definition for the sense in this body and its Traditional Chinese meaning. Never return a missing root form or reuse previousLevelTerms. Return only the requested vocabulary object.',
+              data:{glossaryRepair:true,body,target:c.cefr,candidates,previousLevelTerms,rejectedTerms:data.vocabulary.map(v=>v.term)}}));
+          data={...data,vocabulary:glossary.parse(repaired.data).vocabulary};
+        }
         const vocabPass = new Set(data.vocabulary.map(v => v.term.toLowerCase())).size === 2 &&
           data.vocabulary.every(v => containsTerm(body, v.term)&&!previousLevelTerms.some(term=>learningTermKey(term)===learningTermKey(v.term)));
         if (!mustKeep || !lengthPass || !vocabPass) {

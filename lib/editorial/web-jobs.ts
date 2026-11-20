@@ -101,7 +101,7 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
    if(calls++)throw new NextStep();
    const key=hash({task:req.task,system:req.system,data:req.data,model:req.model});
    const target=(req.data as {target?:string})?.target||req.system.match(/Audience edition: ([a-z]+)/)?.[1]||'';
-   job.activeStep=key;event(job,'開始'+(req.task==='review'?'模型複核':'寫稿')+(target?' · '+target:''));await saveJob(store,job);
+   job.activeStep=key;event(job,'開始'+(req.task==='review'?'模型複核':(req.data as {glossaryRepair?:boolean})?.glossaryRepair?'修訂學習單字':'寫稿')+(target?' · '+target:''));await saveJob(store,job);
    return live.generateStructured({...req,timeoutMs:45000});
   }};
   const checkpoint=async(key:string,value:Checkpoint)=>{const previous=job.checkpoints[key];if(previous&&previous.outputHash!==value.outputHash)job.checkpoints['archived:'+key+':'+previous.outputHash]=previous;job.checkpoints[key]=value;job.activeStep=null;event(job,'完成 '+key);await saveJob(store,job);};
