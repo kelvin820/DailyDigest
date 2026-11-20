@@ -51,6 +51,9 @@ test('reviewed archive imports preserve exact content and produce PDF-only jobs 
  delete process.env.LLM_API_KEY;const store=new MemoryStore(),id=randomUUID();
  const job=await importReviewPacket(store,id,base.id,base.fingerprint);assert.deepEqual(job.editions,base.editions);assert.deepEqual(job.reviews,base.reviews);
  assert.equal((await importReviewPacket(store,id,base.id,base.fingerprint)).id,id);
+ // Writing settings may change after a draft is complete; PDF-only retries use
+ // the stored edition and must never demand a fresh paid generation.
+ job.promptHash='old-generation-settings';store.rows.set(jobKey(id),job);
  const noModel:TextModelProvider={async generateStructured(){throw Error('MODEL_MUST_NOT_RUN');}};
  for(let i=0;i<3;i++)await advanceWebJob(store,id,{provider:noModel,render});
  assert.equal((await store.get<WebJob>(jobKey(id)))!.status,'needs_review');

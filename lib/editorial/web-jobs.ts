@@ -93,7 +93,7 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
  await saveJob(store,job);
  try{
   if(job.activeStep)throw Error('USAGE_RECONCILIATION_REQUIRED');
-  const prompts=await promptFiles();if(executionHash(prompts)!==job.promptHash)throw Error('GENERATION_PROMPTS_CHANGED');
+  const prompts=await promptFiles();if(!job.editions.length&&executionHash(prompts)!==job.promptHash)throw Error('GENERATION_PROMPTS_CHANGED');
   let calls=0;const batchStarted=Date.now(),maxSteps=Math.max(1,Math.min(3,options.maxModelSteps??1));
   const budget=webBudget(store,id,async(input,output)=>{job.usage.calls++;job.usage.inputTokens+=input;job.usage.outputTokens+=output;});
   const live=options.provider??new NvidiaProvider(process.env.LLM_API_KEY?.trim()||'',budget);
