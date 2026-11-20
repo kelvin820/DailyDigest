@@ -55,6 +55,7 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
             'The previous longest sentence has '+(s?.max??'unknown')+' words; average '+(s?.average??'unknown')+'. Rewrite and split long sentences: EVERY sentence must have at most '+c.sentenceMax+' words, with an average at most '+c.avg+'. Keep all must_keep facts but do not copy their sentence structure. Then choose two useful, level-appropriate terms occurring in the revised body; avoid previousLevelTerms.';
         }
         if(attempt&&lengthPolicy==='advisory')system+='\nRevise only to address the factual, vocabulary or genuine audience-fit feedback. Do not rewrite to meet word or sentence counts.';
+        if(attempt)system+='\nVOCABULARY REPAIR: Read feedback.validation. Replace every missing_vocabulary_term with a useful exact word or phrase copied from the current body. The glossary spelling must include the actual endings in the body. A synonym, root form or a word that only appears in a definition is not present. Do not repeat rejected glossary entries unchanged. Respect previousLevelTerms and the target audience; keep the verified facts intact.';
         const previousStats=(feedback as {statistics?:{count:number}}|null)?.statistics;
         const mustShorten=lengthPolicy==='strict'&&attempt>0&&previousStats&&previousStats.count>c.max;
         const writingFact=mustShorten?{...fact,claims:fact.claims.filter(claim=>claim.must_keep),
@@ -79,6 +80,9 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
           data.vocabulary.every(v => containsTerm(body, v.term)&&!previousLevelTerms.some(term=>learningTermKey(term)===learningTermKey(v.term)));
         if (!mustKeep || !lengthPass || !vocabPass) {
           feedback = { previous_article:data,statistics: s, wordLimits: c, mustKeep, vocabPass,
+            validation:{missing_vocabulary_terms:data.vocabulary.filter(v=>!containsTerm(body,v.term)).map(v=>v.term),
+              reused_vocabulary_terms:data.vocabulary.filter(v=>previousLevelTerms.some(term=>learningTermKey(term)===learningTermKey(v.term))).map(v=>v.term),
+              missing_required_claim_ids:fact.claims.filter(claim=>claim.must_keep&&!data.used_claim_ids.includes(claim.claim_id)).map(claim=>claim.claim_id)},
             instruction: lengthPolicy==='advisory'?'Repair factual coverage or vocabulary only; numerical length is advisory.':'Revise the complete article; do not truncate sentences.' };
           continue;
         }

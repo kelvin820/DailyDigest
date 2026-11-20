@@ -64,6 +64,12 @@ export async function createWebJob(store:DocumentStore,id:string,raw:unknown){
 }
 
 class NextStep extends Error {}
+export async function retryWebGeneration(store:DocumentStore,id:string){
+ const job=await store.get<WebJob>(jobKey(id));if(!job)throw Error('NOT_FOUND');
+ if(job.status!=='needs_attention'||job.editions.length||job.activeStep||!Object.keys(job.checkpoints).length||!(job.error==='GENERATION_FAILED'||job.error?.startsWith('NEEDS_REVIEW:')))throw Error('GENERATION_RETRY_NOT_READY');
+ if(job.lease&&job.lease.expiresAt>Date.now())throw Error('JOB_CONFLICT');
+ job.status='pending';job.error=null;event(job,'保留成功回應，依具體稿件檢查繼續；新模型步驟會計入用量');await saveJob(store,job);return job;
+}
 export async function retryWebPdfs(store:DocumentStore,id:string){
  const job=await store.get<WebJob>(jobKey(id));if(!job)throw Error('NOT_FOUND');
  if(job.status!=='needs_attention'||job.editions.length!==3||job.activeStep||job.error==='USAGE_RECONCILIATION_REQUIRED')throw Error('PDF_RETRY_NOT_READY');
@@ -98,7 +104,7 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
    job.activeStep=key;event(job,'開始'+(req.task==='review'?'模型複核':'寫稿')+(target?' · '+target:''));await saveJob(store,job);
    return live.generateStructured({...req,timeoutMs:45000});
   }};
-  const checkpoint=async(key:string,value:Checkpoint)=>{job.checkpoints[key]=value;job.activeStep=null;event(job,'完成 '+key);await saveJob(store,job);};
+  const checkpoint=async(key:string,value:Checkpoint)=>{const previous=job.checkpoints[key];if(previous&&previous.outputHash!==value.outputHash)job.checkpoints['archived:'+key+':'+previous.outputHash]=previous;job.checkpoints[key]=value;job.activeStep=null;event(job,'完成 '+key);await saveJob(store,job);};
   if(!job.editions.length){
    if(job.input.kind==='generate'){
     const result=await produceEditions({facts:job.facts,issueDate:job.issueDate,revision:job.revision,provider,
@@ -126,7 +132,7 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
    if(job.pdfs.length===6){job.status='needs_review';event(job,'生成完成，等待人工審閱與核准');}
   }
  }catch(e){
-  if(!(e instanceof NextStep)){job.status='needs_attention';job.error=e instanceof Error&&/^[A-Z0-9_:.-]{1,180}$/.test(e.message)?e.message:'GENERATION_FAILED';event(job,'暫停：'+job.error);console.error('editorial_job_failed',{jobId:id,code:job.error});}
+  if(!(e instanceof NextStep)){job.status='needs_attention';job.error=e instanceof Error&&(/^[A-Z0-9_:.-]{1,180}$/.test(e.message)||/^NEEDS_REVIEW:[A-Za-z0-9_-]{1,100}:(elementary|junior|senior)$/.test(e.message))?e.message:'GENERATION_FAILED';event(job,'暫停：'+job.error);console.error('editorial_job_failed',{jobId:id,code:job.error});}
  }finally{job.lease=null;await saveJob(store,job);}
  return job;
 }

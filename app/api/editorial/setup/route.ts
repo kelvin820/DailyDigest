@@ -6,7 +6,7 @@ import {editorOrigin,editorSecret,equalSecret,editorToken,requireEditor,validSet
 import {requestBody,webError} from '../../../../lib/editorial/web-api';
 import {withSetupDatabase,inspectDatabase,initializeDatabase} from '../../../../lib/editorial/web-setup';
 import {documentStore,serviceDatabase,WEB_PREFIX} from '../../../../lib/editorial/web-store';
-import {retryWebPdfs,advanceWebJob} from '../../../../lib/editorial/web-jobs';
+import {retryWebPdfs,retryWebGeneration,advanceWebJob} from '../../../../lib/editorial/web-jobs';
 import {jobKey} from '../../../../lib/editorial/web-jobs';
 import type {WebJob} from '../../../../lib/editorial/web-types';
 export const runtime='nodejs';
@@ -19,6 +19,7 @@ const schema=z.discriminatedUnion('action',[
  z.object({action:z.literal('jobs')}).strict(),
  z.object({action:z.literal('job-detail'),id:z.uuid()}).strict(),
  z.object({action:z.literal('recover-pdfs'),id:z.uuid()}).strict(),
+ z.object({action:z.literal('recover-generation'),id:z.uuid()}).strict(),
  z.object({action:z.literal('pdf-preview'),id:z.uuid(),edition:z.enum(['elementary','junior','senior']),mode:z.enum(['color','ink'])}).strict(),
 ]);
 export async function POST(req:Request){try{
@@ -38,6 +39,11 @@ export async function POST(req:Request){try{
  }
  if(input.action==='jobs'){
   const jobs=await documentStore().list<WebJob>(WEB_PREFIX+'job:');return json({jobs:jobs.map(j=>({id:j.id,status:j.status,error:j.error,activeStep:j.activeStep,editions:j.editions.length,pdfs:j.pdfs.length,events:j.events,usage:j.usage}))});
+ }
+ if(input.action==='recover-generation'){
+  const store=documentStore(),old=await store.get<WebJob>(jobKey(input.id));if(!old)throw Error('NOT_FOUND');
+  if(old.status==='needs_attention')await retryWebGeneration(store,input.id);
+  const job=await advanceWebJob(store,input.id);return json({id:job.id,status:job.status,error:job.error,pdfs:job.pdfs,editions:job.editions.length,activeStep:job.activeStep,usage:job.usage});
  }
  if(input.action==='recover-pdfs'){
   const store=documentStore(),jobs=await store.list<WebJob>(WEB_PREFIX+'job:'),old=jobs.find(j=>j.id===input.id);if(!old||old.editions.length!==3||old.activeStep)throw Error('PDF_RETRY_NOT_READY');

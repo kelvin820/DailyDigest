@@ -34,6 +34,22 @@ function memoryStore() {
   return { get: async (k: string) => map.get(k), set: async (k: string, v: unknown) => { map.set(k, v); } };
 }
 
+test('missing glossary terms receive actionable repair feedback and successful repair is reused',async()=>{
+ let calls=0,broken=false,repairs=0;
+ const provider:TextModelProvider={async generateStructured(input){
+  calls++;if(input.task==='review')return {data:input.schema.parse(goodReview),usage:{input_tokens:1,output_tokens:1}};
+  const {fact,previousLevelTerms=[],feedback}=input.data as {fact:typeof facts[number];previousLevelTerms:string[];feedback?:{validation?:{missing_vocabulary_terms:string[]}}};
+  const edition=input.system.match(/Audience edition: (elementary|junior|senior)/)![1] as 'elementary'|'junior'|'senior',a=demoIssue(edition).articles.find(a=>a.storyId===fact.story_id)!;
+  let terms=[...new Set(a.bodyParagraphs.join(' ').match(/[A-Za-z]{4,}/g))].filter(t=>!previousLevelTerms.some(p=>learningTermKey(p)===learningTermKey(t))).slice(0,2);
+  if(!broken){broken=true;terms=['unseenwordone','unseenwordtwo'];}
+  else if(input.task==='revise'){repairs++;assert.deepEqual(feedback?.validation?.missing_vocabulary_terms,['unseenwordone','unseenwordtwo']);assert.match(input.system,/VOCABULARY REPAIR/);}
+  return {data:input.schema.parse({headline:a.headline,body_paragraphs:a.bodyParagraphs,vocabulary:terms.map(term=>({term,definitionEn:'Synthetic definition',meaningZhHant:'測試詞義'})),used_claim_ids:['core'],omitted_optional_claim_ids:[],editorial_flags:[]}),usage:{input_tokens:1,output_tokens:1}};
+ }};
+ const store=memoryStore(),input={...options,facts:facts.slice(0,4),storyCount:4,provider,store};
+ const result=await produceEditions(input);assert.equal(result.editions.length,3);assert.equal(repairs,1);assert.equal(calls,25);
+ await produceEditions(input);assert.equal(calls,25);
+});
+
 test('three writers use the same facts; 24 reviews; repeat run reuses success; DEMO stays DEMO', async () => {
   const seen: unknown[] = [];let reviewCalls=0;
   const provider: TextModelProvider = { async generateStructured(input) {
