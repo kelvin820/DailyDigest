@@ -17,7 +17,7 @@ export type Checkpoint={status:'success';inputHash:string;output:unknown;outputH
 export type WebPdf={path:string;sha256:string;pages:number;edition:string;mode:'color'|'ink'};
 export type WebJob={version:number;id:string;createdAt:string;updatedAt:string;issueDate:string;revision:number;
  status:'pending'|'running'|'needs_review'|'needs_attention';kind:'generate'|'regenerate';
- input:WebGenerationInput;facts:WebFact[];model:string;reviewerModel:string;promptHash:string;imageSnapshots:Record<string,ArticleView['image']>;
+ input:WebGenerationInput;facts:WebFact[];model:string;reviewerModel:string;promptHash:string;promptSnapshot?:{writer:string;reviewer:string};imageSnapshots:Record<string,ArticleView['image']>;
  context?:ReturnType<typeof import('./regeneration').resolveRegeneration>;
  checkpoints:Record<string,Checkpoint>;activeStep:string|null;lease:{owner:string;expiresAt:number}|null;
  editions:EditionView[];drafts:BenchmarkDraft[];reviews:Packet['reviews'];pdfs:WebPdf[];

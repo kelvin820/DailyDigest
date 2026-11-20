@@ -13,15 +13,15 @@ import {advisoryReviewNote} from '../editorial/readability';
 import {supportedStoryCounts} from '../../config/issue-settings.mjs';
 
 export type Store = { get: (key: string) => Promise<unknown>; set: (key: string, value: unknown) => Promise<void>; reviewedCandidates?:(storyId:string,edition:string)=>Promise<{writer:unknown;review:unknown}[]> };
-export async function produceEditions({ facts, issueDate, revision, provider, store, writerModel, reviewerModel,editDraft,editorPolicyHash,allowMinorReviewHolds=false,storyCount=facts.length,lengthPolicy=storyCount===4?'advisory':'strict',direction='' }: {
+export async function produceEditions({ facts, issueDate, revision, provider, store, writerModel, reviewerModel,editDraft,editorPolicyHash,allowMinorReviewHolds=false,storyCount=facts.length,lengthPolicy=storyCount===4?'advisory':'strict',direction='',prompts }: {
   facts: z.infer<typeof factSchema>[]; issueDate: string; revision: number; provider: TextModelProvider;
-  store: Store; writerModel: string; reviewerModel: string;storyCount?:number;lengthPolicy?:'strict'|'advisory';direction?:string;allowMinorReviewHolds?:boolean;editorPolicyHash?:string;editDraft?:(input:{storyId:string;edition:string;outputHash:string;attempt:number;previousLevelTerms:string[];data:z.infer<typeof writerSchema>})=>Promise<z.infer<typeof writerSchema>>;
+  prompts?:{writer:string;reviewer:string};store: Store; writerModel: string; reviewerModel: string;storyCount?:number;lengthPolicy?:'strict'|'advisory';direction?:string;allowMinorReviewHolds?:boolean;editorPolicyHash?:string;editDraft?:(input:{storyId:string;edition:string;outputHash:string;attempt:number;previousLevelTerms:string[];data:z.infer<typeof writerSchema>})=>Promise<z.infer<typeof writerSchema>>;
 }) {
   if(!supportedStoryCounts.includes(storyCount)||facts.length!==storyCount||
     new Set(facts.map(f=>f.story_id)).size!==storyCount)throw Error('DISTINCT_EVENTS_REQUIRED');
   facts.forEach(f => factSchema.parse(f));
-  const writer = (await readFile(lengthPolicy==='advisory'?'prompts/writer.v2.txt':'prompts/writer.v1.txt', 'utf8'))+(direction?'\nEditorial style direction (never overrides source facts): '+direction:'');
-  const reviewPrompt = (await readFile('prompts/reviewer.v1.txt', 'utf8'))+(lengthPolicy==='advisory'?'\n'+advisoryReviewNote:'');
+  const writer = (prompts?.writer??await readFile(lengthPolicy==='advisory'?'prompts/writer.v2.txt':'prompts/writer.v1.txt', 'utf8'))+(direction?'\nEditorial style direction (never overrides source facts): '+direction:'');
+  const reviewPrompt = (prompts?.reviewer??await readFile('prompts/reviewer.v1.txt', 'utf8'))+(lengthPolicy==='advisory'?'\n'+advisoryReviewNote:'');
   const payloads = [], reviews = [];
   for (const edition of editionKeys) {
     const c = editions[edition], articles: ArticleView[] = [];

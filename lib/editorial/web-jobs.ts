@@ -18,12 +18,12 @@ import {isLengthReminder} from './readability';
 import {newsRoundKey,type NewsRound} from './news-config';
 import {readNewsArticle,extractNewsFact,assembleNewsFact,NewsEvidenceError} from './news';
 import {authorizedBackfill} from './backfill';
+import {promptExecutionHash as executionHash,resolvePromptSnapshot} from './prompt-snapshot';
 
 export const jobKey=(id:string)=>WEB_PREFIX+'job:'+z.uuid().parse(id);
 export const releaseKey=(date:string)=>WEB_PREFIX+'release:'+z.iso.date().parse(date);
 export const jobFingerprint=(job:WebJob)=>hash({editions:job.editions,reviews:job.reviews,facts:job.facts,pdfs:job.pdfs});
 const promptFiles=async()=>({writer:await readFile('prompts/writer.v2.txt','utf8'),reviewer:await readFile('prompts/reviewer.v1.txt','utf8')});
-const executionHash=(prompts:Awaited<ReturnType<typeof promptFiles>>)=>hash({prompts,editions,contract:'vercel-web-editorial-v1'});
 function event(job:WebJob,message:string){job.events.push({at:new Date().toISOString(),message});job.events=job.events.slice(-120);}
 export async function saveJob(store:DocumentStore,job:WebJob){const old=job.version;job.version++;job.updatedAt=new Date().toISOString();if(!await store.compare(jobKey(job.id),old,job)){job.version=old;throw Error('JOB_CONFLICT');}}
 
@@ -69,7 +69,7 @@ export async function createWebJob(store:DocumentStore,id:string,raw:unknown){
   const image=packet?.editions.find(i=>i.edition===edition)?.articles.find(a=>a.storyId===fact.story_id)?.image;
   if(image)imageSnapshots[edition+':'+fact.story_id]=structuredClone(image);
  }
- const job:WebJob={version:1,id,createdAt:now,updatedAt:now,issueDate,revision:Math.floor(Date.now()/1000),status:'pending',kind:input.kind==='news'?'generate':input.kind,input,facts,context,model,reviewerModel,promptHash:executionHash(prompts),imageSnapshots,checkpoints:{},activeStep:null,lease:null,editions:[],drafts:[],reviews,pdfs:[],error:null,events:[{at:now,message:'已儲存生成要求與來源快照'}],usage:{calls:0,inputTokens:0,outputTokens:0}};
+ const job:WebJob={version:1,id,createdAt:now,updatedAt:now,issueDate,revision:Math.floor(Date.now()/1000),status:'pending',kind:input.kind==='news'?'generate':input.kind,input,facts,context,model,reviewerModel,promptHash:executionHash(prompts),promptSnapshot:prompts,imageSnapshots,checkpoints:{},activeStep:null,lease:null,editions:[],drafts:[],reviews,pdfs:[],error:null,events:[{at:now,message:'已儲存生成要求與來源快照'}],usage:{calls:0,inputTokens:0,outputTokens:0}};
  if(input.kind==='news'){
   const round=(await store.get<NewsRound>(newsRoundKey(input.roundId)))!;
   job.intakeCandidates=input.sourceIds.map(id=>structuredClone(round.candidates.find(c=>c.id===id)!));job.execution='workflow';job.imageStates={};if(input.campaignId)job.campaignId=input.campaignId;
@@ -95,10 +95,16 @@ export async function importReviewPacket(store:DocumentStore,id:string,packetId:
  const packet=publicationCatalog.packets.find(p=>p.id===packetId&&p.fingerprint===fingerprint);if(!packet)throw Error('STALE_REGENERATION_BASE');
  jobKey(id);const old=await store.get<WebJob>(jobKey(id));if(old){if(old.context||hash(old.editions)!==hash(packet.editions))throw Error('IDEMPOTENCY_CONFLICT');return old;}
  const now=new Date().toISOString(),prompts=await promptFiles();
- const job:WebJob={version:1,id,createdAt:now,updatedAt:now,issueDate:packet.issueDate,revision:packet.revision,status:'pending',kind:'generate',input:{kind:'generate',issueDate:packet.issueDate,sourceIds:packet.facts.map(f=>f.story_id),direction:''},facts:structuredClone(packet.facts),editions:structuredClone(packet.editions),reviews:structuredClone(packet.reviews),drafts:[],pdfs:[],model:packet.production.model,reviewerModel:packet.production.model,promptHash:executionHash(prompts),imageSnapshots:{},checkpoints:{},activeStep:null,lease:null,error:null,usage:{calls:0,inputTokens:0,outputTokens:0},events:[{at:now,message:'已匯入審核稿與模型複核，使用現有正文製作 PDF，不呼叫模型'}]};
+ const job:WebJob={version:1,id,createdAt:now,updatedAt:now,issueDate:packet.issueDate,revision:packet.revision,status:'pending',kind:'generate',input:{kind:'generate',issueDate:packet.issueDate,sourceIds:packet.facts.map(f=>f.story_id),direction:''},facts:structuredClone(packet.facts),editions:structuredClone(packet.editions),reviews:structuredClone(packet.reviews),drafts:[],pdfs:[],model:packet.production.model,reviewerModel:packet.production.model,promptHash:executionHash(prompts),promptSnapshot:prompts,imageSnapshots:{},checkpoints:{},activeStep:null,lease:null,error:null,usage:{calls:0,inputTokens:0,outputTokens:0},events:[{at:now,message:'已匯入審核稿與模型複核，使用現有正文製作 PDF，不呼叫模型'}]};
  job.editions.forEach(i=>editionSchema.parse(i));if(!await store.create(jobKey(id),job))throw Error('JOB_CONFLICT');return job;
 }
 export type WorkerOptions={provider?:TextModelProvider;maxModelSteps?:number;render?:(job:WebJob,edition:typeof editionKeys[number])=>Promise<WebJob['pdfs']>};
+export async function retryPromptSnapshot(store:DocumentStore,id:string){
+ const job=await store.get<WebJob>(jobKey(id));if(!job)throw Error('NOT_FOUND');
+ if(job.status!=='needs_attention'||job.error!=='GENERATION_PROMPTS_CHANGED'||job.activeStep||job.lease&&job.lease.expiresAt>Date.now())throw Error('PROMPT_RETRY_NOT_READY');
+ job.promptSnapshot=resolvePromptSnapshot(job.promptHash,await promptFiles(),job.promptSnapshot);
+ job.status='pending';job.error=null;event(job,'已核對並還原原始提示詞換行格式，沿用已完成的生成結果');await saveJob(store,job);return job;
+}
 export async function advanceWebJob(store:DocumentStore,id:string,options:WorkerOptions={}){
  const job=await store.get<WebJob>(jobKey(id));if(!job)throw Error('NOT_FOUND');
  if(job.status==='needs_review'||job.status==='needs_attention')return job;
@@ -107,7 +113,8 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
  await saveJob(store,job);
  try{
   if(job.activeStep)throw Error('USAGE_RECONCILIATION_REQUIRED');
-  const prompts=await promptFiles();if(!job.editions.length&&executionHash(prompts)!==job.promptHash)throw Error('GENERATION_PROMPTS_CHANGED');
+  const current=await promptFiles(),prompts=job.editions.length?current:resolvePromptSnapshot(job.promptHash,current,job.promptSnapshot);
+  if(!job.editions.length)job.promptSnapshot=prompts;
   let calls=0;const batchStarted=Date.now(),maxSteps=Math.max(1,Math.min(3,options.maxModelSteps??1));
   const budget=webBudget(store,id,async(input,output)=>{job.usage.calls++;job.usage.inputTokens+=input;job.usage.outputTokens+=output;},undefined,job.campaignId?{id:job.campaignId,issueDate:job.issueDate}:undefined);
   const live=options.provider??new NvidiaProvider(process.env.LLM_API_KEY?.trim()||'',budget,async raw=>{
@@ -153,7 +160,7 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
   }else if(!job.editions.length){
    if(job.input.kind!=='regenerate'){
     const result=await produceEditions({facts:job.facts,issueDate:job.issueDate,revision:job.revision,provider,
-     writerModel:job.model,reviewerModel:job.reviewerModel,storyCount:4,lengthPolicy:'advisory',direction:job.input.direction,
+     writerModel:job.model,reviewerModel:job.reviewerModel,storyCount:4,lengthPolicy:'advisory',direction:job.input.direction,prompts,
      store:{get:async key=>job.checkpoints[key],set:async(key,value)=>checkpoint(key,value as Checkpoint)}});
     job.editions=result.editions.map(i=>({...i,reviewCopy:true,articles:i.articles.map(a=>({...a,image:job.imageSnapshots[i.edition+':'+a.storyId]||a.image}))}));job.reviews=result.reviews;
    }else{

@@ -1,7 +1,7 @@
 import {randomUUID} from 'node:crypto';
 import {revalidatePath} from 'next/cache';
 import {documentStore} from '../lib/editorial/web-store';
-import {advanceWebJob,retryWebPdfs,jobKey,canPublishWebJob,jobFingerprint} from '../lib/editorial/web-jobs';
+import {advanceWebJob,retryWebPdfs,retryPromptSnapshot,jobKey,canPublishWebJob,jobFingerprint} from '../lib/editorial/web-jobs';
 import {scheduledPlan,prepareScheduledJob,recordNewsFailure,publishScheduledJob} from '../lib/editorial/news-schedule';
 import type {WebJob,WebPdf} from '../lib/editorial/web-types';
 import {editionKeys} from '../config/editions';
@@ -16,6 +16,7 @@ export async function recordDailyFailureStep(date:string,code:string){'use step'
 export async function advanceEditionStep(id:string){
  'use step';
  const store=documentStore();let job=await store.get<WebJob>(jobKey(id));if(!job)throw Error('NOT_FOUND');
+ if(job.status==='needs_attention'&&job.error==='GENERATION_PROMPTS_CHANGED')job=await retryPromptSnapshot(store,id);
  // PDF errors are safe to retry; an in-flight model request is never repeated.
  if(job.status==='needs_attention'&&job.editions.length===3&&!job.activeStep&&job.error?.startsWith('PDF_'))job=await retryWebPdfs(store,id);
  if(job.status!=='needs_attention')job=await advanceWebJob(store,id,{maxModelSteps:3});
