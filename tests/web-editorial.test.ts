@@ -92,7 +92,7 @@ test('new edition freezes four actual sources and refuses stale, missing or repe
  const failed=structuredClone(job);failed.status='needs_review';assert.equal(canPublishWebJob(failed),false);
 });
 
-test('four-story web generation completes across 24 bounded model steps and three PDF steps without rerunning writers',async()=>{
+test('four-story generation can batch three durable steps and retains the same 24 model calls',async()=>{
  process.env.LLM_API_KEY='synthetic-key';const store=new MemoryStore(),id=randomUUID();let calls=0;
  const provider:TextModelProvider={async generateStructured<T>(r:GenerationRequest<T>){
   calls++;const data=r.data as {fact:typeof base.facts[number]},edition=r.system.match(/Audience edition: ([a-z]+)/)?.[1]||'elementary';
@@ -101,7 +101,8 @@ test('four-story web generation completes across 24 bounded model steps and thre
   return{data:r.schema.parse(response) as T,usage:{input_tokens:1,output_tokens:1}};
  }};
  let job=await createWebJob(store,id,{kind:'generate',issueDate:'2026-11-19',sourceIds:base.facts.map(f=>f.story_id),direction:'Keep source facts.'});
- for(let step=0;step<30&&job.status!=='needs_review';step++)job=await advanceWebJob(store,id,{provider,render});
+ let invocations=0;for(;invocations<15&&job.status!=='needs_review';invocations++)job=await advanceWebJob(store,id,{provider,render,maxModelSteps:3});
+ assert.equal(invocations,11);
  assert.equal(job.error,null);assert.equal(job.status,'needs_review');assert.equal(calls,24);assert.equal(job.reviews.length,12);assert.equal(canPublishWebJob(job),true);
  for(const issue of job.editions)for(const article of issue.articles)assert.deepEqual(article.image,job.imageSnapshots[issue.edition+':'+article.storyId]);
  const before=calls;await advanceWebJob(store,id,{provider,render});assert.equal(calls,before);

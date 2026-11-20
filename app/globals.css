@@ -56,3 +56,6 @@
 .review-room .edition-picker button[aria-pressed="true"]{background:#315f51;color:#fff}
 
 .source-audit{border:1px solid #ad8b50;background:#fff4da;padding:16px;margin-bottom:22px}.source-audit blockquote{margin:12px 0;font-size:13px;line-height:1.6}
+
+/* Allocate the whole sheet to four story areas; each keeps its own whitespace. */
+.flow-print .flow-page{display:flex;flex-direction:column}.flow-print .print-head{flex-shrink:0}.flow-print.four-stories .print-grid{flex:1;grid-template-rows:repeat(2,minmax(min-content,1fr))}

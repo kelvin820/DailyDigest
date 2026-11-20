@@ -84,7 +84,7 @@ export async function importReviewPacket(store:DocumentStore,id:string,packetId:
  const job:WebJob={version:1,id,createdAt:now,updatedAt:now,issueDate:packet.issueDate,revision:packet.revision,status:'pending',kind:'generate',input:{kind:'generate',issueDate:packet.issueDate,sourceIds:packet.facts.map(f=>f.story_id),direction:''},facts:structuredClone(packet.facts),editions:structuredClone(packet.editions),reviews:structuredClone(packet.reviews),drafts:[],pdfs:[],model:packet.production.model,reviewerModel:packet.production.model,promptHash:executionHash(prompts),imageSnapshots:{},checkpoints:{},activeStep:null,lease:null,error:null,usage:{calls:0,inputTokens:0,outputTokens:0},events:[{at:now,message:'已匯入審核稿與模型複核，使用現有正文製作 PDF，不呼叫模型'}]};
  job.editions.forEach(i=>editionSchema.parse(i));if(!await store.create(jobKey(id),job))throw Error('JOB_CONFLICT');return job;
 }
-export type WorkerOptions={provider?:TextModelProvider;render?:(job:WebJob,edition:typeof editionKeys[number])=>Promise<WebJob['pdfs']>};
+export type WorkerOptions={provider?:TextModelProvider;maxModelSteps?:number;render?:(job:WebJob,edition:typeof editionKeys[number])=>Promise<WebJob['pdfs']>};
 export async function advanceWebJob(store:DocumentStore,id:string,options:WorkerOptions={}){
  const job=await store.get<WebJob>(jobKey(id));if(!job)throw Error('NOT_FOUND');
  if(job.status==='needs_review'||job.status==='needs_attention')return job;
@@ -94,17 +94,17 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
  try{
   if(job.activeStep)throw Error('USAGE_RECONCILIATION_REQUIRED');
   const prompts=await promptFiles();if(executionHash(prompts)!==job.promptHash)throw Error('GENERATION_PROMPTS_CHANGED');
-  let calls=0;
-  const budget=webBudget(store,id,async(input,output)=>{job.usage.calls++;job.usage.inputTokens+=input;job.usage.outputTokens+=output;await saveJob(store,job);});
+  let calls=0;const batchStarted=Date.now(),maxSteps=Math.max(1,Math.min(3,options.maxModelSteps??1));
+  const budget=webBudget(store,id,async(input,output)=>{job.usage.calls++;job.usage.inputTokens+=input;job.usage.outputTokens+=output;});
   const live=options.provider??new NvidiaProvider(process.env.LLM_API_KEY?.trim()||'',budget);
   const provider:TextModelProvider={cacheIdentity:'vercel-web-v1',async generateStructured<T>(req:GenerationRequest<T>){
-   if(calls++)throw new NextStep();
+   if(calls>=maxSteps||calls>0&&Date.now()-batchStarted>=30000)throw new NextStep();calls++;
    const key=hash({task:req.task,system:req.system,data:req.data,model:req.model});
    const target=(req.data as {target?:string})?.target||req.system.match(/Audience edition: ([a-z]+)/)?.[1]||'';
    job.activeStep=key;event(job,'開始'+(req.task==='review'?'模型複核':(req.data as {glossaryRepair?:boolean})?.glossaryRepair?'修訂學習單字':'寫稿')+(target?' · '+target:''));await saveJob(store,job);
    return live.generateStructured({...req,timeoutMs:45000});
   }};
-  const checkpoint=async(key:string,value:Checkpoint)=>{const previous=job.checkpoints[key];if(previous&&previous.outputHash!==value.outputHash)job.checkpoints['archived:'+key+':'+previous.outputHash]=previous;job.checkpoints[key]=value;job.activeStep=null;event(job,'完成 '+key);await saveJob(store,job);};
+  const checkpoint=async(key:string,value:Checkpoint)=>{const previous=job.checkpoints[key];if(previous&&previous.outputHash!==value.outputHash)job.checkpoints['archived:'+key+':'+previous.outputHash]=previous;job.checkpoints[key]=value;job.activeStep=null;event(job,'完成 '+key);if(!key.includes(':accepted:'))await saveJob(store,job);};
   if(!job.editions.length){
    if(job.input.kind==='generate'){
     const result=await produceEditions({facts:job.facts,issueDate:job.issueDate,revision:job.revision,provider,
@@ -126,8 +126,9 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
   }else{
    const edition=editionKeys.find(e=>job.pdfs.filter(p=>p.edition===e).length!==2);
    if(edition){
-    const render=options.render??(await import('../pdf/vercel')).renderWebPdfs;
-    job.pdfs.push(...await render(job,edition));event(job,'完成 '+editions[edition].label+' 彩色與省墨 PDF');await saveJob(store,job);
+    const rendered=options.render?await options.render(job,edition):await (await import('../pdf/vercel')).renderWebPdfs(job,edition,undefined,'',async file=>{job.pdfs=job.pdfs.filter(p=>p.path!==file.path).concat(file);event(job,'完成 '+editions[edition].label+' '+(file.mode==='color'?'彩色':'省墨')+' PDF');await saveJob(store,job);});
+    for(const file of rendered)job.pdfs=job.pdfs.filter(p=>p.path!==file.path).concat(file);
+    event(job,'完成 '+editions[edition].label+' 彩色與省墨 PDF');await saveJob(store,job);
    }
    if(job.pdfs.length===6){job.status='needs_review';event(job,'生成完成，等待人工審閱與核准');}
   }
