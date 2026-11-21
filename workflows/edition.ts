@@ -21,7 +21,9 @@ export async function dailyEditionWorkflow(date:string){
  try{
   const plan=await loadDailyStep(date);if(!plan.enabled)return {status:'disabled'};
   await sleep(new Date(plan.prepareAt));
-  const selected=await prepareDailyStep(date);if(selected.skip)return {status:'already_released_or_disabled'};
+  let selected:Awaited<ReturnType<typeof prepareDailyStep>>|undefined;
+  for(let retry=0;retry<3;retry++){try{selected=await prepareDailyStep(date);break;}catch(error){if(retry===2||!String(error).includes('MODEL_RATE_LIMITED'))throw error;await sleep('1m');}}
+  if(!selected)throw Error('DAILY_PREPARATION_INCOMPLETE');if(selected.skip)return {status:'already_released_or_disabled'};
   const state=await generateEditionWorkflow(selected.id);
   if(state.status!=='needs_review'){await recordDailyFailureStep(date,state.error||'GENERATION_INCOMPLETE');return state;}
   // Render the final, non-preview PDFs before the publication deadline.
@@ -36,7 +38,8 @@ export async function backfillWeekWorkflow(campaignId:string){
  // One issue at a time keeps shared provider rate limits and spending bounded.
  for(const date of dates){
   try{
-   const id=await prepareBackfillStep(campaignId,date),state=await generateEditionWorkflow(id);
+   let id:string|undefined;for(let retry=0;retry<3;retry++){try{id=await prepareBackfillStep(campaignId,date);break;}catch(error){if(retry===2||!String(error).includes('MODEL_RATE_LIMITED'))throw error;await sleep('1m');}}
+   if(!id)throw Error('BACKFILL_PREPARATION_INCOMPLETE');const state=await generateEditionWorkflow(id);
    if(state.status!=='needs_review'){await reportBackfillStep(campaignId,date,state.error||'GENERATION_INCOMPLETE');continue;}
    const publication=await publicationStep(id);await publishDailyStep(id,publication);await reportBackfillStep(campaignId,date);
   }catch(e){await reportBackfillStep(campaignId,date,e instanceof Error?e.message:'BACKFILL_FAILED');}

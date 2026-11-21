@@ -3,7 +3,7 @@ import type {BudgetPort} from '../providers/text';
 import {changeDocument,WEB_PREFIX,type DocumentStore} from './web-store';
 import {authorizedBackfill} from './backfill';
 
-type Reservation={id:string;jobId:string;tokens:number;input:number;output:number;cost:number;known:boolean;status:'reserved'|'settled'|'unknown';at:string;acknowledgedAt?:string;acknowledgement?:{notes:string;actor:string}};
+type Reservation={id:string;jobId:string;tokens:number;input:number;output:number;cost:number;known:boolean;status:'reserved'|'settled'|'unknown'|'declined';at:string;httpStatus?:number;acknowledgedAt?:string;acknowledgement?:{notes:string;actor:string}};
 type DailyUsage={version:number;calls:number;tokens:number;spent:number;reservations:Reservation[]};
 const positive=(key:string,fallback:number)=>{const n=Number(process.env[key]);return Number.isFinite(n)&&n>0?n:fallback;};
 export function webBudget(store:DocumentStore,jobId:string,onUsage:(input:number,output:number)=>Promise<void>,day=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()),scope?:{id:string;issueDate:string}):BudgetPort{
@@ -28,6 +28,6 @@ export function webBudget(store:DocumentStore,jobId:string,onUsage:(input:number
     if(r.known)v.spent+=(usage.input_tokens*Number(process.env.LLM_INPUT_USD_PER_MILLION)+usage.output_tokens*Number(process.env.LLM_OUTPUT_USD_PER_MILLION))/1e6;
    });await onUsage(usage.input_tokens,usage.output_tokens);
   },
-  async fail(ticket){await changeDocument<DailyUsage>(store,key,()=>{throw Error('MISSING_BUDGET');},v=>{const r=v.reservations.find(r=>r.id===ticket);if(r&&r.status==='reserved'){r.status='unknown';v.spent+=r.cost;}});},
+  async fail(ticket,rejection){await changeDocument<DailyUsage>(store,key,()=>{throw Error('MISSING_BUDGET');},v=>{const r=v.reservations.find(r=>r.id===ticket);if(r&&r.status==='reserved'){r.status=rejection?.httpStatus===429?'declined':'unknown';if(rejection)r.httpStatus=rejection.httpStatus;v.spent+=r.cost;}});},
  };
 }

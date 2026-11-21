@@ -13,7 +13,7 @@ import sharp from 'sharp';
 import {PDFDocument} from 'pdf-lib';
 const base=JSON.parse(await readFile('content/publications/catalog.json','utf8')).packets.find(p=>p.id==='2026-11-19-r5');
 const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
-const rows=new Map(),files=new Map(),counts={select:0,facts:0,write:0,review:0,images:0},errors=[];let app,browser,logs='',pdfUploadRejectedOnce=false,finalPdfRejectedOnce=false;
+const rows=new Map(),files=new Map(),counts={select:0,facts:0,write:0,review:0,images:0,rateLimits:0},errors=[];let app,browser,logs='',pdfUploadRejectedOnce=false,finalPdfRejectedOnce=false;
 await mkdir('output/news-workflow',{recursive:true});await mkdir('.runtime',{recursive:true});
 const fixtureImage=await sharp({create:{width:640,height:420,channels:3,background:'#f3e3c2'}}).composite([{input:Buffer.from('<svg width="640" height="420"><circle cx="200" cy="180" r="120" fill="#648f75"/><path d="M0 300L640 170V420H0Z" fill="#8aa7bd"/></svg>')}]).png().toBuffer();
 const fixtureSheet=await sharp(Buffer.from('<svg width="1024" height="1024">'+['#f5e8c9','#d7e9dc','#c6d8e3','#fff'].map((color,index)=>'<g transform="translate(0 '+index*256+')"><rect width="1024" height="256" fill="'+color+'"/><circle cx="'+(180+index*130)+'" cy="128" r="85" fill="'+(index===3?'#000':'#608675')+'"/><path d="M30 220L990 30" stroke="#111" stroke-width="9"/></g>').join('')+'</svg>')).png().toBuffer();
@@ -45,6 +45,7 @@ import https from 'node:https';import dns from 'node:dns/promises';import {syncB
 const OriginalDate=Date,clockOffset=${Date.parse(new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())+'T12:00:00+08:00')-Date.now()};function TestDate(...args){if(!new.target)return new OriginalDate(OriginalDate.now()+clockOffset).toString();return args.length?new OriginalDate(...args):new OriginalDate(OriginalDate.now()+clockOffset);}TestDate.prototype=OriginalDate.prototype;TestDate.now=()=>OriginalDate.now()+clockOffset;TestDate.parse=OriginalDate.parse;TestDate.UTC=OriginalDate.UTC;globalThis.Date=TestDate;
 const base=${JSON.stringify(base)},image=${JSON.stringify(fixtureImage.toString('base64'))},sheet=${JSON.stringify(fixtureSheet.toString('base64'))},hosts=['feeds.bbci.co.uk','www.bbc.com','www.bbc.co.uk','www.theguardian.com','www.smithsonianmag.com','globalvoices.org'];
 const oldLookup=dns.lookup,oldRequest=https.request,realFetch=globalThis.fetch;
+let rateLimitRejected=false;
 dns.lookup=async function(host,...args){if(hosts.includes(host))return [{address:'93.184.216.34',family:4}];return oldLookup.call(this,host,...args);};
 const escape=s=>s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
 https.request=function(input,options,callback){const u=new URL(input),host=options?.headers?.Host||u.hostname;if(!hosts.includes(host))return oldRequest.call(this,input,options,callback);const emitter=new EventEmitter();emitter.end=()=>queueMicrotask(()=>{
@@ -66,7 +67,7 @@ globalThis.fetch=async function(input,init){const url=String(input);
   }else{
    const edition=system.match(/Audience edition: ([a-z]+)/)?.[1],index=base.facts.findIndex(f=>f.claims.some(c=>c.text===data.fact.claims[0].text));
    if(edition){type='write';const article=base.editions.find(i=>i.edition===edition).articles[Math.max(0,index)];result={headline:article.headline,body_paragraphs:article.bodyParagraphs,vocabulary:article.vocabulary,used_claim_ids:data.fact.claims.filter(c=>c.must_keep).map(c=>c.claim_id),omitted_optional_claim_ids:[],editorial_flags:[]};}
-   else{type='review';result={factual_status:'pass',level_fit:'suitable',suitability:'pass',issues:[],publish_recommendation:'pass'};}
+   else{type='review';if(!rateLimitRejected){rateLimitRejected=true;await realFetch('${dbOrigin}/calls',{method:'POST',body:JSON.stringify({type:'rateLimits'})});return Response.json({error:'synthetic rate limit'},{status:429,headers:{'retry-after':'0'}});}result={factual_status:'pass',level_fit:'suitable',suitability:'pass',issues:[],publish_recommendation:'pass'};}
   }
   await realFetch('${dbOrigin}/calls',{method:'POST',body:JSON.stringify({type})});return Response.json({id:'synthetic-news',usage:{prompt_tokens:100,completion_tokens:100},choices:[{finish_reason:'stop',message:{content:JSON.stringify(result)}}]});
  }return realFetch(input,init);
@@ -92,7 +93,7 @@ try{
   if(job.status==='needs_review')break;
   await delay(2000);
  }
- assert.equal(job.status,'needs_review');assert.equal(job.facts.length,4);assert.equal(job.pdfs.length,6);assert.equal(counts.select,1);assert.equal(counts.facts,4);assert.equal(counts.write,12);assert.equal(counts.review,12);assert.equal(counts.images,13);assert.equal(Object.values(job.imageStates).filter(s=>s==='done').length,12);
+ assert.equal(job.status,'needs_review');assert.equal(job.facts.length,4);assert.equal(job.pdfs.length,6);assert.equal(counts.select,1);assert.equal(counts.facts,4);assert.equal(counts.write,12);assert.equal(counts.review,12);assert.equal(counts.images,13);assert.equal(counts.rateLimits,1);assert.ok(job.events.some(e=>e.message.includes('HTTP 429')));assert.equal(Object.values(job.imageStates).filter(s=>s==='done').length,12);
  console.log('PASS: background completed twelve stories, twelve images and six PDFs');
  const currentNews=await context.request.get(origin+'/api/editorial/news').then(r=>r.json());const earlier=await context.request.post(origin+'/api/editorial/news',{headers:{origin},data:{action:'settings',settings:{...currentNews.settings,selectionTime:'00:00',publishTime:'02:00'}}});assert.equal(earlier.status(),200,await earlier.text());
  const before={...counts},body={action:'schedule',issueDate:today};

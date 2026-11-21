@@ -9,7 +9,7 @@ import {sourceLibrary,sourceChoices} from './library';
 import {resolveRegeneration,regenerateOneStory} from './regeneration';
 import {produceEditions} from '../pipeline/editorial';
 import {hash} from '../pipeline/state.mjs';
-import {NvidiaProvider,type TextModelProvider,type GenerationRequest} from '../providers/text';
+import {NvidiaProvider,ModelRateLimitError,type TextModelProvider,type GenerationRequest} from '../providers/text';
 import {webBudget} from './web-budget';
 import {WEB_PREFIX,type DocumentStore} from './web-store';
 import {webGenerationSchema,type WebJob,type WebRelease,type Checkpoint} from './web-types';
@@ -111,10 +111,12 @@ export async function retryPromptSnapshot(store:DocumentStore,id:string){
 export async function advanceWebJob(store:DocumentStore,id:string,options:WorkerOptions={}){
  const job=await store.get<WebJob>(jobKey(id));if(!job)throw Error('NOT_FOUND');
  if(job.status==='needs_review'||job.status==='needs_attention')return job;
+ if(job.waitUntil&&job.waitUntil>Date.now())return job;
  if(job.lease&&job.lease.expiresAt>Date.now())return job;
  const owner=randomUUID();job.lease={owner,expiresAt:Date.now()+280000};job.status='running';
  await saveJob(store,job);
  try{
+  delete job.waitUntil;
   if(job.activeStep)throw Error('USAGE_RECONCILIATION_REQUIRED');
   const current=await promptFiles(),prompts=job.editions.length?current:resolvePromptSnapshot(job.promptHash,current,job.promptSnapshot);
   if(!job.editions.length)job.promptSnapshot=prompts;
@@ -131,7 +133,7 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
    if(calls>=maxSteps||calls>0&&Date.now()-batchStarted>=30000)throw new NextStep();calls++;
    const target=(req.data as {target?:string})?.target||req.system.match(/Audience edition: ([a-z]+)/)?.[1]||'';
    job.activeStep=key;event(job,'開始'+(req.task==='facts'?'來源核對':req.task==='review'?'模型複核':(req.data as {glossaryRepair?:boolean})?.glossaryRepair?'修訂學習單字':'寫稿')+(target?' · '+target:''));await saveJob(store,job);
-   return live.generateStructured({...req,timeoutMs:45000});
+   const response=await live.generateStructured({...req,timeoutMs:45000});delete job.modelRateLimitCounts?.[key];return response;
   }};
   const checkpoint=async(key:string,value:Checkpoint)=>{const previous=job.checkpoints[key];if(previous&&previous.outputHash!==value.outputHash)job.checkpoints['archived:'+key+':'+previous.outputHash]=previous;job.checkpoints[key]=value;job.activeStep=null;event(job,'完成 '+key);if(!key.includes(':accepted:'))await saveJob(store,job);};
   if(job.input.kind==='news'&&job.facts.length<4){
@@ -200,7 +202,8 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
    if(job.pdfs.length===6){job.status='needs_review';event(job,'生成完成，等待人工審閱與核准');}
   }
  }catch(e){
-  if(!(e instanceof NextStep)){job.status='needs_attention';job.error=e instanceof Error&&(/^[A-Z0-9_:.-]{1,180}$/.test(e.message)||/^NEEDS_REVIEW:[A-Za-z0-9_-]{1,100}:(elementary|junior|senior)$/.test(e.message))?e.message:job.editions.length===3?'PDF_RUNTIME_FAILED':'GENERATION_FAILED';if(job.error==='MODEL_SCHEMA_INVALID')job.activeStep=null;event(job,'暫停：'+job.error);console.error('editorial_job_failed',{jobId:id,code:job.error});if(job.editions.length===3&&e instanceof Error)console.error('pdf_worker_failed',{jobId:id,detail:e.message.replace(/https?:\/\/\S+/g,'[url]').slice(0,1400),stack:e.stack?.split('\n').slice(0,5).join('\n')});}
+  if(e instanceof ModelRateLimitError&&job.activeStep){const key=job.activeStep;job.modelRateLimitCounts??={};const count=job.modelRateLimitCounts[key]=(job.modelRateLimitCounts[key]??0)+1;job.activeStep=null;if(count<=3){job.status='pending';job.error=null;job.waitUntil=Date.now()+e.retryAfterMs;event(job,'模型服務限流 HTTP 429，已保存稿件並等待 '+Math.ceil(e.retryAfterMs/1000)+' 秒後續做');}else{job.status='needs_attention';job.error='MODEL_RATE_LIMITED';event(job,'同一步驟連續限流三次以上，停止新增請求');}}
+  else if(!(e instanceof NextStep)){job.status='needs_attention';job.error=e instanceof Error&&(/^[A-Z0-9_:.-]{1,180}$/.test(e.message)||/^NEEDS_REVIEW:[A-Za-z0-9_-]{1,100}:(elementary|junior|senior)$/.test(e.message))?e.message:job.editions.length===3?'PDF_RUNTIME_FAILED':'GENERATION_FAILED';if(job.error==='MODEL_SCHEMA_INVALID')job.activeStep=null;event(job,'暫停：'+job.error);console.error('editorial_job_failed',{jobId:id,code:job.error});if(job.editions.length===3&&e instanceof Error)console.error('pdf_worker_failed',{jobId:id,detail:e.message.replace(/https?:\/\/\S+/g,'[url]').slice(0,1400),stack:e.stack?.split('\n').slice(0,5).join('\n')});}
  }finally{job.lease=null;await saveJob(store,job);}
  return job;
 }

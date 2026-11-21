@@ -6,6 +6,7 @@ import {changeDocument,type DocumentStore,WEB_PREFIX} from '../lib/editorial/web
 import {webBudget} from '../lib/editorial/web-budget';
 import type {WebJob} from '../lib/editorial/web-types';
 import type {TextModelProvider,GenerationRequest} from '../lib/providers/text';
+import {ModelRateLimitError} from '../lib/providers/text';
 import {publicationCatalog} from '../lib/publications/catalog';
 import {sourceLibrary} from '../lib/editorial/library';
 import {rebuildDraftPdfs,refreshApprovedPdfs} from '../lib/editorial/pdf-layout-refresh';
@@ -17,6 +18,16 @@ class MemoryStore implements DocumentStore {
  async compare<T extends {version:number}>(key:string,version:number,value:T){if((this.rows.get(key) as T)?.version!==version)return false;this.rows.set(key,structuredClone(value));return true;}
  async list<T>(prefix:string){return [...this.rows].filter(([k])=>k.startsWith(prefix)).map(([,v])=>structuredClone(v) as T);}
 }
+test('a rate-limited job waits without sending new requests, then resumes the same paid checkpoints',async()=>{
+ process.env.LLM_API_KEY='synthetic-key';const store=new MemoryStore(),id=randomUUID();await createWebJob(store,id,request());let attempts=0;const normal=testProvider(),provider:TextModelProvider={async generateStructured<T>(input:GenerationRequest<T>){if(!attempts++)throw new ModelRateLimitError(60000);return normal.provider.generateStructured(input);}};
+ const first=await advanceWebJob(store,id,{provider});assert.equal(first.status,'pending');assert.equal(first.activeStep,null);assert.ok(first.waitUntil!>Date.now());assert.equal(first.error,null);
+ await advanceWebJob(store,id,{provider});assert.equal(attempts,1);
+ first.waitUntil=Date.now()-1;store.rows.set(jobKey(id),first);const resumed=await advanceWebJob(store,id,{provider});assert.equal(resumed.error,null);assert.ok(attempts>1);
+});
+test('a declined 429 request retains its reservation and call count without blocking later budget reservations',async()=>{
+ const store=new MemoryStore(),budget=webBudget(store,'fixture',async()=>{},'2099-03-01'),ticket=await budget.reserve(10,20);await budget.fail(ticket,{httpStatus:429});
+ const key=WEB_PREFIX+'usage:2099-03-01',ledger=await store.get<{calls:number;tokens:number;reservations:{status:string;tokens:number;httpStatus:number}[]}>(key);assert.equal(ledger?.calls,1);assert.equal(ledger?.tokens,30);assert.equal(ledger?.reservations[0].status,'declined');assert.equal(ledger?.reservations[0].tokens,30);assert.equal(ledger?.reservations[0].httpStatus,429);await budget.reserve(10,20);assert.equal((await store.get<{calls:number}>(key))?.calls,2);
+});
 const base=publicationCatalog.packets.find(p=>p.id==='2026-11-19-r5')!;
 const request=()=>({kind:'regenerate',request:{version:1,base:{kind:'packet',id:base.id,fingerprint:base.fingerprint},storyId:base.facts[0].story_id,mode:'rewrite',category:base.facts[0].primary_category,editions:['junior'],direction:'保留真實來源，讓敘事清楚。'}});
 function testProvider(){let calls=0;const provider:TextModelProvider={async generateStructured<T>(r:GenerationRequest<T>){calls++;const old=base.editions.find(i=>i.edition==='junior')!.articles[0];const output=r.task==='review'?{factual_status:'pass',level_fit:'suitable',suitability:'pass',issues:[],publish_recommendation:'pass',readership:{interest:4,information:4,readability:4,reason:'Synthetic test',suggestion:''}}:{headline:'A Saved Review Draft',body_paragraphs:old.bodyParagraphs,vocabulary:old.vocabulary,used_claim_ids:base.facts[0].claims.filter(c=>c.must_keep).map(c=>c.claim_id),omitted_optional_claim_ids:[],editorial_flags:[]};return {data:r.schema.parse(output),usage:{input_tokens:1,output_tokens:1}};}};return{provider,count:()=>calls};}

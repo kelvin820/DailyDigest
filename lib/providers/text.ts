@@ -2,8 +2,9 @@ import { z } from 'zod';
 export interface BudgetPort {
   reserve(input: number, output: number): unknown;
   settle(ticket: unknown, usage: { input_tokens: number; output_tokens: number }): unknown;
-  fail(ticket: unknown): unknown;
+  fail(ticket: unknown, rejection?:{httpStatus:number}): unknown;
 }
+export class ModelRateLimitError extends Error{constructor(public retryAfterMs:number){super('MODEL_RATE_LIMITED');}}
 export type Task = 'select' | 'facts' | 'write' | 'review' | 'revise';
 export type GenerationRequest<T> = { task: Task; system: string; data: unknown;
   schema: z.ZodType<T>; model: string; timeoutMs: number; maxOutputTokens: number };
@@ -62,16 +63,12 @@ export class CompatibleProvider implements TextModelProvider {
       } catch { await this.budget.fail(ticket); throw Error('MODEL_TIMEOUT_OR_NETWORK'); }
       if (!response.ok || response.status === 202) {
         console.warn('model_request_failed',{task:input.task,model:input.model,httpStatus:response.status});
-        await this.budget.fail(ticket);
-        if ([429, 500, 502, 503, 504].includes(response.status) && attempt < 2) {
-          const retry = response.headers.get('retry-after');
-          const numeric = retry ? Number(retry) : NaN;
-          const dateSeconds = retry ? (Date.parse(retry) - Date.now()) / 1000 : NaN;
-          const seconds = Number.isFinite(numeric) ? Math.max(0, numeric) :
-            Number.isFinite(dateSeconds) ? Math.max(0, dateSeconds) : 2 ** attempt;
-          if (seconds > 30) throw Error('MODEL_RETRY_LATER');
-          await new Promise(r => setTimeout(r, seconds * 1000 + Math.random() * 300));
-          continue;
+        await this.budget.fail(ticket,{httpStatus:response.status});
+        await response.body?.cancel();
+        if(response.status===429){
+          const retry=response.headers.get('retry-after'),numeric=retry?Number(retry):NaN,dateSeconds=retry?(Date.parse(retry)-Date.now())/1000:NaN;
+          const seconds=Number.isFinite(numeric)?numeric:Number.isFinite(dateSeconds)?dateSeconds:60;
+          throw new ModelRateLimitError(Math.max(30000,Math.min(900000,seconds*1000)));
         }
         throw Error(response.status === 202 ? 'MODEL_ASYNC_NOT_SUPPORTED' : 'MODEL_HTTP_' + response.status);
       }

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { z } from 'zod';
-import { NvidiaProvider, DEFAULT_NEMOTRON_MODEL, NVIDIA_BASE_URL } from '../lib/providers/text';
+import { NvidiaProvider, ModelRateLimitError,DEFAULT_NEMOTRON_MODEL, NVIDIA_BASE_URL } from '../lib/providers/text';
 import { Budget } from '../lib/pipeline/state.mjs';
 
 test('NVIDIA contract uses bounded non-streaming JSON, disables thinking, accounts format repair', async t => {
@@ -27,6 +27,14 @@ test('NVIDIA contract uses bounded non-streaming JSON, disables thinking, accoun
   assert.deepEqual(result.usage, { input_tokens: 40, output_tokens: 10 });
   assert.equal(budget.calls, 2); assert.equal(budget.ledger.length, 2);
   assert.equal(JSON.stringify(result).includes('discarded'), false);
+});
+
+test('HTTP 429 returns a durable retry delay, records the rejection, and never retries immediately',async t=>{
+ let calls=0;const rejected:unknown[]=[];
+ t.mock.method(globalThis,'fetch',async()=>{calls++;return new Response('{}',{status:429,headers:{'retry-after':'120'}});});
+ const provider=new NvidiaProvider('fixture-not-key',{reserve:async()=> 'ticket',settle:async()=>{throw Error('NO_GENERATION_COMPLETED');},fail:async(ticket,reason)=>{rejected.push({ticket,reason});}});
+ await assert.rejects(()=>provider.generateStructured({task:'review',system:'Synthetic rate limit test',data:{},schema:z.object({ok:z.boolean()}),model:DEFAULT_NEMOTRON_MODEL,timeoutMs:1000,maxOutputTokens:100}),error=>error instanceof ModelRateLimitError&&error.retryAfterMs===120000);
+ assert.equal(calls,1);assert.deepEqual(rejected,[{ticket:'ticket',reason:{httpStatus:429}}]);
 });
 
 test('sentence-per-item NVIDIA output preserves every word and original array when joining paragraphs',async t=>{
