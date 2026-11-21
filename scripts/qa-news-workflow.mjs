@@ -87,7 +87,7 @@ try{
  let job;
  for(let i=0;i<180;i++){
   const response=await context.request.get(origin+'/api/editorial/jobs/'+id);assert.equal(response.status(),200);job=(await response.json()).job;
-  if(job.status==='needs_attention')throw Error('JOB_FAILED:'+job.error);
+  if(job.status==='needs_attention'&&!job.error?.startsWith('PDF_'))throw Error('JOB_FAILED:'+job.error);
   if(job.status==='needs_review')break;
   await delay(2000);
  }

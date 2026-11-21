@@ -2,7 +2,10 @@ import sharp from 'sharp';
 import {createHash} from 'node:crypto';
 import type {Edition} from '../../config/editions';
 import {audienceConceptPrompt,audienceTopicPrompt} from '../media/audience';
-import {generateNvidiaImage,NVIDIA_IMAGE_MODELS,type NvidiaImageModel} from '../providers/image';
+import {generateNvidiaImage} from '../providers/image';
+import {imageModelPriority} from '../providers/image-config';
+import {generateWithImagePriority} from '../media/image-priority';
+import {imageFailureCode} from './image-retry';
 import {serviceDatabase,WEB_PREFIX,type DocumentStore} from './web-store';
 import type {WebJob,WebFact} from './web-types';
 import type {ArticleView} from '../schemas/edition';
@@ -19,12 +22,21 @@ export async function generateWebImage(store:DocumentStore,job:WebJob,edition:Ed
  if(receipt){if(receipt.inputHash!==inputHash||receipt.outputHash!==hash(receipt.image))throw Error('IMAGE_RESULT_CHANGED');return receipt.image;}
  const grant=job.campaignId?await authorizedBackfill(store,job.campaignId,job.issueDate):null;
  const ledger=WEB_PREFIX+'image-budget:'+(job.campaignId?'backfill:'+job.campaignId:day),limit=grant?.limits.images??(Number(process.env.MAX_IMAGE_CALLS_PER_DAY)||32),key=process.env.NVIDIA_IMAGE_API_KEY?.trim()||process.env.LLM_API_KEY?.trim()||'';
- const configured=process.env.NVIDIA_IMAGE_MODEL||'black-forest-labs/flux.2-klein-4b';if(!NVIDIA_IMAGE_MODELS.includes(configured as NvidiaImageModel))throw Error('IMAGE_MODEL_NOT_ALLOWED');const model=configured as NvidiaImageModel;
+ const models=imageModelPriority(),model=models[0];
  let prompt=audienceConceptPrompt('Create a wide landscape conceptual editorial illustration for this factual story. Illustrate its central subject simply, without adding factual claims. '+fact.claims.filter(c=>c.must_keep).map(c=>c.text).join(' '),edition),topic=job.imageFallbackSlots?.includes(edition+':'+fact.story_id)??false,primaryAttempted=false,result;
  if(!topic){
-  await reserveImageSlot(store,ledger,slot,limit,!!grant);
   primaryAttempted=true;
-  try{result=await generateNvidiaImage(key,{prompt,model});}catch(error){if(!(error instanceof Error)||error.message!=='IMAGE_CONTENT_FILTERED')throw error;topic=true;job.imageFallbackSlots??=[];if(!job.imageFallbackSlots.includes(imageKey))job.imageFallbackSlots.push(imageKey);}
+  try{
+   const routed=await generateWithImagePriority(models.map((candidate,index)=>({id:candidate,run:async()=>{
+    const attemptSlot=index?slot+':priority:'+hash(candidate).slice(0,12):slot;
+    await reserveImageSlot(store,ledger,attemptSlot,limit,!!grant);
+    const traceKey=WEB_PREFIX+'image-attempt:'+hash(attemptSlot),trace={version:1,jobId:job.id,storyId:fact.story_id,edition,model:candidate,prompt,createdAt:new Date().toISOString(),status:'started',error:null as string|null};
+    await store.create(traceKey,trace);
+    try{const generated=await generateNvidiaImage(key,{prompt,model:candidate,timeoutMs:models.length>1?75000:180000});await store.compare(traceKey,1,{...trace,version:2,status:'generated'});return generated;}
+    catch(error){await store.compare(traceKey,1,{...trace,version:2,status:'failed',error:imageFailureCode(error)});throw error;}
+   }})));
+   result=routed.result;
+  }catch(error){if(!(error instanceof Error)||error.message!=='IMAGE_CONTENT_FILTERED'||models.length>1)throw error;topic=true;job.imageFallbackSlots??=[];if(!job.imageFallbackSlots.includes(imageKey))job.imageFallbackSlots.push(imageKey);}
  }
  if(topic){
   await reserveImageSlot(store,ledger,slot,limit,!!grant,primaryAttempted||attempt===0);prompt=audienceTopicPrompt(fact.primary_category,edition);

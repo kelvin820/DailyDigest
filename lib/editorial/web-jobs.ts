@@ -21,6 +21,7 @@ import {authorizedBackfill} from './backfill';
 import {promptExecutionHash as executionHash,resolvePromptSnapshot} from './prompt-snapshot';
 import {publicationEditions} from './event-date';
 import {imageFailureCode,retryableImageError} from './image-retry';
+import {recoverStructuredReply} from '../pipeline/recover-structured';
 
 export const jobKey=(id:string)=>WEB_PREFIX+'job:'+z.uuid().parse(id);
 export const releaseKey=(date:string)=>WEB_PREFIX+'release:'+z.iso.date().parse(date);
@@ -125,8 +126,9 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
    job.checkpoints[key]=value;event(job,'已保存無法解析的模型回覆，保留用量與診斷');await saveJob(store,job);
   });
   const provider:TextModelProvider={cacheIdentity:'vercel-web-v1',async generateStructured<T>(req:GenerationRequest<T>){
-   if(calls>=maxSteps||calls>0&&Date.now()-batchStarted>=30000)throw new NextStep();calls++;
    const key=hash({task:req.task,system:req.system,data:req.data,model:req.model});
+   const recovered=recoverStructuredReply(job.checkpoints,key,req);if(recovered){event(job,'已依目前驗證規則恢復原先付費回覆，不重複呼叫模型');return recovered;}
+   if(calls>=maxSteps||calls>0&&Date.now()-batchStarted>=30000)throw new NextStep();calls++;
    const target=(req.data as {target?:string})?.target||req.system.match(/Audience edition: ([a-z]+)/)?.[1]||'';
    job.activeStep=key;event(job,'開始'+(req.task==='facts'?'來源核對':req.task==='review'?'模型複核':(req.data as {glossaryRepair?:boolean})?.glossaryRepair?'修訂學習單字':'寫稿')+(target?' · '+target:''));await saveJob(store,job);
    return live.generateStructured({...req,timeoutMs:45000});

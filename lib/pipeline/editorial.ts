@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { z } from 'zod';
 import { editions, editionKeys } from '../../config/editions';
-import { articleSchema, editionSchema, vocabularySchema, type ArticleView } from '../schemas/edition';
+import { articleSchema, editionSchema, type ArticleView } from '../schemas/edition';
 import { factSchema, writerResponseSchema, writerSchema, reviewSchema } from '../schemas/editorial';
 import type { TextModelProvider } from '../providers/text';
 import { stats } from '../content/metrics';
@@ -11,6 +11,7 @@ import {learningTermKey} from '../content/vocabulary.mjs';
 import {recoverReviewedArticle} from './recover-reviewed';
 import {advisoryReviewNote} from '../editorial/readability';
 import {supportedStoryCounts} from '../../config/issue-settings.mjs';
+import {glossaryRepairSchema} from './glossary-repair';
 
 export type Store = { get: (key: string) => Promise<unknown>; set: (key: string, value: unknown) => Promise<void>; reviewedCandidates?:(storyId:string,edition:string)=>Promise<{writer:unknown;review:unknown}[]> };
 export async function produceEditions({ facts, issueDate, revision, provider, store, writerModel, reviewerModel,editDraft,editorPolicyHash,allowMinorReviewHolds=false,storyCount=facts.length,lengthPolicy=storyCount===4?'advisory':'strict',direction='',prompts }: {
@@ -83,7 +84,7 @@ export async function produceEditions({ facts, issueDate, revision, provider, st
           // repeatedly just because the writer keeps returning absent root forms.
           const candidates=[...new Set(body.match(/[A-Za-z]+(?:['’-][A-Za-z]+)*/g)||[])].filter(term=>term.length>=3&&!previousLevelTerms.some(old=>learningTermKey(old)===learningTermKey(term))).slice(0,180);
           if(candidates.length<2)throw Error('VOCABULARY_CANDIDATES_MISSING');
-          const glossary=z.object({vocabulary:z.array(vocabularySchema.extend({term:z.enum(candidates as [string,...string[]])})).length(2).refine(values=>new Set(values.map(v=>learningTermKey(v.term))).size===2)}).strict();
+          const glossary=glossaryRepairSchema(body,previousLevelTerms);
           const repaired=await cachedStep(store,`${fact.story_id}:${edition}:vocabulary:${attempt}`,
             {body,candidates,previousLevelTerms,target:c.cefr,model:writerModel,contract:'exact-body-glossary-v1',provider:provider.cacheIdentity},
             ()=>provider.generateStructured({task:'revise',model:writerModel,timeoutMs:45000,maxOutputTokens:700,schema:glossary,

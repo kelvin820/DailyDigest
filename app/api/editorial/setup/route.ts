@@ -25,6 +25,7 @@ const schema=z.discriminatedUnion('action',[
  z.object({action:z.literal('verify')}).strict(),
  z.object({action:z.literal('jobs')}).strict(),
  z.object({action:z.literal('job-detail'),id:z.uuid()}).strict(),
+ z.object({action:z.literal('image-attempts'),id:z.uuid()}).strict(),
  z.object({action:z.literal('news-rounds'),issueDate:z.iso.date()}).strict(),
  z.object({action:z.literal('reopen-selection'),issueDate:z.iso.date()}).strict(),
  z.object({action:z.literal('rebuild-pdfs'),id:z.uuid()}).strict(),
@@ -43,6 +44,7 @@ export async function POST(req:Request){try{
   (await cookies()).set(EDITOR_COOKIE,editorToken(editorSecret()),{httpOnly:true,secure:process.env.VERCEL==='1'||new URL(req.url).protocol==='https:',sameSite:'strict',path:'/',maxAge:8*3600});
  }else await requireEditor();
  if(input.action==='job-detail')return json({job:await documentStore().get<WebJob>(jobKey(input.id))});
+ if(input.action==='image-attempts'){const attempts=await documentStore().list<{jobId:string;createdAt:string}>(WEB_PREFIX+'image-attempt:');return json({attempts:attempts.filter(a=>a.jobId===input.id).sort((a,b)=>a.createdAt.localeCompare(b.createdAt))});}
  if(input.action==='reopen-selection'){
   const store=documentStore(),plan=await store.get<NewsPlan>(newsPlanKey(input.issueDate));if(!plan)throw Error('NOT_FOUND');
   if(await store.get<WebRelease>(releaseKey(input.issueDate)))throw Error('ISSUE_ALREADY_PUBLISHED');
