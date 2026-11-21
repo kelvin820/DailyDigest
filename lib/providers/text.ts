@@ -53,7 +53,9 @@ export class CompatibleProvider implements TextModelProvider {
             stream: false, temperature: 0,
             ...(this.options.responseFormat === 'json_object' ? { response_format: { type: 'json_object' } } : {}),
             ...(this.options.disableThinking ? { chat_template_kwargs: { enable_thinking: false } } : {}),
-            ...(this.options.reasoningEffort?{reasoning_effort:this.options.reasoningEffort}:{}),
+            // Ultra's hosted API explicitly documents `none`; retain the older
+            // chat-template switch for models with a different API contract.
+            ...(this.options.disableThinking&&input.model==='nvidia/nemotron-3-ultra-550b-a55b'?{reasoning_effort:'none'}:this.options.reasoningEffort?{reasoning_effort:this.options.reasoningEffort}:{}),
             max_tokens: input.maxOutputTokens,
           }),
         });

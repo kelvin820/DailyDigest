@@ -24,23 +24,26 @@ export async function generateWebImage(store:DocumentStore,job:WebJob,edition:Ed
  const ledger=WEB_PREFIX+'image-budget:'+(job.campaignId?'backfill:'+job.campaignId:day),limit=grant?.limits.images??(Number(process.env.MAX_IMAGE_CALLS_PER_DAY)||32),key=process.env.NVIDIA_IMAGE_API_KEY?.trim()||process.env.LLM_API_KEY?.trim()||'';
  const models=imageModelPriority(),model=models[0];
  let prompt=audienceConceptPrompt('Create a wide landscape conceptual editorial illustration for this factual story. Illustrate its central subject simply, without adding factual claims. '+fact.claims.filter(c=>c.must_keep).map(c=>c.text).join(' '),edition),topic=job.imageFallbackSlots?.includes(edition+':'+fact.story_id)??false,primaryAttempted=false,result;
+ async function tracedImage(candidate:typeof model,attemptSlot:string,timeoutMs:number){
+  const traceKey=WEB_PREFIX+'image-attempt:'+hash(attemptSlot),trace={version:1,jobId:job.id,storyId:fact.story_id,edition,model:candidate,prompt,createdAt:new Date().toISOString(),status:'started',error:null as string|null};
+  await store.create(traceKey,trace);
+  try{const generated=await generateNvidiaImage(key,{prompt,model:candidate,timeoutMs});await store.compare(traceKey,1,{...trace,version:2,status:'generated'});return generated;}
+  catch(error){await store.compare(traceKey,1,{...trace,version:2,status:'failed',error:imageFailureCode(error)});throw error;}
+ }
  if(!topic){
   primaryAttempted=true;
   try{
    const routed=await generateWithImagePriority(models.map((candidate,index)=>({id:candidate,run:async()=>{
     const attemptSlot=index?slot+':priority:'+hash(candidate).slice(0,12):slot;
     await reserveImageSlot(store,ledger,attemptSlot,limit,!!grant);
-    const traceKey=WEB_PREFIX+'image-attempt:'+hash(attemptSlot),trace={version:1,jobId:job.id,storyId:fact.story_id,edition,model:candidate,prompt,createdAt:new Date().toISOString(),status:'started',error:null as string|null};
-    await store.create(traceKey,trace);
-    try{const generated=await generateNvidiaImage(key,{prompt,model:candidate,timeoutMs:models.length>1?75000:180000});await store.compare(traceKey,1,{...trace,version:2,status:'generated'});return generated;}
-    catch(error){await store.compare(traceKey,1,{...trace,version:2,status:'failed',error:imageFailureCode(error)});throw error;}
+    return tracedImage(candidate,attemptSlot,models.length>1?75000:180000);
    }})));
    result=routed.result;
   }catch(error){if(!(error instanceof Error)||error.message!=='IMAGE_CONTENT_FILTERED'||models.length>1)throw error;topic=true;job.imageFallbackSlots??=[];if(!job.imageFallbackSlots.includes(imageKey))job.imageFallbackSlots.push(imageKey);}
  }
  if(topic){
   await reserveImageSlot(store,ledger,slot,limit,!!grant,primaryAttempted||attempt===0);prompt=audienceTopicPrompt(fact.primary_category,edition);
-  result=await generateNvidiaImage(key,{prompt,model,timeoutMs:90000});
+  result=await tracedImage(model,slot+':topic',90000);
  }
  if(!result)throw Error('IMAGE_RESPONSE_INVALID');
  const input=sharp(result.bytes,{limitInputPixels:40_000_000,animated:false,failOn:'warning'}),meta=await input.metadata();

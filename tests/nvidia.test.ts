@@ -22,6 +22,7 @@ test('NVIDIA contract uses bounded non-streaming JSON, disables thinking, accoun
   assert.equal(requests[0].url, NVIDIA_BASE_URL + '/chat/completions');
   assert.equal(requests[0].payload.stream, false); assert.equal(requests[0].payload.max_tokens, 100);
   assert.deepEqual(requests[0].payload.chat_template_kwargs, { enable_thinking: false });
+  assert.equal(requests[0].payload.reasoning_effort, 'none');
   assert.equal(requests[0].payload.response_format, undefined);
   assert.deepEqual(result.usage, { input_tokens: 40, output_tokens: 10 });
   assert.equal(budget.calls, 2); assert.equal(budget.ledger.length, 2);
