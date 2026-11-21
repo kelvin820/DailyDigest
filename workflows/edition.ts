@@ -3,10 +3,16 @@ import {advanceEditionStep,loadDailyStep,prepareDailyStep,recordDailyFailureStep
 
 export async function generateEditionWorkflow(id:string){
  'use workflow';
+ let pdfRetries=0,formatRetries=0;
  for(let i=0;i<100;i++){
   const state=await advanceEditionStep(id);
-  if(state.status==='needs_review'||state.status==='needs_attention')return state;
-  await sleep('1s');
+  if(state.status==='needs_review')return state;
+  if(state.status==='needs_attention'){
+   if(state.error?.startsWith('PDF_')&&pdfRetries++<2){await sleep('10s');continue;}
+   if(state.error==='MODEL_SCHEMA_INVALID'&&formatRetries++<1){await sleep('10s');continue;}
+   return state;
+  }
+  if(state.waitUntil)await sleep(new Date(state.waitUntil));else await sleep('1s');
  }
  return {status:'needs_attention',error:'WORKFLOW_STEP_LIMIT'};
 }

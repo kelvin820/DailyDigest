@@ -20,6 +20,7 @@ import {readNewsArticle,extractNewsFact,assembleNewsFact,NewsEvidenceError} from
 import {authorizedBackfill} from './backfill';
 import {promptExecutionHash as executionHash,resolvePromptSnapshot} from './prompt-snapshot';
 import {publicationEditions} from './event-date';
+import {imageFailureCode,retryableImageError} from './image-retry';
 
 export const jobKey=(id:string)=>WEB_PREFIX+'job:'+z.uuid().parse(id);
 export const releaseKey=(date:string)=>WEB_PREFIX+'release:'+z.iso.date().parse(date);
@@ -176,13 +177,16 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
     job.reviews=drafts.flatMap(d=>{const r=d.assessment??job.reviews.find(r=>r.storyId===d.storyId&&r.edition===d.edition);return r?[{...r,storyId:d.storyId,edition:d.edition}]:[];});
    }
    job.editions.forEach(i=>editionSchema.parse(i));event(job,'三版稿件已儲存，開始製作 PDF');await saveJob(store,job);
-  }else if(job.input.kind==='news'&&job.input.imageGeneration&&Object.keys(job.imageStates??{}).length<12){
-   const slot=editionKeys.flatMap(edition=>job.facts.map(fact=>({edition,fact,key:edition+':'+fact.story_id}))).find(s=>!job.imageStates?.[s.key])!;
-   job.imageStates??={};job.imageStates[slot.key]='running';event(job,'開始配圖 · '+slot.edition+' · '+slot.fact.story_id);await saveJob(store,job);
+  }else if(job.input.kind==='news'&&job.input.imageGeneration&&Object.values(job.imageStates??{}).filter(s=>s==='done').length<12){
+   const slots=editionKeys.flatMap(edition=>job.facts.map(fact=>({edition,fact,key:edition+':'+fact.story_id}))),eligible=slots.filter(s=>job.imageStates?.[s.key]==='failed'&&(job.imageAttempts?.[s.key]??1)<3&&retryableImageError(job.imageErrors?.[s.key]??'IMAGE_FAILED'));
+   const slot=slots.find(s=>!job.imageStates?.[s.key])??eligible.find(s=>(job.imageRetryAt?.[s.key]??0)<=Date.now());
+   if(!slot){const later=eligible.map(s=>job.imageRetryAt?.[s.key]??0).filter(t=>t>Date.now());if(later.length){job.waitUntil=Math.min(...later);return job;}throw Error('AI_IMAGES_INCOMPLETE');}
+   delete job.waitUntil;job.imageAttempts??={};job.imageAttempts[slot.key]=(job.imageAttempts[slot.key]??(job.imageStates?.[slot.key]==='failed'?1:0))+1;
+   job.imageStates??={};job.imageStates[slot.key]='running';event(job,'開始 AI 配圖 · '+slot.edition+' · '+slot.fact.story_id);await saveJob(store,job);
    try{
     const image=await (await import('./web-images')).generateWebImage(store,job,slot.edition,slot.fact);
-    job.imageSnapshots[slot.key]=image;job.editions.find(i=>i.edition===slot.edition)!.articles.find(a=>a.storyId===slot.fact.story_id)!.image=image;job.imageStates[slot.key]='done';event(job,'完成配圖 · '+slot.edition);
-   }catch(error){job.imageStates[slot.key]='failed';event(job,'配圖暫不可用，保留分類圖示 · '+slot.edition);console.warn('news_image_failed',{jobId:id,code:error instanceof Error&&/^[A-Z_0-9]+$/.test(error.message)?error.message:'IMAGE_FAILED'});}
+    job.imageSnapshots[slot.key]=image;job.editions.find(i=>i.edition===slot.edition)!.articles.find(a=>a.storyId===slot.fact.story_id)!.image=image;job.imageStates[slot.key]='done';event(job,'完成'+(image.caption?.startsWith('主題')?'主題概念插畫':'配圖')+' · '+slot.edition);
+   }catch(error){const code=imageFailureCode(error);job.imageStates[slot.key]='failed';job.imageErrors??={};job.imageErrors[slot.key]=code;job.imageRetryAt??={};job.imageRetryAt[slot.key]=Date.now()+5*60000;event(job,'AI 配圖尚未完成 · '+slot.edition+' · '+code);console.warn('news_image_failed',{jobId:id,slot:slot.key,code});}
    await saveJob(store,job);
   }else{
    const edition=editionKeys.find(e=>job.pdfs.filter(p=>p.edition===e).length!==2);
@@ -201,6 +205,7 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
 
 export function canPublishWebJob(job:WebJob){
  if(job.status!=='needs_review'||job.editions.length!==3||job.pdfs.length!==6||job.reviews.length!==12||job.activeStep)return false;
+ if(job.input.kind==='news'&&job.editions.some(e=>e.articles.some(a=>a.image.kind!=='generated_illustration')))return false;
  if(job.editions.some(i=>!editionSchema.safeParse(i).success)||job.drafts.some(d=>d.errors.some(e=>!isLengthReminder(e))))return false;
  if(new Set(job.reviews.map(r=>r.storyId+':'+r.edition)).size!==12)return false;
  for(const fact of job.facts){

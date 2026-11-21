@@ -13,13 +13,13 @@ import sharp from 'sharp';
 import {PDFDocument} from 'pdf-lib';
 const base=JSON.parse(await readFile('content/publications/catalog.json','utf8')).packets.find(p=>p.id==='2026-11-19-r5');
 const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
-const rows=new Map(),files=new Map(),counts={select:0,facts:0,write:0,review:0,images:0},errors=[];let app,browser,logs='';
+const rows=new Map(),files=new Map(),counts={select:0,facts:0,write:0,review:0,images:0},errors=[];let app,browser,logs='',pdfUploadRejectedOnce=false;
 await mkdir('output/news-workflow',{recursive:true});await mkdir('.runtime',{recursive:true});
 const fixtureImage=await sharp({create:{width:640,height:420,channels:3,background:'#f3e3c2'}}).composite([{input:Buffer.from('<svg width="640" height="420"><circle cx="200" cy="180" r="120" fill="#648f75"/><path d="M0 300L640 170V420H0Z" fill="#8aa7bd"/></svg>')}]).png().toBuffer();
 const json=(res,data,status=200)=>{res.writeHead(status,{'Content-Type':'application/json'});res.end(JSON.stringify(data));};
 const db=createServer(async(req,res)=>{try{
  const url=new URL(req.url,'http://local'),parts=[];for await(const p of req)parts.push(p);const bytes=Buffer.concat(parts);
- if(url.pathname==='/calls'){const c=JSON.parse(bytes);counts[c.type]++;return json(res,{});}
+ if(url.pathname==='/calls'){const c=JSON.parse(bytes);counts[c.type]++;return json(res,{count:counts[c.type]});}
  if(url.pathname==='/rest/v1/app_settings'){
   assert.equal(req.headers.apikey,'sb_secret_news-test');assert.equal(req.headers.authorization,undefined);
   const key=url.searchParams.get('key'),version=url.searchParams.get('value->>version');
@@ -31,7 +31,7 @@ const db=createServer(async(req,res)=>{try{
  if(url.pathname.startsWith('/storage/v1/object/')){
   let path=decodeURIComponent(url.pathname.slice('/storage/v1/object/'.length));
   if(path.startsWith('sign/')){path=path.slice(5);if(req.method==='POST')return json(res,{signedURL:'/object/sign/'+path+'?token=synthetic'});}
-  if(req.method==='POST'){files.set(path,bytes);return json(res,{Key:path});}
+  if(req.method==='POST'){if(path.endsWith('.pdf')&&!pdfUploadRejectedOnce){pdfUploadRejectedOnce=true;return json(res,{error:'synthetic transient storage failure'},503);}files.set(path,bytes);return json(res,{Key:path});}
   if(files.has(path)){res.writeHead(200,{'Content-Type':path.endsWith('.pdf')?'application/pdf':path.endsWith('.webp')?'image/webp':'image/jpeg'});return res.end(files.get(path));}
   return json(res,{error:'not found'},404);
  }
@@ -41,6 +41,7 @@ await new Promise(r=>db.listen(0,'127.0.0.1',r));const dbOrigin='http://127.0.0.
 const preload=resolve('.runtime/news-model-preload.mjs');
 await writeFile(preload,`
 import https from 'node:https';import dns from 'node:dns/promises';import {syncBuiltinESMExports} from 'node:module';import{EventEmitter}from'node:events';import{Readable}from'node:stream';
+const OriginalDate=Date,clockOffset=${Date.parse(new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())+'T12:00:00+08:00')-Date.now()};function TestDate(...args){if(!new.target)return new OriginalDate(OriginalDate.now()+clockOffset).toString();return args.length?new OriginalDate(...args):new OriginalDate(OriginalDate.now()+clockOffset);}TestDate.prototype=OriginalDate.prototype;TestDate.now=()=>OriginalDate.now()+clockOffset;TestDate.parse=OriginalDate.parse;TestDate.UTC=OriginalDate.UTC;globalThis.Date=TestDate;
 const base=${JSON.stringify(base)},image=${JSON.stringify(fixtureImage.toString('base64'))},hosts=['feeds.bbci.co.uk','www.bbc.com','www.bbc.co.uk','www.theguardian.com','www.smithsonianmag.com','globalvoices.org'];
 const oldLookup=dns.lookup,oldRequest=https.request,realFetch=globalThis.fetch;
 dns.lookup=async function(host,...args){if(hosts.includes(host))return [{address:'93.184.216.34',family:4}];return oldLookup.call(this,host,...args);};
@@ -52,7 +53,7 @@ https.request=function(input,options,callback){const u=new URL(input),host=optio
  const response=Readable.from([Buffer.from(text)]);response.statusCode=200;response.headers={'content-type':mime};callback(response);
  });return emitter;};syncBuiltinESMExports();
 globalThis.fetch=async function(input,init){const url=String(input);
- if(url.startsWith('https://ai.api.nvidia.com/v1/genai/')){await realFetch('${dbOrigin}/calls',{method:'POST',body:JSON.stringify({type:'images'})});return Response.json({artifacts:[{base64:image,finishReason:'SUCCESS'}]});}
+ if(url.startsWith('https://ai.api.nvidia.com/v1/genai/')){const receipt=await realFetch('${dbOrigin}/calls',{method:'POST',body:JSON.stringify({type:'images'})}).then(r=>r.json());if(receipt.count===1)return Response.json({artifacts:[{finishReason:'CONTENT_FILTERED'}]});return Response.json({artifacts:[{base64:image,finishReason:'SUCCESS'}]});}
  if(url==='https://integrate.api.nvidia.com/v1/chat/completions'){
   const request=JSON.parse(init.body),system=request.messages[0].content,data=JSON.parse(request.messages[1].content).untrusted_data;let result,type;
   if(system.startsWith('You are the DayDay newspaper assignment editor')){
@@ -69,12 +70,12 @@ globalThis.fetch=async function(input,init){const url=String(input);
   await realFetch('${dbOrigin}/calls',{method:'POST',body:JSON.stringify({type})});return Response.json({id:'synthetic-news',usage:{prompt_tokens:100,completion_tokens:100},choices:[{finish_reason:'stop',message:{content:JSON.stringify(result)}}]});
  }return realFetch(input,init);
 };`);
-app=spawn(process.execPath,['--import',pathToFileURL(preload).href,'node_modules/next/dist/bin/next','start','--port','4332','--hostname','127.0.0.1'],{env:{...process.env,APP_URL:origin,EDITOR_ACTION_SECRET:'synthetic-news-editor-password-for-qa',LLM_API_KEY:'synthetic-news-model',NEXT_PUBLIC_SUPABASE_URL:dbOrigin,SUPABASE_SERVICE_ROLE_KEY:'sb_secret_news-test',WORKFLOW_LOCAL_BASE_URL:origin,WORKFLOW_LOCAL_DATA_DIR:resolve('.runtime/news-workflow-'+randomUUID()),WORKFLOW_TARGET_WORLD:'local',VERCEL:'',PORT:'4332'},stdio:['ignore','pipe','pipe']});
+app=spawn(process.execPath,['--import',pathToFileURL(preload).href,'node_modules/next/dist/bin/next','start','--port','4332','--hostname','127.0.0.1'],{env:{...process.env,APP_URL:origin,CRON_SECRET:'synthetic-news-cron-key-for-qa',EDITOR_ACTION_SECRET:'synthetic-news-editor-password-for-qa',LLM_API_KEY:'synthetic-news-model',NEXT_PUBLIC_SUPABASE_URL:dbOrigin,SUPABASE_SERVICE_ROLE_KEY:'sb_secret_news-test',WORKFLOW_LOCAL_BASE_URL:origin,WORKFLOW_LOCAL_DATA_DIR:resolve('.runtime/news-workflow-'+randomUUID()),WORKFLOW_TARGET_WORLD:'local',VERCEL:'',PORT:'4332'},stdio:['ignore','pipe','pipe']});
 app.stdout.on('data',d=>logs+=d);app.stderr.on('data',d=>logs+=d);
 try{
  for(let i=0;;i++){try{if((await fetch(origin+'/api/editorial/status')).ok)break;}catch{}if(i>100)throw Error('START_FAILED');await delay(200);}
  browser=await chromium.launch({executablePath:process.env.DD_CHROME||undefined});const context=await browser.newContext({viewport:{width:1440,height:1000}}),page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
- assert.equal((await fetch(origin+'/api/editorial/news')).status,401);assert.equal((await fetch(origin+'/api/cron/daily')).status,401);
+ assert.equal((await fetch(origin+'/api/internal/pdf',{method:'POST',body:'{}'})).status,401);assert.equal((await fetch(origin+'/api/editorial/news')).status,401);assert.equal((await fetch(origin+'/api/cron/daily')).status,401);
  await page.goto(origin+'/editor');await page.getByLabel('管理密碼',{exact:true}).fill('synthetic-news-editor-password-for-qa');await page.getByRole('button',{name:'解鎖',exact:true}).click();
  await page.locator('.news-story').nth(9).waitFor({timeout:120000});assert.equal(await page.locator('.news-story').count(),10);assert.equal(counts.select,1);
  await page.getByRole('button',{name:'LLM 幫我選四篇'}).click();await page.getByText('四篇選題已儲存，可立即生成。',{exact:true}).waitFor();
@@ -90,8 +91,9 @@ try{
   if(job.status==='needs_review')break;
   await delay(2000);
  }
- assert.equal(job.status,'needs_review');assert.equal(job.facts.length,4);assert.equal(job.pdfs.length,6);assert.equal(counts.select,1);assert.equal(counts.facts,4);assert.equal(counts.write,12);assert.equal(counts.review,12);assert.equal(counts.images,12);assert.equal(Object.values(job.imageStates).filter(s=>s==='done').length,12);
+ assert.equal(job.status,'needs_review');assert.equal(job.facts.length,4);assert.equal(job.pdfs.length,6);assert.equal(counts.select,1);assert.equal(counts.facts,4);assert.equal(counts.write,12);assert.equal(counts.review,12);assert.equal(counts.images,13);assert.equal(Object.values(job.imageStates).filter(s=>s==='done').length,12);
  console.log('PASS: background completed twelve stories, twelve images and six PDFs');
+ const currentNews=await context.request.get(origin+'/api/editorial/news').then(r=>r.json());const earlier=await context.request.post(origin+'/api/editorial/news',{headers:{origin},data:{action:'settings',settings:{...currentNews.settings,selectionTime:'00:00',publishTime:'02:00'}}});assert.equal(earlier.status(),200,await earlier.text());
  const before={...counts},body={action:'schedule',issueDate:today};
  const schedule=await context.request.post(origin+'/api/editorial/news',{headers:{origin},data:body});assert.equal(schedule.status(),200,await schedule.text());const run=(await schedule.json()).runId;
  const again=await context.request.post(origin+'/api/editorial/news',{headers:{origin},data:body});assert.equal((await again.json()).runId,run);
@@ -101,7 +103,7 @@ try{
  const publicIssue=await fetch(origin+'/api/issues/latest?edition=junior').then(r=>r.json());assert.equal(publicIssue.issue.reviewCopy,false);assert.equal(publicIssue.issue.articles.length,4);
  for(const image of publicIssue.issue.articles.map(a=>a.image)){assert.equal((await fetch(origin+image.rendition.webPath)).status,200);}
  for(const file of release.pdfs){const r=await fetch(origin+'/api/issues/'+today+'/pdf?edition='+file.edition+'&mode='+file.mode);assert.equal(r.status,200);const bytes=Buffer.from(await r.arrayBuffer());assert.ok((await PDFDocument.load(bytes)).getPageCount()>=1);await writeFile('output/news-workflow/'+file.edition+'-'+file.mode+'.pdf',bytes);}
- assert.deepEqual(errors,[]);await writeFile('output/news-workflow/verification.json',JSON.stringify({syntheticExternalServices:true,realBrowser:true,realWorkflow:true,realPdf:true,shortlist:10,manualSelectionSaved:true,continuedAfterPageClosed:true,automaticRelease:true,idempotentSchedule:true,counts,files:files.size,browserErrors:errors},null,2));
+ assert.ok(pdfUploadRejectedOnce);assert.ok([...rows.keys()].some(k=>k.includes('pdf:render:')));assert.deepEqual(errors,[]);await writeFile('output/news-workflow/verification.json',JSON.stringify({syntheticExternalServices:true,realBrowser:true,realWorkflow:true,realPdf:true,privatePdfWorker:true,recoveredPdfUpload:true,shortlist:10,manualSelectionSaved:true,continuedAfterPageClosed:true,automaticRelease:true,idempotentSchedule:true,counts,files:files.size,browserErrors:errors},null,2));
  console.log('PASS: pool → LLM shortlist → manual selection → closed page → durable workflow → 12 stories + 12 images + six PDFs → idempotent automatic release → public assets and downloads');
 }catch(e){await writeFile('output/news-workflow/failure.log',logs+'\n'+e.stack);await writeFile('output/news-workflow/failure-state.json',JSON.stringify({counts,jobs:[...rows.values()].filter(r=>r.checkpoints)},null,2));throw e;}
 finally{await browser?.close();app?.kill();db.close();}

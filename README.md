@@ -1,7 +1,7 @@
 # DayDay Daily Digest
 Four stories. Every day. Your level.
 
-網頁編輯室：`/editor`。可勾選新聞來源與題材 pool，由 LLM 整理 8–10 篇 shortlist，手選四篇或採用 LLM 組合，再於背景製作三種程度、分齡插圖與六份 PDF。每日台北時間 08:00 自動出刊：提前 30 分鐘採用已儲存的四篇，未選滿時由 LLM 選題。Vercel Workflow 在關閉網頁後仍持續執行，稿件與發布紀錄存進 Supabase。操作與儲存方式見 [WEB_EDITORIAL](docs/WEB_EDITORIAL.md)。`EDITOR_ACTION_SECRET` 用於管理員解鎖；讀者不需登入。
+網頁編輯室：`/editor`。可勾選新聞來源與題材 pool，由 LLM 整理 8–10 篇 shortlist，手選四篇或採用 LLM 組合，再於背景製作三種程度、分齡插圖與六份 PDF。每日台北時間 09:00 截止選題、12:00 自動出刊。已選滿四篇就採用手選；未選滿時在 09:00 重新抓最新來源並由 LLM 選題。正式新刊全部使用 AI 配圖，12 張插畫、三程度稿件及 PDF 未通過不會放行。Vercel Workflow 在關閉網頁後仍持續執行，稿件與發布紀錄存進 Supabase。操作與儲存方式見 [WEB_EDITORIAL](docs/WEB_EDITORIAL.md)。`EDITOR_ACTION_SECRET` 用於管理員解鎖；讀者不需登入。
 
 Vercel：<https://daily-digest-wine-two.vercel.app/>。預設直接閱讀最新已發布的四則新聞，可切換小學／國中／高中三版、記錄已讀及下載六份 PDF。**一般訪客不需要登入或 API key。手動生成先進審查頁；每日自動出刊必須通過來源、十二份模型複核、詞彙與六份 PDF 檢查，才更新首頁。**
 

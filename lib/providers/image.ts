@@ -10,7 +10,7 @@ export const PARK_IMAGE_PROMPT='Editorial watercolor illustration on warm ivory 
 type ImageDiagnostic={httpStatus:number;hasArtifacts:boolean;artifactCount:number;hasProviderError:boolean;
   hasImage:boolean;finishReason:string|null;validationFields:string[];steps:number};
 export async function generateNvidiaImage(key:string,{fetcher=fetch,prompt=PARK_IMAGE_PROMPT,
-  model=NVIDIA_IMAGE_MODEL,onDiagnostic}:{fetcher?:typeof fetch;prompt?:string;model?:NvidiaImageModel;
+  model=NVIDIA_IMAGE_MODEL,onDiagnostic,timeoutMs=180000}:{fetcher?:typeof fetch;prompt?:string;model?:NvidiaImageModel;timeoutMs?:number;
     onDiagnostic?:(diagnostic:ImageDiagnostic)=>void}={}){
   if(!key.trim())throw Error('IMAGE_KEY_MISSING');
   if(!NVIDIA_IMAGE_MODELS.includes(model))throw Error('IMAGE_MODEL_NOT_ALLOWED');
@@ -18,9 +18,10 @@ export async function generateNvidiaImage(key:string,{fetcher=fetch,prompt=PARK_
     {text_prompts:[{text:prompt,weight:1}],cfg_scale:5,sampler:'K_DPM_2_ANCESTRAL',seed:18,steps:25}:
     model==='stabilityai/stable-diffusion-3-medium'?
       {prompt,cfg_scale:5,aspect_ratio:'3:2',seed:18,steps:28,negative_prompt:''}:
-      {prompt,width:1216,height:832,steps:model==='black-forest-labs/flux-3-image-klein'?50:4};
+      model==='black-forest-labs/flux.2-klein-4b'?{prompt,width:1024,height:1024,steps:4}:
+      {prompt,width:1216,height:832,steps:50};
   const response=await fetcher('https://ai.api.nvidia.com/v1/genai/'+model,{
-    method:'POST',redirect:'error',signal:AbortSignal.timeout(180_000),
+    method:'POST',redirect:'error',signal:AbortSignal.timeout(Math.max(1000,Math.min(180000,timeoutMs))),
     headers:{Authorization:'Bearer '+key,'Content-Type':'application/json',Accept:'application/json'},
     body:JSON.stringify(payload),
   });

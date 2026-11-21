@@ -108,3 +108,11 @@ test('FLUX 3 uses its documented 50-step default rather than FLUX 2 distilled se
     return new Response(JSON.stringify({artifacts:[{base64:png.toString('base64'),finishReason:'SUCCESS'}]}));
   }});
 });
+
+test('FLUX 2 Klein follows its supported square canvas and four-step contract',async()=>{
+ const png=await sharp({create:{width:256,height:256,channels:3,background:'#abc'}}).png().toBuffer();
+ await generateNvidiaImage('test-key',{model:'black-forest-labs/flux.2-klein-4b',fetcher:async(_url,options)=>{
+  const body=JSON.parse(String(options?.body));assert.equal(body.width,1024);assert.equal(body.height,1024);assert.equal(body.steps,4);
+  return new Response(JSON.stringify({artifacts:[{base64:png.toString('base64'),finishReason:'SUCCESS'}]}));
+ }});
+});

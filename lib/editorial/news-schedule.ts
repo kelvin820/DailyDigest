@@ -8,17 +8,17 @@ import type {WebJob,WebRelease,WebPdf} from './web-types';
 import {authorizedBackfill} from './backfill';
 export async function scheduledPlan(store:DocumentStore,date:string){
  z.iso.date().parse(date);const settings=await getNewsSettings(store);
- return {enabled:settings.autoEnabled,...scheduleTimes(date,settings.publishTime)};
+ return {enabled:settings.autoEnabled,...scheduleTimes(date,settings.publishTime,settings.selectionTime)};
 }
-export async function prepareScheduledJob(store:DocumentStore,date:string){
+export async function prepareScheduledJob(store:DocumentStore,date:string,options:{refresh?:typeof refreshNewsRound}={}){
  const settings=await getNewsSettings(store);if(!settings.autoEnabled)return {skip:true as const};
  if(await store.get<WebRelease>(releaseKey(date)))return {skip:true as const};
  let plan=await store.get<NewsPlan>(newsPlanKey(date));
  if(plan?.jobId){const job=await store.get<WebJob>(jobKey(plan.jobId));if(job){await changeDocument<NewsPlan>(store,newsPlanKey(date),()=>emptyNewsPlan(date),p=>{p.lockedAt=new Date().toISOString();});return {skip:false as const,id:job.id};}}
  let round=plan?.roundId?await store.get<NewsRound>(newsRoundKey(plan.roundId)):null;
- const samePool=round&&JSON.stringify(round.settings)===JSON.stringify(settings);
- if(!round||round.status!=='ready'||Date.now()-Date.parse(round.createdAt)>18*3600000||!samePool){round=await refreshNewsRound(store,date);plan=await store.get<NewsPlan>(newsPlanKey(date));}
- const manual=plan?.roundId===round.id&&plan.selectedIds.length===4;
+ const manual=!!round&&round.status==='ready'&&plan?.roundId===round.id&&plan.selectedIds.length===4;
+ if(!manual){round=await (options.refresh??refreshNewsRound)(store,date);plan=await store.get<NewsPlan>(newsPlanKey(date));}
+ if(!round)throw Error('NEWS_POOL_TOO_SMALL');
  const ids=manual?plan!.selectedIds:round.recommendedIds;
  if(ids.length!==4)throw Error('NEWS_POOL_TOO_SMALL');
  await selectNews(store,date,round.id,ids,manual?'manual':'llm');

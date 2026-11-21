@@ -1,11 +1,11 @@
 import {randomUUID} from 'node:crypto';
 import {revalidatePath} from 'next/cache';
 import {documentStore} from '../lib/editorial/web-store';
-import {advanceWebJob,retryWebPdfs,retryPromptSnapshot,jobKey,canPublishWebJob,jobFingerprint} from '../lib/editorial/web-jobs';
+import {advanceWebJob,retryWebPdfs,retryWebGeneration,retryPromptSnapshot,jobKey,canPublishWebJob,jobFingerprint} from '../lib/editorial/web-jobs';
 import {scheduledPlan,prepareScheduledJob,recordNewsFailure,publishScheduledJob} from '../lib/editorial/news-schedule';
 import type {WebJob,WebPdf} from '../lib/editorial/web-types';
 import {editionKeys} from '../config/editions';
-import {renderWebPdfs} from '../lib/pdf/vercel';
+import {dispatchWebPdfs} from '../lib/pdf/dispatch';
 import {verifyWebPdfs} from '../lib/editorial/web-files';
 import {campaignKey,prepareBackfillDay,reportBackfillDay,type BackfillCampaign} from '../lib/editorial/backfill';
 import {changeDocument} from '../lib/editorial/web-store';
@@ -18,17 +18,18 @@ export async function advanceEditionStep(id:string){
  'use step';
  const store=documentStore();let job=await store.get<WebJob>(jobKey(id));if(!job)throw Error('NOT_FOUND');
  if(job.status==='needs_attention'&&job.error==='GENERATION_PROMPTS_CHANGED')job=await retryPromptSnapshot(store,id);
+ if(job.status==='needs_attention'&&job.error==='MODEL_SCHEMA_INVALID'&&!job.activeStep)job=await retryWebGeneration(store,id);
  // PDF errors are safe to retry; an in-flight model request is never repeated.
  if(job.status==='needs_attention'&&job.editions.length===3&&!job.activeStep&&job.error?.startsWith('PDF_'))job=await retryWebPdfs(store,id);
- if(job.status!=='needs_attention')job=await advanceWebJob(store,id,{maxModelSteps:3});
- return {status:job.status,error:job.error};
+ if(job.status!=='needs_attention')job=await advanceWebJob(store,id,{maxModelSteps:3,render:(j,e)=>dispatchWebPdfs(j,e)});
+ return {status:job.status,error:job.error,waitUntil:job.waitUntil};
 }
 advanceEditionStep.maxRetries=0;
 export async function publicationStep(id:string){
  'use step';
  const job=await documentStore().get<WebJob>(jobKey(id));if(!job||!canPublishWebJob(job))throw Error('PUBLICATION_CHECKS_FAILED');
  await verifyWebPdfs(job);const releasedAt=new Date().toISOString(),final=structuredClone(job);final.editions=publicationEditions(job,releasedAt);final.pdfs=[];
- const folder='published-'+randomUUID();for(const edition of editionKeys)final.pdfs.push(...await renderWebPdfs(final,edition,undefined,folder));
+ const folder='published-'+randomUUID();for(const edition of editionKeys)final.pdfs.push(...await dispatchWebPdfs(final,edition,folder,jobFingerprint(job)));
  return {pdfs:final.pdfs,releasedAt,fingerprint:jobFingerprint(job)};
 }
 export async function publishDailyStep(id:string,publication:{pdfs:WebPdf[];releasedAt:string;fingerprint:string}){

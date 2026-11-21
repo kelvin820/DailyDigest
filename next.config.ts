@@ -7,7 +7,7 @@ const pdfAssets=['./prompts/*.txt','./app/globals.css','./public/fonts/*.ttf','.
  './node_modules/playwright-core/**/*','./node_modules/.pnpm/playwright-core*/node_modules/playwright-core/**/*'];
 const config:NextConfig={poweredByHeader:false,
  serverExternalPackages:['@sparticuz/chromium','playwright-core','pg'],
- outputFileTracingIncludes:{'/api/editorial/jobs/**':pdfAssets,
+ outputFileTracingIncludes:{'/api/editorial/jobs/**':pdfAssets,'/api/internal/pdf':pdfAssets,
  '/api/editorial/setup':['./supabase/migrations/*.sql',...pdfAssets],
  '/.well-known/workflow/v1/step':pdfAssets,'/.well-known/workflow/v1/flow':pdfAssets},
  async headers(){return [{source:"/:path*",headers:[{key:"X-Content-Type-Options",value:"nosniff"},{key:"Referrer-Policy",value:"same-origin"},{key:"X-Frame-Options",value:"DENY"}]}]}};

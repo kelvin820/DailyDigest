@@ -36,6 +36,16 @@ test('layout refresh preserves paid text and approved publication, and refuses c
  await assert.rejects(()=>refreshApprovedPdfs(store,id,finalRender),/REVIEW_VERSION_CHANGED/);assert.equal(rendered,3);
 });
 
+test('approved releases may fill missing concept illustrations while body edits remain blocked',async()=>{
+ const store=new MemoryStore(),id=randomUUID();await importReviewPacket(store,id,base.id,base.fingerprint);
+ for(let i=0;i<3;i++)await advanceWebJob(store,id,{render});
+ const job=(await store.get<WebJob>(jobKey(id)))!;for(const issue of job.editions)issue.articles[0].image={...issue.articles[0].image,kind:'icon'};store.rows.set(jobKey(id),job);
+ const old=await publishWebJob(store,id,jobFingerprint(job),true);
+ const changed=(await store.get<WebJob>(jobKey(id)))!;for(const issue of changed.editions)issue.articles[0].image={...issue.articles[0].image,kind:'generated_illustration',caption:'主題概念插畫，非事件照片'};store.rows.set(jobKey(id),changed);
+ const release=await refreshApprovedPdfs(store,id,async(j,e,folder)=>(await render!(j,e)).map(p=>({...p,path:'web-editorial/'+id+'/'+folder+'/'+e+'-'+p.mode+'.pdf'})));
+ assert.equal(release.editions[0].articles[0].image.kind,'generated_illustration');assert.deepEqual(release.editions.map(e=>e.articles.map(a=>a.bodyParagraphs)),old.editions.map(e=>e.articles.map(a=>a.bodyParagraphs)));
+});
+
 test('PDF recovery preserves paid model results and refuses jobs with unknown model usage',async()=>{
  process.env.LLM_API_KEY='synthetic-key';const store=new MemoryStore(),id=randomUUID(),api=testProvider();
  await createWebJob(store,id,request());await advanceWebJob(store,id,{provider:api.provider});

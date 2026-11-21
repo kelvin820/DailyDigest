@@ -15,7 +15,7 @@ export async function createBackfill(store:DocumentStore,id:string,asOfDate=taip
  z.iso.date().parse(asOfDate);if(asOfDate>taipeiDate())throw Error('FUTURE_ISSUE_DATE');
  const windowKey=WEB_PREFIX+'backfill-window:'+asOfDate,window=await store.get<{version:number;id:string}>(windowKey);if(window&&window.id!==id)throw Error('BACKFILL_ALREADY_EXISTS');
  if(!window&&!await store.create(windowKey,{version:1,id}))throw Error('BACKFILL_ALREADY_EXISTS');
- const dates=previousSevenDays(asOfDate),row:BackfillCampaign={version:1,id,createdAt:new Date().toISOString(),status:'running',dates,settings:structuredClone(defaultNewsSettings),limits:{calls:420,tokens:2_000_000,images:84,usd:(Number(process.env.DAILY_BUDGET_USD)||2)*7},jobs:{},rounds:{},reports:dates.map(date=>({date,status:'pending'}))};
+ const dates=previousSevenDays(asOfDate),row:BackfillCampaign={version:1,id,createdAt:new Date().toISOString(),status:'running',dates,settings:structuredClone(defaultNewsSettings),limits:{calls:420,tokens:2_000_000,images:112,usd:(Number(process.env.DAILY_BUDGET_USD)||2)*7},jobs:{},rounds:{},reports:dates.map(date=>({date,status:'pending'}))};
  if(!await store.create(key,row))return (await store.get<BackfillCampaign>(key))!;return row;
 }
 export async function authorizedBackfill(store:DocumentStore,id:string,date:string){const grant=await store.get<BackfillCampaign>(campaignKey(id));if(!grant||grant.status!=='running'||!grant.dates.includes(date))throw Error('BACKFILL_NOT_AUTHORIZED');return grant;}

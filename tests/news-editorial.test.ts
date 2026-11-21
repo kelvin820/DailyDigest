@@ -49,13 +49,15 @@ test('daily scheduling uses saved manual choices, otherwise LLM choices; an exis
  for(const manual of [true,false]){
   const store=new Memory(),round=await readyRound(store),ids=round.candidates.slice(5,9).map(c=>c.id);
   await selectNews(store,today(),round.id,manual?ids:ids.slice(0,2));
-  const plan=await prepareScheduledJob(store,today());assert.equal(plan.skip,false);if(plan.skip)throw Error('Unexpected skip');
+  let refreshes=0;const plan=await prepareScheduledJob(store,today(),{refresh:async()=>{refreshes++;return readyRound(store);}});assert.equal(refreshes,manual?0:1);assert.equal(plan.skip,false);if(plan.skip)throw Error('Unexpected skip');
   const job=(await store.get<WebJob>(jobKey(plan.id)))!;assert.equal(job.input.kind,'news');assert.deepEqual(job.intakeCandidates!.map(c=>c.id),manual?ids:round.recommendedIds);assert.equal(job.execution,'workflow');assert.equal(job.usage.calls,0);
   job.status='needs_attention';job.activeStep='unknown-paid-request';store.rows.set(jobKey(job.id),job);
   const resumed=await prepareScheduledJob(store,today());assert.equal(resumed.skip,false);if(!resumed.skip)assert.equal(resumed.id,job.id);
  }
  const store=new Memory();await saveNewsSettings(store,{...defaultNewsSettings,autoEnabled:false});assert.deepEqual(await prepareScheduledJob(store,today()),{skip:true});
- assert.deepEqual(scheduleTimes('2026-11-21','08:00'),{publishAt:'2026-11-21T00:00:00.000Z',prepareAt:'2026-11-20T23:30:00.000Z'});
+ assert.deepEqual(scheduleTimes('2026-11-21','12:00','09:00'),{publishAt:'2026-11-21T04:00:00.000Z',prepareAt:'2026-11-21T01:00:00.000Z'});
+ assert.equal(defaultNewsSettings.selectionTime,'09:00');assert.equal(defaultNewsSettings.publishTime,'12:00');
+ assert.equal(newsSettingsSchema.safeParse({...defaultNewsSettings,selectionTime:'12:00'}).success,false);
 });
 test('fact extraction rejects invented evidence and keeps unknown event dates unknown',async()=>{
  const c=candidates()[0],quote='Researchers reported a new finding after observing animals for several weeks.';

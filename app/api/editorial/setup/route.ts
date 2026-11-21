@@ -5,12 +5,16 @@ import {json} from '../../../../lib/api';
 import {editorOrigin,editorSecret,equalSecret,editorToken,requireEditor,validSetupAuthorization,EDITOR_COOKIE} from '../../../../lib/editorial/web-auth';
 import {requestBody,webError} from '../../../../lib/editorial/web-api';
 import {withSetupDatabase,inspectDatabase,initializeDatabase} from '../../../../lib/editorial/web-setup';
-import {documentStore,serviceDatabase,WEB_PREFIX} from '../../../../lib/editorial/web-store';
+import {documentStore,serviceDatabase,changeDocument,WEB_PREFIX} from '../../../../lib/editorial/web-store';
 import {retryWebPdfs,retryWebGeneration,advanceWebJob} from '../../../../lib/editorial/web-jobs';
-import {jobKey,releaseKey} from '../../../../lib/editorial/web-jobs';
+import {jobKey,releaseKey,jobFingerprint} from '../../../../lib/editorial/web-jobs';
+import {dispatchWebPdfs} from '../../../../lib/pdf/dispatch';
 import type {WebJob,WebRelease} from '../../../../lib/editorial/web-types';
 import {hash} from '../../../../lib/pipeline/state.mjs';
-import {rebuildDraftPdfs,refreshApprovedPdfs} from '../../../../lib/editorial/pdf-layout-refresh';
+import type {NewsRound} from '../../../../lib/editorial/news-config';
+import {newsPlanKey,type NewsPlan} from '../../../../lib/editorial/news-config';
+import {getRun} from 'workflow/api';
+import {rebuildDraftPdfs,refreshApprovedPdfs,retryFilteredImages} from '../../../../lib/editorial/pdf-layout-refresh';
 import {revalidatePath} from 'next/cache';
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
@@ -21,10 +25,13 @@ const schema=z.discriminatedUnion('action',[
  z.object({action:z.literal('verify')}).strict(),
  z.object({action:z.literal('jobs')}).strict(),
  z.object({action:z.literal('job-detail'),id:z.uuid()}).strict(),
+ z.object({action:z.literal('news-rounds'),issueDate:z.iso.date()}).strict(),
+ z.object({action:z.literal('reopen-selection'),issueDate:z.iso.date()}).strict(),
  z.object({action:z.literal('rebuild-pdfs'),id:z.uuid()}).strict(),
  z.object({action:z.literal('refresh-approved-pdfs'),id:z.uuid()}).strict(),
  z.object({action:z.literal('recover-pdfs'),id:z.uuid()}).strict(),
  z.object({action:z.literal('recover-generation'),id:z.uuid()}).strict(),
+ z.object({action:z.literal('retry-filtered-images'),id:z.uuid()}).strict(),
  z.object({action:z.literal('pdf-preview'),id:z.uuid(),edition:z.enum(['elementary','junior','senior']),mode:z.enum(['color','ink'])}).strict(),
 ]);
 export async function POST(req:Request){try{
@@ -36,11 +43,20 @@ export async function POST(req:Request){try{
   (await cookies()).set(EDITOR_COOKIE,editorToken(editorSecret()),{httpOnly:true,secure:process.env.VERCEL==='1'||new URL(req.url).protocol==='https:',sameSite:'strict',path:'/',maxAge:8*3600});
  }else await requireEditor();
  if(input.action==='job-detail')return json({job:await documentStore().get<WebJob>(jobKey(input.id))});
+ if(input.action==='reopen-selection'){
+  const store=documentStore(),plan=await store.get<NewsPlan>(newsPlanKey(input.issueDate));if(!plan)throw Error('NOT_FOUND');
+  if(await store.get<WebRelease>(releaseKey(input.issueDate)))throw Error('ISSUE_ALREADY_PUBLISHED');
+  if(plan.runId){const status=await getRun(plan.runId).status;if(status==='running'||status==='pending')throw Error('WORKFLOW_STILL_RUNNING');}
+  await changeDocument<NewsPlan>(store,newsPlanKey(input.issueDate),()=>{throw Error('NOT_FOUND');},p=>{p.jobId=null;p.lockedAt=null;p.error=null;p.runId=undefined;if(p.selectedBy!=='manual'){p.selectedIds=[];p.selectedBy=null;}p.updatedAt=new Date().toISOString();});
+  return json({reopened:true,priorWorkPreserved:true});
+ }
+ if(input.action==='news-rounds'){const rounds=await documentStore().list<NewsRound>(WEB_PREFIX+'news:round:');return json({rounds:rounds.filter(r=>r.issueDate===input.issueDate).sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).slice(0,4).map(r=>({id:r.id,status:r.status,error:r.error,usage:r.usage,invalidReplies:r.invalidReplies}))});}
+ if(input.action==='retry-filtered-images'){const job=await retryFilteredImages(documentStore(),input.id);return json({id:job.id,status:job.status,usage:job.usage});}
  if(input.action==='rebuild-pdfs'){const job=await rebuildDraftPdfs(documentStore(),input.id);return json({id:job.id,status:job.status,usage:job.usage});}
  if(input.action==='refresh-approved-pdfs'){
-  const {renderWebPdfs}=await import('../../../../lib/pdf/vercel');
   const store=documentStore(),job=await store.get<WebJob>(jobKey(input.id)),before=job?await store.get<WebRelease>(releaseKey(job.issueDate)):null;
-  const release=await refreshApprovedPdfs(store,input.id,(job,edition,folder)=>renderWebPdfs(job,edition,undefined,folder));
+  const release=await refreshApprovedPdfs(store,input.id,(final,edition,folder)=>dispatchWebPdfs(final,edition,folder,jobFingerprint(job!)));
+  if(job?.campaignId)await (await import('../../../../lib/editorial/backfill')).reportBackfillDay(store,job.campaignId,job.issueDate);
   const text=(r:WebRelease|null)=>r?.editions.map(e=>e.articles.map(a=>({headline:a.headline,body:a.bodyParagraphs,vocabulary:a.vocabulary})));
   const bodies=(r:WebRelease|null)=>r?.editions.map(e=>e.articles.map(a=>a.bodyParagraphs));
   revalidatePath('/');revalidatePath('/issues/'+release.issueDate);return json({id:release.jobId,pdfs:release.pdfs,approvedTextPreserved:hash(text(before))===hash(text(release)),approvedBodyPreserved:hash(bodies(before))===hash(bodies(release))});
@@ -62,7 +78,7 @@ export async function POST(req:Request){try{
  if(input.action==='recover-pdfs'){
   const store=documentStore(),jobs=await store.list<WebJob>(WEB_PREFIX+'job:'),old=jobs.find(j=>j.id===input.id);if(!old||old.editions.length!==3||old.activeStep)throw Error('PDF_RETRY_NOT_READY');
   if(old.status==='needs_attention')await retryWebPdfs(store,input.id);
-  const job=await advanceWebJob(store,input.id);return json({id:job.id,status:job.status,error:job.error,pdfs:job.pdfs,usage:job.usage});
+  const job=await advanceWebJob(store,input.id,{render:(j,e)=>dispatchWebPdfs(j,e)});return json({id:job.id,status:job.status,error:job.error,pdfs:job.pdfs,usage:job.usage});
  }
  if(input.action==='verify'){
   const id=randomUUID(),store=documentStore(),key=WEB_PREFIX+'health:'+id;
