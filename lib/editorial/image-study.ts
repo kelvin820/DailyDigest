@@ -23,6 +23,6 @@ export async function runImageStudy(store:DocumentStore,input:{id:string;probeId
   const result=await generateNvidiaImage(process.env.NVIDIA_IMAGE_API_KEY?.trim()||process.env.LLM_API_KEY?.trim()||'',{model:input.model,prompt,timeoutMs:90000,onDiagnostic:value=>{diagnostic=value;}}),bucket=serviceDatabase().storage.from('issue-files');
   const paths:{key:string;path:string}[]=[],images=[{key:'original',bytes:result.bytes},...(input.mode==='sheet'?await cropIllustrationSheet(result.bytes):[])];
   for(const image of images){const path='image-studies/'+input.probeId+'/'+image.key+(image.key==='original'&&result.mime==='image/jpeg'?'.jpg':'.png'),{error}=await bucket.upload(path,image.bytes,{contentType:image.key==='original'?result.mime:'image/png',upsert:true});if(error)throw Error('IMAGE_STORAGE_FAILED');paths.push({key:image.key,path});}
-  const study={...base,version:2,status:'generated',diagnostic,paths};if(!await store.compare(documentKey,1,study))throw Error('JOB_CONFLICT');return study;
+  const study={...base,version:2,status:'generated',publicationEligible:false,reviewStatus:'needs_visual_review',diagnostic,paths};if(!await store.compare(documentKey,1,study))throw Error('JOB_CONFLICT');return study;
  }catch(error){const study={...base,version:2,status:'failed',error:imageFailureCode(error),diagnostic};await store.compare(documentKey,1,study);return study;}
 }

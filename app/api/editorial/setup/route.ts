@@ -31,12 +31,13 @@ const schema=z.discriminatedUnion('action',[
  z.object({action:z.literal('image-study'),id:z.uuid(),probeId:z.uuid(),storyId:z.string().min(1),edition:z.enum(['elementary','junior','senior']),mode:z.enum(['single','sheet']),model:z.enum(NVIDIA_IMAGE_MODELS)}).strict(),
  z.object({action:z.literal('news-rounds'),issueDate:z.iso.date()}).strict(),
  z.object({action:z.literal('reopen-selection'),issueDate:z.iso.date()}).strict(),
+ z.object({action:z.literal('resume-daily'),issueDate:z.iso.date()}).strict(),
  z.object({action:z.literal('rebuild-pdfs'),id:z.uuid()}).strict(),
  z.object({action:z.literal('refresh-approved-pdfs'),id:z.uuid()}).strict(),
  z.object({action:z.literal('recover-pdfs'),id:z.uuid()}).strict(),
  z.object({action:z.literal('recover-generation'),id:z.uuid()}).strict(),
  z.object({action:z.literal('retry-filtered-images'),id:z.uuid()}).strict(),
- z.object({action:z.literal('retry-image-prompt-limit'),id:z.uuid()}).strict(),
+ z.object({action:z.literal('retry-image-prompt-limit'),id:z.uuid(),verifiedLegacyModel:z.literal('black-forest-labs/flux.2-klein-4b').optional()}).strict(),
  z.object({action:z.literal('pdf-preview'),id:z.uuid(),edition:z.enum(['elementary','junior','senior']),mode:z.enum(['color','ink'])}).strict(),
 ]);
 export async function POST(req:Request){try{
@@ -48,6 +49,14 @@ export async function POST(req:Request){try{
   (await cookies()).set(EDITOR_COOKIE,editorToken(editorSecret()),{httpOnly:true,secure:process.env.VERCEL==='1'||new URL(req.url).protocol==='https:',sameSite:'strict',path:'/',maxAge:8*3600});
  }else await requireEditor();
  if(input.action==='job-detail')return json({job:await documentStore().get<WebJob>(jobKey(input.id))});
+ if(input.action==='resume-daily'){
+  const store=documentStore(),plan=await store.get<NewsPlan>(newsPlanKey(input.issueDate));if(!plan?.jobId)throw Error('NOT_FOUND');
+  if(await store.get<WebRelease>(releaseKey(input.issueDate)))throw Error('ISSUE_ALREADY_PUBLISHED');
+  if(plan.runId){const status=await getRun(plan.runId).status;if(status==='running'||status==='pending')return json({runId:plan.runId,alreadyRunning:true});}
+  const job=await store.get<WebJob>(jobKey(plan.jobId));if(!job||job.status==='needs_attention'||job.activeStep||job.lease&&job.lease.expiresAt>Date.now())throw Error('GENERATION_RETRY_NOT_READY');
+  await changeDocument<NewsPlan>(store,newsPlanKey(input.issueDate),()=>{throw Error('NOT_FOUND');},p=>{p.workflowAttempt=(p.workflowAttempt??0)+1;p.error=null;p.updatedAt=new Date().toISOString();});
+  return json({runId:await (await import('../../../../lib/editorial/background')).startDaily(store,input.issueDate),id:plan.jobId,selectionPreserved:true});
+ }
  if(input.action==='image-attempts'){const attempts=await documentStore().list<{jobId:string;createdAt:string}>(WEB_PREFIX+'image-attempt:');return json({attempts:attempts.filter(a=>a.jobId===input.id).sort((a,b)=>a.createdAt.localeCompare(b.createdAt))});}
  if(input.action==='image-study'){
   const study=await runImageStudy(documentStore(),input),paths=(study as {paths?:{key:string;path:string}[]}).paths??[],images=[];
@@ -63,7 +72,7 @@ export async function POST(req:Request){try{
  }
  if(input.action==='news-rounds'){const rounds=await documentStore().list<NewsRound>(WEB_PREFIX+'news:round:');return json({rounds:rounds.filter(r=>r.issueDate===input.issueDate).sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).slice(0,4).map(r=>({id:r.id,status:r.status,error:r.error,usage:r.usage,invalidReplies:r.invalidReplies}))});}
  if(input.action==='retry-filtered-images'){const job=await retryFilteredImages(documentStore(),input.id);return json({id:job.id,status:job.status,usage:job.usage});}
- if(input.action==='retry-image-prompt-limit'){const job=await retryImagePromptLimit(documentStore(),input.id);return json({id:job.id,status:job.status,usage:job.usage});}
+ if(input.action==='retry-image-prompt-limit'){const job=await retryImagePromptLimit(documentStore(),input.id,input.verifiedLegacyModel);return json({id:job.id,status:job.status,usage:job.usage});}
  if(input.action==='rebuild-pdfs'){const job=await rebuildDraftPdfs(documentStore(),input.id);return json({id:job.id,status:job.status,usage:job.usage});}
  if(input.action==='refresh-approved-pdfs'){
   const store=documentStore(),job=await store.get<WebJob>(jobKey(input.id)),before=job?await store.get<WebRelease>(releaseKey(job.issueDate)):null;

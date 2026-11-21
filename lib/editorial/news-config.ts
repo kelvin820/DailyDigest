@@ -26,7 +26,7 @@ export async function getNewsSettings(store:DocumentStore){const row=await store
 export async function saveNewsSettings(store:DocumentStore,raw:unknown){const settings=newsSettingsSchema.parse(raw);await changeDocument(store,newsSettingsKey,()=>({version:0,settings}),v=>{v.settings=settings;});return settings;}
 export type NewsCandidate={id:string;sourceId:string;publisher:string;title:string;url:string;publishedAt:string;excerpt:string;category:NewsCategory;titleZh?:string;summaryZh?:string;whyZh?:string;eventKey?:string;score?:number;referenceDate?:string};
 export type NewsRound={version:number;id:string;issueDate:string;createdAt:string;settings:NewsSettings;status:'collecting'|'ready'|'failed';candidates:NewsCandidate[];recommendedIds:string[];failures:{source:string;code:string}[];usage:{calls:number;inputTokens:number;outputTokens:number};error?:string;invalidReplies?:import('../providers/text').InvalidStructuredReply[]};
-export type NewsPlan={version:number;issueDate:string;roundId:string|null;selectedIds:string[];jobId:string|null;selectedBy:'manual'|'llm'|null;updatedAt:string;runId?:string;error?:string|null;lockedAt?:string|null};
+export type NewsPlan={version:number;issueDate:string;roundId:string|null;selectedIds:string[];jobId:string|null;selectedBy:'manual'|'llm'|null;updatedAt:string;runId?:string;workflowAttempt?:number;error?:string|null;lockedAt?:string|null};
 export const newsRoundKey=(id:string)=>WEB_PREFIX+'news:round:'+z.uuid().parse(id);
 export const newsPlanKey=(date:string)=>WEB_PREFIX+'news:plan:'+z.iso.date().parse(date);
 export const emptyNewsPlan=(date:string):NewsPlan=>({version:0,issueDate:date,roundId:null,selectedIds:[],jobId:null,selectedBy:null,updatedAt:new Date().toISOString()});
