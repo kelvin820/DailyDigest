@@ -9,7 +9,7 @@ import {renderWebPdfs} from '../../../../lib/pdf/vercel';
 import {hash} from '../../../../lib/pipeline/state.mjs';
 import {requestBody} from '../../../../lib/editorial/web-api';
 export const runtime='nodejs';
-export const maxDuration=60;
+export const maxDuration=180;
 export const dynamic='force-dynamic';
 const schema=z.object({id:z.uuid(),edition:z.enum(['elementary','junior','senior']),folder:z.string().regex(/^(?:published-[a-f0-9-]{36})?$/),fingerprint:z.string().regex(/^[a-f0-9]{64}$/),releasedAt:z.iso.datetime().optional()}).strict();
 export async function POST(req:Request){

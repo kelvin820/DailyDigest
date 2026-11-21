@@ -1,4 +1,3 @@
-import {randomUUID} from 'node:crypto';
 import {revalidatePath} from 'next/cache';
 import {documentStore} from '../lib/editorial/web-store';
 import {advanceWebJob,retryWebPdfs,retryWebGeneration,retryPromptSnapshot,jobKey,canPublishWebJob,jobFingerprint} from '../lib/editorial/web-jobs';
@@ -10,6 +9,7 @@ import {verifyWebPdfs} from '../lib/editorial/web-files';
 import {campaignKey,prepareBackfillDay,reportBackfillDay,type BackfillCampaign} from '../lib/editorial/backfill';
 import {changeDocument} from '../lib/editorial/web-store';
 import {publicationEditions} from '../lib/editorial/event-date';
+import {publicationPlan} from '../lib/editorial/publication-plan';
 export async function loadDailyStep(date:string){'use step';return scheduledPlan(documentStore(),date);}
 export async function prepareDailyStep(date:string){'use step';return prepareScheduledJob(documentStore(),date);}
 prepareDailyStep.maxRetries=0;
@@ -28,8 +28,8 @@ advanceEditionStep.maxRetries=0;
 export async function publicationStep(id:string){
  'use step';
  const job=await documentStore().get<WebJob>(jobKey(id));if(!job||!canPublishWebJob(job))throw Error('PUBLICATION_CHECKS_FAILED');
- await verifyWebPdfs(job);const releasedAt=new Date().toISOString(),final=structuredClone(job);final.editions=publicationEditions(job,releasedAt);final.pdfs=[];
- const folder='published-'+randomUUID();for(const edition of editionKeys)final.pdfs.push(...await dispatchWebPdfs(final,edition,folder,jobFingerprint(job)));
+ await verifyWebPdfs(job);const {releasedAt,folder}=await publicationPlan(documentStore(),id,jobFingerprint(job)),final=structuredClone(job);final.editions=publicationEditions(job,releasedAt);final.pdfs=[];
+ for(const edition of editionKeys)final.pdfs.push(...await dispatchWebPdfs(final,edition,folder,jobFingerprint(job)));
  return {pdfs:final.pdfs,releasedAt,fingerprint:jobFingerprint(job)};
 }
 export async function publishDailyStep(id:string,publication:{pdfs:WebPdf[];releasedAt:string;fingerprint:string}){

@@ -9,11 +9,13 @@ import {checkPrintLayout} from './print-checks.mjs';
 import {printPdfOptions} from './options.mjs';
 import {recoverClosedBrowser} from './browser-retry';
 import {withPdfProfile} from './temporary-profile';
+import {withPdfBrowserSlot} from './browser-slot';
 import {editions,type Edition} from '../../config/editions';
 import {serviceDatabase} from '../editorial/web-store';
 import type {WebJob,WebPdf} from '../editorial/web-types';
 
-export async function renderWebPdfs(job:WebJob,edition:Edition,upload?:(path:string,bytes:Buffer)=>Promise<void>,folder='',onFile?:(file:WebPdf)=>Promise<void>){
+export async function renderWebPdfs(...args:Parameters<typeof renderWebPdfsUnlocked>){return withPdfBrowserSlot(()=>renderWebPdfsUnlocked(...args));}
+async function renderWebPdfsUnlocked(job:WebJob,edition:Edition,upload?:(path:string,bytes:Buffer)=>Promise<void>,folder='',onFile?:(file:WebPdf)=>Promise<void>){
  let stage='ASSETS',currentMode='';
  try{
   if(folder&&!/^published-[a-f0-9-]{36}$/.test(folder))throw Error('INVALID_PDF_FOLDER');
@@ -28,6 +30,7 @@ export async function renderWebPdfs(job:WebJob,edition:Edition,upload?:(path:str
    const existing=job.pdfs.find(p=>p.path===path);if(existing){results.push(existing);continue;}
    const bytes=await recoverClosedBrowser(async attempt=>withPdfProfile(async profile=>{
     stage='BROWSER';
+    console.info('pdf_browser_memory',{jobId:job.id,edition,mode,attempt,rssMiB:Math.round(process.memoryUsage().rss/1048576)});
     // Default contexts avoid the single-process Chromium incognito crash.
     // Each PDF gets a fresh browser rather than resetting a shared page.
     const context=await chromium.launchPersistentContext(profile,process.env.VERCEL?
