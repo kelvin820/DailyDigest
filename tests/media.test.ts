@@ -75,7 +75,7 @@ test('HTTP 200 with a provider error is rejected; response diagnostics exclude c
     onDiagnostic:value=>diagnostics.push(value),
   }),/^Error: IMAGE_PROVIDER_REJECTED$/);
   assert.deepEqual(diagnostics,[{httpStatus:200,hasArtifacts:false,artifactCount:0,hasProviderError:true,
-    hasImage:false,finishReason:null,validationFields:[],steps:50}]);
+    hasImage:false,finishReason:null,validationFields:[],validationMessages:[],steps:50}]);
   assert.doesNotMatch(JSON.stringify(diagnostics),/private-key|sensitive/);
 });
 

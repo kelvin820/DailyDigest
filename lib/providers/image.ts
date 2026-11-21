@@ -8,7 +8,7 @@ export const NVIDIA_OFFICIAL_IMAGE_SAMPLE='a simple coffee shop interior';
 export const PARK_IMAGE_PROMPT='Editorial watercolor illustration on warm ivory paper: an open sketchbook on a wooden outdoor table showing simple green tree shapes and curved paths for a possible future community park, colored pencils, leafy trees softly in the background. No people, no lettering, no logos. Conceptual planning scene, not a photograph or a completed real event. Sage green, muted ochre and terracotta. Keep the important sketchbook centered with generous space around it for newspaper landscape cropping.';
 
 type ImageDiagnostic={httpStatus:number;hasArtifacts:boolean;artifactCount:number;hasProviderError:boolean;
-  hasImage:boolean;finishReason:string|null;validationFields:string[];steps:number};
+  hasImage:boolean;finishReason:string|null;validationFields:string[];validationMessages:string[];steps:number};
 export async function generateNvidiaImage(key:string,{fetcher=fetch,prompt=PARK_IMAGE_PROMPT,
   model=NVIDIA_IMAGE_MODEL,onDiagnostic,timeoutMs=180000}:{fetcher?:typeof fetch;prompt?:string;model?:NvidiaImageModel;timeoutMs?:number;
     onDiagnostic?:(diagnostic:ImageDiagnostic)=>void}={}){
@@ -44,9 +44,10 @@ export async function generateNvidiaImage(key:string,{fetcher=fetch,prompt=PARK_
     'aspect_ratio','mode','model','negative_prompt','weight','text']);
   const validationFields=Array.isArray(data?.detail)?[...new Set<string>(data.detail.flatMap((item:{loc?:unknown[]})=>
     Array.isArray(item?.loc)?item.loc.filter((part):part is string=>typeof part==='string'&&fields.has(part)):[]))]:[];
+  const validationMessages=Array.isArray(data?.detail)?data.detail.slice(0,5).flatMap((item:{msg?:unknown})=>typeof item.msg==='string'?[item.msg.split(key).join('[credential]').replace(/https?:\/\/\S+/g,'[url]').slice(0,300)]:[]):[];
   onDiagnostic?.({httpStatus:response.status,hasArtifacts:Array.isArray(data?.artifacts),
     artifactCount:Array.isArray(data?.artifacts)?data.artifacts.length:0,hasProviderError:!!(data?.error||data?.errors),
-    hasImage:typeof data?.image==='string',finishReason,validationFields,steps:payload.steps});
+    hasImage:typeof data?.image==='string',finishReason,validationFields,validationMessages,steps:payload.steps});
   if(!response.ok)throw Error('IMAGE_HTTP_'+response.status);
   if(data?.error||data?.errors)throw Error('IMAGE_PROVIDER_REJECTED');
   if(finishReason==='CONTENT_FILTERED')throw Error('IMAGE_CONTENT_FILTERED');

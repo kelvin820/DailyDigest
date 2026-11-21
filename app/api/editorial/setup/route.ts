@@ -16,6 +16,8 @@ import {newsPlanKey,type NewsPlan} from '../../../../lib/editorial/news-config';
 import {getRun} from 'workflow/api';
 import {rebuildDraftPdfs,refreshApprovedPdfs,retryFilteredImages} from '../../../../lib/editorial/pdf-layout-refresh';
 import {revalidatePath} from 'next/cache';
+import {NVIDIA_IMAGE_MODELS} from '../../../../lib/providers/image';
+import {runImageStudy} from '../../../../lib/editorial/image-study';
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
 export const maxDuration=240;
@@ -26,6 +28,7 @@ const schema=z.discriminatedUnion('action',[
  z.object({action:z.literal('jobs')}).strict(),
  z.object({action:z.literal('job-detail'),id:z.uuid()}).strict(),
  z.object({action:z.literal('image-attempts'),id:z.uuid()}).strict(),
+ z.object({action:z.literal('image-study'),id:z.uuid(),probeId:z.uuid(),storyId:z.string().min(1),edition:z.enum(['elementary','junior','senior']),mode:z.enum(['single','sheet']),model:z.enum(NVIDIA_IMAGE_MODELS)}).strict(),
  z.object({action:z.literal('news-rounds'),issueDate:z.iso.date()}).strict(),
  z.object({action:z.literal('reopen-selection'),issueDate:z.iso.date()}).strict(),
  z.object({action:z.literal('rebuild-pdfs'),id:z.uuid()}).strict(),
@@ -45,6 +48,11 @@ export async function POST(req:Request){try{
  }else await requireEditor();
  if(input.action==='job-detail')return json({job:await documentStore().get<WebJob>(jobKey(input.id))});
  if(input.action==='image-attempts'){const attempts=await documentStore().list<{jobId:string;createdAt:string}>(WEB_PREFIX+'image-attempt:');return json({attempts:attempts.filter(a=>a.jobId===input.id).sort((a,b)=>a.createdAt.localeCompare(b.createdAt))});}
+ if(input.action==='image-study'){
+  const study=await runImageStudy(documentStore(),input),paths=(study as {paths?:{key:string;path:string}[]}).paths??[],images=[];
+  for(const file of paths){const {data,error}=await serviceDatabase().storage.from('issue-files').createSignedUrl(file.path,600);if(error||!data?.signedUrl)throw Error('IMAGE_STORAGE_FAILED');images.push({key:file.key,url:data.signedUrl});}
+  return json({study,images});
+ }
  if(input.action==='reopen-selection'){
   const store=documentStore(),plan=await store.get<NewsPlan>(newsPlanKey(input.issueDate));if(!plan)throw Error('NOT_FOUND');
   if(await store.get<WebRelease>(releaseKey(input.issueDate)))throw Error('ISSUE_ALREADY_PUBLISHED');
