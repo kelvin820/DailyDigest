@@ -16,7 +16,7 @@ export function NewsDesk({today}:{today:string}){
   try{await request({action:'settings',settings:current});const d=await request({action:'refresh',issueDate:today,id});await load();if(d.round.status!=='ready')setMessage('正在整理候選故事，請稍後更新。');}
   catch(e){setError((e as Error).message);}finally{setBusy('');}
  },[request,today,load]);
- useEffect(()=>{let active=true;load().then(d=>{if(active&&!autoRefresh.current&&(!d.round||Date.now()-Date.parse(d.round.createdAt)>30*60000)&&!d.plan?.jobId){autoRefresh.current=true;void refresh(d.settings,refreshId.current);}}).catch(e=>{if(active)setError(e.message);});return()=>{active=false;};},[load,refresh]);
+ useEffect(()=>{let active=true;load().then(d=>{if(active&&!autoRefresh.current&&(!d.round||Date.now()-Date.parse(d.round.createdAt)>30*60000)&&!d.plan?.jobId&&d.plan?.selectedIds.length!==4){autoRefresh.current=true;void refresh(d.settings,refreshId.current);}}).catch(e=>{if(active)setError(e.message);});return()=>{active=false;};},[load,refresh]);
  useEffect(()=>{if(!locked)return;let active=true;const timer=setInterval(()=>{editorialFetch('/api/editorial/news?date='+today).then(d=>{if(active)setBoard(d as Board);}).catch(()=>{});},10000);return()=>{active=false;clearInterval(timer);};},[locked,today]);
  async function choose(next:string[],by:'manual'|'llm'='manual'){
   if(!board?.round)return;setBusy('正在儲存選題…');setError('');
