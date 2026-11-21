@@ -1,6 +1,6 @@
 import {hash} from '../pipeline/state.mjs';
 import {audienceConceptPrompt} from '../media/audience';
-import {illustrationSheetPrompt,cropIllustrationSheet} from '../media/illustration-sheet';
+import {compactIllustrationSheetPrompt,cropIllustrationSheet} from '../media/illustration-sheet';
 import {generateNvidiaImage,type NvidiaImageModel} from '../providers/image';
 import type {Edition} from '../../config/editions';
 import {jobKey} from './web-jobs';
@@ -14,7 +14,7 @@ export async function runImageStudy(store:DocumentStore,input:{id:string;probeId
  const documentKey=WEB_PREFIX+'image-study:'+input.probeId,prior=await store.get<{inputHash:string}>(documentKey),inputHash=hash(input);if(prior){if(prior.inputHash!==inputHash)throw Error('IDEMPOTENCY_CONFLICT');return prior;}
  const job=await store.get<WebJob>(jobKey(input.id)),fact=job?.facts.find(f=>f.story_id===input.storyId);if(!job||!fact)throw Error('NOT_FOUND');
  const grant=job.campaignId?await authorizedBackfill(store,job.campaignId,job.issueDate):null;
- const concept='Create a wide landscape conceptual editorial illustration for this factual story. Illustrate its central subject simply, without adding factual claims. '+fact.claims.filter(c=>c.must_keep).map(c=>c.text).join(' '),prompt=input.mode==='sheet'?illustrationSheetPrompt(concept):audienceConceptPrompt(concept,input.edition);
+ const concept='Create a wide landscape conceptual editorial illustration for this factual story. Illustrate its central subject simply, without adding factual claims. '+fact.claims.filter(c=>c.must_keep).map(c=>c.text).join(' '),prompt=input.mode==='sheet'?compactIllustrationSheetPrompt(fact.claims.find(c=>c.must_keep)!.text):audienceConceptPrompt(concept,input.edition);
  const base={version:1,inputHash,...input,prompt,status:'started',createdAt:new Date().toISOString()};
  await reserveImageSlot(store,WEB_PREFIX+'image-budget:'+(job.campaignId?'backfill:'+job.campaignId:taipeiDate()),job.id+':study:'+input.probeId,grant?.limits.images??(Number(process.env.MAX_IMAGE_CALLS_PER_DAY)||32),!!grant);
  if(!await store.create(documentKey,base))throw Error('JOB_CONFLICT');

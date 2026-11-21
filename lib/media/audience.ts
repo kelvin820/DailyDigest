@@ -8,3 +8,10 @@ export function audienceConceptPrompt(concept:string,edition:Edition){return con
   ' This is a conceptual illustration, not a documentary photo or reconstruction of an actual event. No text, letters, logos or invented factual diagrams. Keep key subjects in the central area for newspaper cropping.';}
 const topicObjects={technology:'an unbranded keyboard, a plain game controller and a blank screen on a tidy desk',culture:'a closed book and a small empty picture frame on a museum desk',nature:'green leaves beside a still pond',science:'a prism, a small telescope and a blank notebook on a desk',world:'a plain globe beside a blank notebook',business:'a small market stall with baskets and a potted plant'};
 export function audienceTopicPrompt(category:keyof typeof topicObjects,edition:Edition){return audienceConceptPrompt('A simple, non-specific newspaper topic illustration of '+topicObjects[category]+'. No people, characters, brands, weapons or violence.',edition);}
+export function boundedNewsImagePrompt(claims:string[],category:keyof typeof topicObjects,edition:Edition){
+ const prefix='Wide conceptual newspaper illustration. ',suffix=' Concept art, not an event photo. No text, letters, logos or factual diagrams. Keep the central subject visible in a wide crop.',style=' '+audienceImageStyles[edition];
+ const selected:string[]=[];
+ for(const claim of claims){if((prefix+[...selected,claim].join(' ')+style+suffix).length>800)break;selected.push(claim);}
+ if(!selected.length)return {prompt:audienceTopicPrompt(category,edition),topic:true};
+ return {prompt:prefix+selected.join(' ')+style+suffix,topic:false};
+}

@@ -14,7 +14,7 @@ import {hash} from '../../../../lib/pipeline/state.mjs';
 import type {NewsRound} from '../../../../lib/editorial/news-config';
 import {newsPlanKey,type NewsPlan} from '../../../../lib/editorial/news-config';
 import {getRun} from 'workflow/api';
-import {rebuildDraftPdfs,refreshApprovedPdfs,retryFilteredImages} from '../../../../lib/editorial/pdf-layout-refresh';
+import {rebuildDraftPdfs,refreshApprovedPdfs,retryFilteredImages,retryImagePromptLimit} from '../../../../lib/editorial/pdf-layout-refresh';
 import {revalidatePath} from 'next/cache';
 import {NVIDIA_IMAGE_MODELS} from '../../../../lib/providers/image';
 import {runImageStudy} from '../../../../lib/editorial/image-study';
@@ -36,6 +36,7 @@ const schema=z.discriminatedUnion('action',[
  z.object({action:z.literal('recover-pdfs'),id:z.uuid()}).strict(),
  z.object({action:z.literal('recover-generation'),id:z.uuid()}).strict(),
  z.object({action:z.literal('retry-filtered-images'),id:z.uuid()}).strict(),
+ z.object({action:z.literal('retry-image-prompt-limit'),id:z.uuid()}).strict(),
  z.object({action:z.literal('pdf-preview'),id:z.uuid(),edition:z.enum(['elementary','junior','senior']),mode:z.enum(['color','ink'])}).strict(),
 ]);
 export async function POST(req:Request){try{
@@ -62,6 +63,7 @@ export async function POST(req:Request){try{
  }
  if(input.action==='news-rounds'){const rounds=await documentStore().list<NewsRound>(WEB_PREFIX+'news:round:');return json({rounds:rounds.filter(r=>r.issueDate===input.issueDate).sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).slice(0,4).map(r=>({id:r.id,status:r.status,error:r.error,usage:r.usage,invalidReplies:r.invalidReplies}))});}
  if(input.action==='retry-filtered-images'){const job=await retryFilteredImages(documentStore(),input.id);return json({id:job.id,status:job.status,usage:job.usage});}
+ if(input.action==='retry-image-prompt-limit'){const job=await retryImagePromptLimit(documentStore(),input.id);return json({id:job.id,status:job.status,usage:job.usage});}
  if(input.action==='rebuild-pdfs'){const job=await rebuildDraftPdfs(documentStore(),input.id);return json({id:job.id,status:job.status,usage:job.usage});}
  if(input.action==='refresh-approved-pdfs'){
   const store=documentStore(),job=await store.get<WebJob>(jobKey(input.id)),before=job?await store.get<WebRelease>(releaseKey(job.issueDate)):null;

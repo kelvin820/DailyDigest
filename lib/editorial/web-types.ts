@@ -25,6 +25,7 @@ export type WebJob={version:number;id:string;createdAt:string;updatedAt:string;i
  intakeCandidates?:NewsCandidate[];execution?:'workflow';workflowRunId?:string;
  imageStates?:Record<string,'running'|'done'|'failed'>;rejectedNewsIds?:string[];
  imageErrors?:Record<string,string>;imageFallbackSlots?:string[];
+ imagePromptRecoverySlots?:string[];
  imageAttempts?:Record<string,number>;imageRetryAt?:Record<string,number>;waitUntil?:number;
  campaignId?:string;
  additionalNewsCandidates?:NewsCandidate[];recoveryRounds?:string[];

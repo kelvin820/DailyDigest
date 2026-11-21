@@ -11,6 +11,10 @@ export function illustrationSheetPrompt(concept:string){return [
  'BOTTOM / adult style study: '+adultNewspaperStyle,
  'Keep a consistent publication identity, but make the age progression and final monochrome style distinct. Each panel is a complete wide newspaper image. These are conceptual illustrations, not event photographs or factual diagrams.',
  ].join('\n');}
+export function compactIllustrationSheetPrompt(subject:string){
+ const prefix='Create one square contact sheet: FOUR equal horizontal strips, top to bottom, each full width and 1/4 height. No borders, gutters, text, labels or subjects crossing strips. All depict: ',suffix='\nTOP elementary: cheerful simple warm watercolor, few large shapes, friendly for school children.\nSECOND junior: clean lively editorial watercolor, moderate detail, light background, not childish.\nTHIRD senior: refined editorial watercolor, richer texture, natural proportions, muted colors.\nBOTTOM adult study: pure black ink on white, newspaper engraving, crosshatching and stippling, no color.\nEach strip is a complete conceptual illustration, not an event photograph.';
+ const available=800-prefix.length-suffix.length;if(subject.length>available)throw Error('IMAGE_SHEET_SUBJECT_TOO_LONG');return prefix+subject+suffix;
+}
 export async function cropIllustrationSheet(bytes:Buffer){
  const normalized=await sharp(bytes,{limitInputPixels:40_000_000,animated:false}).rotate().flatten({background:'#fff'}).png().toBuffer({resolveWithObject:true});
  const {width,height}=normalized.info;if(width<800||height<640||Math.abs(width/height-1)>.05)throw Error('IMAGE_SHEET_GEOMETRY');

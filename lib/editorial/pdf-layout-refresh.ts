@@ -2,7 +2,7 @@ import {randomUUID} from 'node:crypto';
 import {editionKeys,type Edition} from '../../config/editions';
 import {hash} from '../pipeline/state.mjs';
 import {jobKey,jobFingerprint,releaseKey,saveJob} from './web-jobs';
-import {changeDocument,type DocumentStore} from './web-store';
+import {changeDocument,WEB_PREFIX,type DocumentStore} from './web-store';
 import type {WebJob,WebRelease,WebPdf} from './web-types';
 import {publicationEditions,verifiedNewsDates} from './event-date';
 
@@ -23,6 +23,17 @@ export async function retryFilteredImages(store:DocumentStore,id:string){
  for(const slot of slots){job.imageErrors[slot]='IMAGE_CONTENT_FILTERED';if(!job.imageFallbackSlots.includes(slot))job.imageFallbackSlots.push(slot);delete job.imageStates![slot];}
  job.pdfs=[];job.status='pending';job.error=null;job.events.push({at:new Date().toISOString(),message:'根據已核對的供應商拒絕紀錄，改製一般主題概念插畫；保留正文與既有圖片'});
  await saveJob(store,job);return job;
+}
+
+export async function retryImagePromptLimit(store:DocumentStore,id:string){
+ const job=await store.get<WebJob>(jobKey(id));if(!job)throw Error('NOT_FOUND');
+ if(job.input.kind!=='news'||job.status!=='needs_attention'||job.editions.length!==3||job.activeStep||job.lease&&job.lease.expiresAt>Date.now())throw Error('IMAGE_RETRY_NOT_READY');
+ const attempts=await store.list<{jobId:string;edition:string;storyId:string;model:string;error:string;prompt:string}>(WEB_PREFIX+'image-attempt:');
+ const verified=attempts.filter(a=>a.jobId===id&&a.model==='black-forest-labs/flux.2-klein-4b'&&a.error==='IMAGE_HTTP_422'&&a.prompt.length>800).map(a=>a.edition+':'+a.storyId);
+ const slots=Object.entries(job.imageStates??{}).filter(([key,state])=>state==='failed'&&job.imageErrors?.[key]==='IMAGE_HTTP_422'&&verified.includes(key)&&(job.imageAttempts?.[key]??1)<3).map(([key])=>key);
+ if(!slots.length)throw Error('IMAGE_RETRY_NOT_READY');
+ job.imagePromptRecoverySlots=[...new Set([...(job.imagePromptRecoverySlots??[]),...slots])];for(const slot of slots)delete job.imageRetryAt?.[slot];
+ job.status='pending';job.error=null;job.events.push({at:new Date().toISOString(),message:'已核對原始 HTTP 422 與超過 800 字元的 prompt，套用精簡提示詞續製缺圖；保留稿件、圖片及每次用量'});await saveJob(store,job);return job;
 }
 type Render=(job:WebJob,edition:Edition,folder:string)=>Promise<WebPdf[]>;
 export async function refreshApprovedPdfs(store:DocumentStore,id:string,render:Render){

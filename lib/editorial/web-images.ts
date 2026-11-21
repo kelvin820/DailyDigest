@@ -1,7 +1,7 @@
 import sharp from 'sharp';
 import {createHash} from 'node:crypto';
 import type {Edition} from '../../config/editions';
-import {audienceConceptPrompt,audienceTopicPrompt} from '../media/audience';
+import {boundedNewsImagePrompt,audienceTopicPrompt} from '../media/audience';
 import {generateNvidiaImage} from '../providers/image';
 import {imageModelPriority} from '../providers/image-config';
 import {generateWithImagePriority} from '../media/image-priority';
@@ -23,7 +23,8 @@ export async function generateWebImage(store:DocumentStore,job:WebJob,edition:Ed
  const grant=job.campaignId?await authorizedBackfill(store,job.campaignId,job.issueDate):null;
  const ledger=WEB_PREFIX+'image-budget:'+(job.campaignId?'backfill:'+job.campaignId:day),limit=grant?.limits.images??(Number(process.env.MAX_IMAGE_CALLS_PER_DAY)||32),key=process.env.NVIDIA_IMAGE_API_KEY?.trim()||process.env.LLM_API_KEY?.trim()||'';
  const models=imageModelPriority(),model=models[0];
- let prompt=audienceConceptPrompt('Create a wide landscape conceptual editorial illustration for this factual story. Illustrate its central subject simply, without adding factual claims. '+fact.claims.filter(c=>c.must_keep).map(c=>c.text).join(' '),edition),topic=job.imageFallbackSlots?.includes(edition+':'+fact.story_id)??false,primaryAttempted=false,result;
+ const brief=boundedNewsImagePrompt(fact.claims.filter(c=>c.must_keep).map(c=>c.text),fact.primary_category,edition);
+ let prompt=brief.prompt,topic=job.imageFallbackSlots?.includes(edition+':'+fact.story_id)||false,primaryAttempted=false,result;
  async function tracedImage(candidate:typeof model,attemptSlot:string,timeoutMs:number){
   const traceKey=WEB_PREFIX+'image-attempt:'+hash(attemptSlot),trace={version:1,jobId:job.id,storyId:fact.story_id,edition,model:candidate,prompt,createdAt:new Date().toISOString(),status:'started',error:null as string|null};
   await store.create(traceKey,trace);
@@ -54,7 +55,7 @@ export async function generateWebImage(store:DocumentStore,job:WebJob,edition:Ed
  const print=await input.clone().rotate().resize({width:1800,height:1800,fit:'inside',withoutEnlargement:true}).flatten({background:'#fff'}).jpeg({quality:90}).toBuffer();
  const webPath=`web-assets/${id}-web.webp`,printPath=`web-assets/${id}-print.jpg`,bucket=serviceDatabase().storage.from('issue-files');
  for(const [path,bytes,contentType] of [[webPath,web.data,'image/webp'],[printPath,print,'image/jpeg']] as const){const {error}=await bucket.upload(path,bytes,{contentType,upsert:true});if(error)throw Error('IMAGE_STORAGE_FAILED');}
- const image:ArticleView['image']={assetId:id,kind:'generated_illustration',alt:topic?'新聞主題概念插畫':fact.claims.find(c=>c.must_keep)!.text,caption:topic?'主題概念插畫，非事件照片':'概念插畫，非事件照片',credit:'DayDay · NVIDIA '+result.model,rendition:{webPath:`/api/editorial/assets/${id}/web`,printPath:`/api/editorial/assets/${id}/print`,width:web.info.width,height:web.info.height},focalPoint:{x:50,y:50}};
+ const image:ArticleView['image']={assetId:id,kind:'generated_illustration',alt:topic||brief.topic?'新聞主題概念插畫':fact.claims.find(c=>c.must_keep)!.text,caption:topic||brief.topic?'主題概念插畫，非事件照片':'概念插畫，非事件照片',credit:'DayDay · NVIDIA '+result.model,rendition:{webPath:`/api/editorial/assets/${id}/web`,printPath:`/api/editorial/assets/${id}/print`,width:web.info.width,height:web.info.height},focalPoint:{x:50,y:50}};
  await store.create<WebAsset>(webAssetKey(id),{version:1,jobId:job.id,id,webPath,printPath,image,prompt,model:result.model,createdAt:new Date().toISOString(),...(topic?{fallbackReason:'IMAGE_CONTENT_FILTERED' as const}:{})});
  await store.create(receiptKey,{version:1,inputHash,image,outputHash:hash(image)});return image;
 }
