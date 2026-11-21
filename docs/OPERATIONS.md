@@ -16,6 +16,8 @@ worker 每 30 秒 heartbeat、lease 120 秒；過期後可接手，舊 owner 不
 
 有 pending／usage_unknown 的中斷工作，補跑也會停 USAGE_RECONCILIATION_REQUIRED。管理者先在 NVIDIA 核對，再於工作明細記錄理由、允許續跑；此操作保留原費用狀態、calls/tokens 與預留額度，並非將費用改成 0。後續新不明呼叫需要另一次核對。
 
+真實七期測試另提供明確的管理權限續作動作：只有停止中的已授權 campaign、過期且已標示 unknown 的呼叫、無有效 lease 的中斷工作才可處理；必須附理由及 `keepReservedBudget=true`。供應商費用尚未確認時，紀錄仍保持 unknown，原 calls、token 預留與保守費用一律不扣回，也不擴大原總上限；只記錄允許新增一次後續步驟的管理決定。此紀錄不代表已向供應商核銷。任何新的 unknown 仍會再次停止，不能一次允許所有未來中斷。
+
 PDF 失敗不重選新聞或重寫已通過內容。修好模板／字體，原 job 續跑會重用 writer/reviewer。上傳以 PDF SHA256 路徑，不覆蓋既有檔；若 runner 中斷，先前成功步驟可重用，未完成的孤立檔留待有引用檢查的清理。
 
 ## 修訂與試讀

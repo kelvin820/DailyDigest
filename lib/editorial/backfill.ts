@@ -39,8 +39,8 @@ export async function prepareBackfillDay(store:DocumentStore,id:string,date:stri
   }
   if(job.editions.length||job.facts.length===4||job.sourceRecoveryVersion===2)return job.id;
   if(job.lease&&job.lease.expiresAt>Date.now())throw Error('JOB_BUSY');
-  const ledger=await store.get<{reservations:{jobId:string;status:string}[]}>(WEB_PREFIX+'usage:backfill:'+id);
-  if(ledger?.reservations.some(r=>r.jobId===job.id&&['reserved','unknown'].includes(r.status)))throw Error('USAGE_RECONCILIATION_REQUIRED');
+  const ledger=await store.get<{reservations:{jobId:string;status:string;acknowledgedAt?:string}[]}>(WEB_PREFIX+'usage:backfill:'+id);
+  if(ledger?.reservations.some(r=>r.jobId===job.id&&['reserved','unknown'].includes(r.status)&&!r.acknowledgedAt))throw Error('USAGE_RECONCILIATION_REQUIRED');
   if(job.activeStep&&job.error!=='MODEL_SCHEMA_INVALID')throw Error('USAGE_RECONCILIATION_REQUIRED');
   const {refreshNewsRound}=await import('./news'),{newsRoundKey}=await import('./news-config');
   const round=await refreshNewsRound(store,date,randomUUID(),{historical:true,settings:grant.settings,campaignId:id,minSourceDate:grant.dates[0]});

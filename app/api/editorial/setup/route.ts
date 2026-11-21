@@ -18,6 +18,7 @@ import {rebuildDraftPdfs,refreshApprovedPdfs,retryFilteredImages,retryImagePromp
 import {revalidatePath} from 'next/cache';
 import {NVIDIA_IMAGE_MODELS} from '../../../../lib/providers/image';
 import {runImageStudy} from '../../../../lib/editorial/image-study';
+import {acknowledgeBackfillUsage} from '../../../../lib/editorial/usage-recovery';
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
 export const maxDuration=240;
@@ -27,6 +28,7 @@ const schema=z.discriminatedUnion('action',[
  z.object({action:z.literal('verify')}).strict(),
  z.object({action:z.literal('jobs')}).strict(),
  z.object({action:z.literal('job-detail'),id:z.uuid()}).strict(),
+ z.object({action:z.literal('acknowledge-backfill-usage'),id:z.uuid(),notes:z.string().trim().min(40).max(1000),keepReservedBudget:z.literal(true)}).strict(),
  z.object({action:z.literal('image-attempts'),id:z.uuid()}).strict(),
  z.object({action:z.literal('image-study'),id:z.uuid(),probeId:z.uuid(),storyId:z.string().min(1),edition:z.enum(['elementary','junior','senior']),mode:z.enum(['single','sheet']),model:z.enum(NVIDIA_IMAGE_MODELS)}).strict(),
  z.object({action:z.literal('news-rounds'),issueDate:z.iso.date()}).strict(),
@@ -49,6 +51,7 @@ export async function POST(req:Request){try{
   (await cookies()).set(EDITOR_COOKIE,editorToken(editorSecret()),{httpOnly:true,secure:process.env.VERCEL==='1'||new URL(req.url).protocol==='https:',sameSite:'strict',path:'/',maxAge:8*3600});
  }else await requireEditor();
  if(input.action==='job-detail')return json({job:await documentStore().get<WebJob>(jobKey(input.id))});
+ if(input.action==='acknowledge-backfill-usage')return json(await acknowledgeBackfillUsage(documentStore(),input.id,input.notes,automation?'owner_setup':'editor_session'));
  if(input.action==='resume-daily'){
   const store=documentStore(),plan=await store.get<NewsPlan>(newsPlanKey(input.issueDate));if(!plan?.jobId)throw Error('NOT_FOUND');
   if(await store.get<WebRelease>(releaseKey(input.issueDate)))throw Error('ISSUE_ALREADY_PUBLISHED');

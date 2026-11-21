@@ -1,0 +1,22 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import {acknowledgeBackfillUsage} from '../lib/editorial/usage-recovery';
+import {webBudget} from '../lib/editorial/web-budget';
+import {WEB_PREFIX,type DocumentStore} from '../lib/editorial/web-store';
+import {campaignKey,type BackfillCampaign} from '../lib/editorial/backfill';
+import {importReviewPacket,jobKey} from '../lib/editorial/web-jobs';
+import {publicationCatalog} from '../lib/publications/catalog';
+test('explicit continuation retains unknown charges, tokens and calls, and never acknowledges a later unknown request',async()=>{
+ const rows=new Map<string,unknown>(),store:DocumentStore={async get<T>(key:string){return structuredClone(rows.get(key) as T??null);},async create(key,value){if(rows.has(key))return false;rows.set(key,structuredClone(value));return true;},async compare(key,version,value){if((rows.get(key) as {version:number})?.version!==version)return false;rows.set(key,structuredClone(value));return true;},async list<T>(prefix:string){return [...rows].filter(([key])=>key.startsWith(prefix)).map(([,v])=>structuredClone(v) as T);}};
+ const base=publicationCatalog.packets.find(p=>p.id==='2026-11-19-r5')!,id=randomUUID(),campaign=randomUUID(),job=await importReviewPacket(store,id,base.id,base.fingerprint),ledgerKey=WEB_PREFIX+'usage:backfill:'+campaign;
+ job.input={kind:'news',issueDate:job.issueDate,roundId:randomUUID(),sourceIds:job.facts.map(f=>f.story_id),direction:'',imageGeneration:true,autoSelect:true,campaignId:campaign};job.facts=job.facts.slice(0,3);job.campaignId=campaign;job.status='needs_attention';job.error='USAGE_RECONCILIATION_REQUIRED';job.activeStep='interrupted';job.editions=[];rows.set(jobKey(id),structuredClone(job));
+ rows.set(campaignKey(campaign),{version:1,id:campaign,status:'needs_attention',dates:[job.issueDate],jobs:{[job.issueDate]:id},limits:{calls:30,tokens:100000,usd:2,images:12}});
+ const original={version:1,calls:11,tokens:34567,spent:.5,reservations:[{id:'unknown-ticket',jobId:id,status:'unknown',tokens:5000,input:0,output:0,cost:.1,known:true,at:new Date(Date.now()-600000).toISOString()}]};rows.set(ledgerKey,structuredClone(original));
+ const notes='Continue the explicitly authorized historical test while retaining the entire previous unknown reservation and its conservative cost charge.';
+ const result=await acknowledgeBackfillUsage(store,id,notes,'owner_setup');assert.equal(result.acknowledged,1);assert.equal(result.budgetUnchanged,true);
+ const after=await store.get<typeof original>(ledgerKey);assert.equal(after?.calls,11);assert.equal(after?.tokens,34567);assert.equal(after?.spent,.5);assert.equal(after?.reservations[0].status,'unknown');assert.equal(after?.reservations[0].tokens,5000);assert.equal(after?.reservations[0].cost,.1);
+ const c=(await store.get<BackfillCampaign>(campaignKey(campaign)))!;c.status='running';rows.set(campaignKey(campaign),c);
+ const budget=webBudget(store,id,async()=>{},undefined,{id:campaign,issueDate:job.issueDate}),ticket=await budget.reserve(10,10);await budget.fail(ticket);await assert.rejects(async()=>await budget.reserve(10,10),/USAGE_RECONCILIATION_REQUIRED/);
+ await assert.rejects(()=>acknowledgeBackfillUsage(store,id,notes,'owner_setup'),/USAGE_REVIEW_NOT_READY/);
+});

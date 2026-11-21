@@ -61,6 +61,7 @@ export class CompatibleProvider implements TextModelProvider {
         });
       } catch { await this.budget.fail(ticket); throw Error('MODEL_TIMEOUT_OR_NETWORK'); }
       if (!response.ok || response.status === 202) {
+        console.warn('model_request_failed',{task:input.task,model:input.model,httpStatus:response.status});
         await this.budget.fail(ticket);
         if ([429, 500, 502, 503, 504].includes(response.status) && attempt < 2) {
           const retry = response.headers.get('retry-after');
