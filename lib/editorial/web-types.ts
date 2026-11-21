@@ -26,6 +26,7 @@ export type WebJob={version:number;id:string;createdAt:string;updatedAt:string;i
  imageStates?:Record<string,'running'|'done'|'failed'>;rejectedNewsIds?:string[];
  imageErrors?:Record<string,string>;imageFallbackSlots?:string[];
  imagePromptRecoverySlots?:string[];
+ imageBudgetRecoverySlots?:string[];
  imageAttempts?:Record<string,number>;imageRetryAt?:Record<string,number>;waitUntil?:number;
  modelRateLimitCounts?:Record<string,number>;
  campaignId?:string;

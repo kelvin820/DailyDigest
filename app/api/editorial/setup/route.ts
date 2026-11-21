@@ -19,6 +19,7 @@ import {revalidatePath} from 'next/cache';
 import {NVIDIA_IMAGE_MODELS} from '../../../../lib/providers/image';
 import {runImageStudy} from '../../../../lib/editorial/image-study';
 import {acknowledgeBackfillUsage} from '../../../../lib/editorial/usage-recovery';
+import {extendBackfillImages} from '../../../../lib/editorial/image-budget-recovery';
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
 export const maxDuration=240;
@@ -29,6 +30,7 @@ const schema=z.discriminatedUnion('action',[
  z.object({action:z.literal('jobs')}).strict(),
  z.object({action:z.literal('job-detail'),id:z.uuid()}).strict(),
  z.object({action:z.literal('acknowledge-backfill-usage'),id:z.uuid(),notes:z.string().trim().min(40).max(1000),keepReservedBudget:z.literal(true)}).strict(),
+ z.object({action:z.literal('extend-backfill-images'),id:z.uuid(),extraRequests:z.number().int().min(1).max(12),notes:z.string().trim().min(40).max(1000)}).strict(),
  z.object({action:z.literal('image-attempts'),id:z.uuid()}).strict(),
  z.object({action:z.literal('image-study'),id:z.uuid(),probeId:z.uuid(),storyId:z.string().min(1),edition:z.enum(['elementary','junior','senior']),mode:z.enum(['single','sheet']),model:z.enum(NVIDIA_IMAGE_MODELS)}).strict(),
  z.object({action:z.literal('news-rounds'),issueDate:z.iso.date()}).strict(),
@@ -52,6 +54,7 @@ export async function POST(req:Request){try{
  }else await requireEditor();
  if(input.action==='job-detail')return json({job:await documentStore().get<WebJob>(jobKey(input.id))});
  if(input.action==='acknowledge-backfill-usage')return json(await acknowledgeBackfillUsage(documentStore(),input.id,input.notes,automation?'owner_setup':'editor_session'));
+ if(input.action==='extend-backfill-images')return json(await extendBackfillImages(documentStore(),input.id,input.extraRequests,input.notes,automation?'owner_setup':'editor_session'));
  if(input.action==='resume-daily'){
   const store=documentStore(),plan=await store.get<NewsPlan>(newsPlanKey(input.issueDate));if(!plan?.jobId)throw Error('NOT_FOUND');
   if(await store.get<WebRelease>(releaseKey(input.issueDate)))throw Error('ISSUE_ALREADY_PUBLISHED');

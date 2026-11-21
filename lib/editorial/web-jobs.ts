@@ -182,7 +182,7 @@ export async function advanceWebJob(store:DocumentStore,id:string,options:Worker
    }
    job.editions.forEach(i=>editionSchema.parse(i));event(job,'三版稿件已儲存，開始製作 PDF');await saveJob(store,job);
   }else if(job.input.kind==='news'&&job.input.imageGeneration&&Object.values(job.imageStates??{}).filter(s=>s==='done').length<12){
-   const slots=editionKeys.flatMap(edition=>job.facts.map(fact=>({edition,fact,key:edition+':'+fact.story_id}))),eligible=slots.filter(s=>job.imageStates?.[s.key]==='failed'&&(job.imageAttempts?.[s.key]??1)<3&&(retryableImageError(job.imageErrors?.[s.key]??'IMAGE_FAILED')||job.imageErrors?.[s.key]==='IMAGE_HTTP_422'&&job.imagePromptRecoverySlots?.includes(s.key)));
+   const slots=editionKeys.flatMap(edition=>job.facts.map(fact=>({edition,fact,key:edition+':'+fact.story_id}))),eligible=slots.filter(s=>job.imageStates?.[s.key]==='failed'&&(job.imageAttempts?.[s.key]??1)<3&&(retryableImageError(job.imageErrors?.[s.key]??'IMAGE_FAILED')||job.imageErrors?.[s.key]==='IMAGE_HTTP_422'&&job.imagePromptRecoverySlots?.includes(s.key)||job.imageErrors?.[s.key]==='IMAGE_BUDGET_EXCEEDED'&&job.imageBudgetRecoverySlots?.includes(s.key)));
    const slot=slots.find(s=>!job.imageStates?.[s.key])??eligible.find(s=>(job.imageRetryAt?.[s.key]??0)<=Date.now());
    if(!slot){const later=eligible.map(s=>job.imageRetryAt?.[s.key]??0).filter(t=>t>Date.now());if(later.length){job.waitUntil=Math.min(...later);return job;}throw Error('AI_IMAGES_INCOMPLETE');}
    delete job.waitUntil;job.imageAttempts??={};job.imageAttempts[slot.key]=(job.imageAttempts[slot.key]??(job.imageStates?.[slot.key]==='failed'?1:0))+1;
