@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 import {withWorkflow} from 'workflow/next';
-const pdfAssets=['./prompts/*.txt','./app/globals.css','./public/fonts/*.ttf','./public/preview-issues/**/*.{jpg,webp}',
+const pdfAssets=['./prompts/*.txt','./app/globals.css','./public/fonts/*.ttf','./public/branding/*.png','./public/preview-issues/**/*.{jpg,webp}',
  './node_modules/@sparticuz/chromium/bin/**/*','./node_modules/.pnpm/@sparticuz+chromium*/node_modules/@sparticuz/chromium/bin/**/*',
  // playwright-core loads registry metadata dynamically from coreBundle.js.
  // Tracing its JavaScript alone omits browsers.json on Vercel.

@@ -1,4 +1,15 @@
-# 本輪交接
+# Daily Digest 接手入口
+
+2026 年 11 月 21 日更新。接手請先讀這兩份最新文件：
+
+1. [開發待辦與接手順序](TODO.md)：已完成／未完成、最後七張補圖、圖片政策、文字三版批次方向及必要驗證。
+2. [流程與系統架構](ARCHITECTURE.md)：Vercel 排程、即時選題、生成、Supabase、PDF、發布及成本恢復。
+
+本機在 `C:\Users\User\Documents\ChatGPT\Daily Digest`。本次提交納入 DayDay Inc. 品牌、圖片相近接受規則及交接文件；最新 commit 請用 `git log -1` 查核，品牌入口與本機備份恢復方式見 [BRANDING.md](BRANDING.md)。日常已遷到 Vercel／Supabase，不能把下方「尚未部署」「八篇」「先設定 GitHub key」等歷史文字當作目前狀態。七期歷史試刊仍差 18 日的七張圖，不能宣稱全數完成。
+
+本機完整性清單與可攜原始碼備份位於 `output/handoff/`。備份排除實際金鑰、依賴安裝目錄與雲端資料，保留必要字體、靜態資產和原 PDF 參考。
+
+## 歷史交接內容
 
 2026-11-20 接手：最新工作是 Vercel 網頁編輯室，先讀 `WEB_EDITORIAL.md` 和 `STATUS.md` 最上方。以下原交接包含過時的分支、部署、八篇及憑證待辦。使用者已在 Vercel 設定 NVIDIA、Supabase service role 與管理密碼；不可要求重新貼金鑰，也不可把日常生成導回 GitHub。
 

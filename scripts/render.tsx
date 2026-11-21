@@ -19,6 +19,8 @@ export async function renderIssues(issues: EditionView[], outDir: string, option
   const quality=issues.map(p=>editionSchema.safeParse(p).success);
   issues.forEach((p,i)=>{if(quality[i])return;if(!options.allowUncalibratedReviewDraft||!p.reviewCopy||p.isDemo||p.publishedAt!==null)editionSchema.parse(p);else z.object(editionSchema.shape).strict().parse(p);});
   await mkdir(resolve(outDir, 'fonts'), { recursive: true });
+  await mkdir(resolve(outDir, 'branding'), {recursive:true});
+  await copyFile(resolve('public/branding/dayday-wordmark-dark.png'),resolve(outDir,'branding/dayday-wordmark-dark.png'));
   for (const font of ['NotoSans-Regular.ttf', 'Newsreader.ttf', 'NotoSansTC.ttf',
     'InstrumentSerif-Regular.ttf', 'LibreCaslonText.ttf', 'OldStandard-Bold.ttf', 'PlayfairDisplay.ttf']) {
     await copyFile(resolve('public/fonts', font), resolve(outDir, 'fonts', font));

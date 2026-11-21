@@ -10,3 +10,10 @@ test('one sheet yields four independent full-width panels; adult study is true m
  await assert.rejects(()=>cropIllustrationSheet(Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"/>')),/GEOMETRY/);
  assert.match(illustrationSheetPrompt('a telescope under meteors'),/FOUR equal-height HORIZONTAL/);
 });
+
+test('matching age panels are accepted without rejecting stylistic similarity',async()=>{
+ const scene='<rect width="1024" height="256" fill="#fff"/><circle cx="512" cy="128" r="75" fill="#111"/>';
+ const svg='<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024">'+[0,1,2,3].map(i=>'<g transform="translate(0 '+i*256+')">'+scene+'</g>').join('')+'</svg>';
+ const panels=await cropIllustrationSheet(await sharp(Buffer.from(svg)).png().toBuffer());
+ assert.equal(panels.length,4);assert.equal(panels[0].sha256,panels[1].sha256);assert.equal(panels[1].sha256,panels[2].sha256);
+});

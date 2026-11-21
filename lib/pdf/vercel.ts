@@ -47,6 +47,7 @@ async function renderWebPdfsUnlocked(job:WebJob,edition:Edition,upload?:(path:st
         const name=asset.endsWith('/NotoSans-Regular.ttf')||asset.endsWith('/NotoSansTC.ttf')?'NotoSansTC-Print.ttf':asset.split('/').at(-1)!;
         return route.fulfill({body:await file(resolve('public/fonts',name)),contentType:'font/ttf'});
        }
+       if(asset==='/branding/dayday-wordmark-dark.png')return route.fulfill({body:await file(resolve('public/branding/dayday-wordmark-dark.png')),contentType:'image/png'});
        if(/^\/preview-issues\/[a-zA-Z0-9/_.-]+\.(?:jpg|webp)$/.test(asset))return route.fulfill({body:await file(resolve('public','.'+asset)),contentType:asset.endsWith('.jpg')?'image/jpeg':'image/webp'});
        const stored=asset.match(/^\/api\/editorial\/assets\/([a-f0-9]{64})\/(web|print)$/);
        if(stored){const path=`web-assets/${stored[1]}-${stored[2]==='web'?'web.webp':'print.jpg'}`;

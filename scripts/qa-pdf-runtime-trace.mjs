@@ -4,7 +4,7 @@ import {dirname,resolve} from 'node:path';
 for(const route of ['api/internal/pdf','api/editorial/jobs/[id]','api/editorial/jobs/[id]/publish','api/editorial/setup','.well-known/workflow/v1/flow']){
  const path=resolve('.next/server/app',route,'route.js.nft.json');
  const trace=JSON.parse(await readFile(path,'utf8')).files;
- for(const required of ['playwright-core/browsers.json','playwright-core/lib/coreBundle.js','chromium/bin/chromium.br','chromium/bin/al2023.tar.br','public/fonts/NotoSansTC-Print.ttf','app/globals.css']){
+ for(const required of ['playwright-core/browsers.json','playwright-core/lib/coreBundle.js','chromium/bin/chromium.br','chromium/bin/al2023.tar.br','public/fonts/NotoSansTC-Print.ttf','public/branding/dayday-wordmark-dark.png','app/globals.css']){
   const file=trace.find(f=>f.replaceAll('\\','/').endsWith(required));assert.ok(file,route+' missing '+required);await readFile(resolve(dirname(path),file));
  }
  const metadata=trace.find(f=>f.replaceAll('\\','/').endsWith('playwright-core/browsers.json'));

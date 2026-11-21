@@ -18,14 +18,14 @@ export function compactIllustrationSheetPrompt(subject:string){
 export async function cropIllustrationSheet(bytes:Buffer){
  const normalized=await sharp(bytes,{limitInputPixels:40_000_000,animated:false}).rotate().flatten({background:'#fff'}).png().toBuffer({resolveWithObject:true});
  const {width,height}=normalized.info;if(width<800||height<640||Math.abs(width/height-1)>.05)throw Error('IMAGE_SHEET_GEOMETRY');
- const result=[];const seen=new Set<string>();
+ const result=[];
  for(const [index,key]of illustrationPanels.entries()){
   const top=Math.floor(height*index/4)+2,bottom=Math.floor(height*(index+1)/4)-2;
   let panel=sharp(normalized.data).extract({left:0,top,width,height:bottom-top});
   if(key==='adult_study')panel=panel.grayscale().threshold(170);
   const output=await panel.png().toBuffer({resolveWithObject:true}),stats=await sharp(output.data).stats();
   if(stats.channels.slice(0,3).every(c=>c.stdev<2))throw Error('IMAGE_SHEET_EMPTY_PANEL');
-  const digest=createHash('sha256').update(output.data).digest('hex');if(seen.has(digest))throw Error('IMAGE_SHEET_DUPLICATE_PANEL');seen.add(digest);
+  const digest=createHash('sha256').update(output.data).digest('hex');
   result.push({key,bytes:output.data,width:output.info.width,height:output.info.height,crop:{left:0,top,width,height:bottom-top},sha256:digest});
  }
  return result;

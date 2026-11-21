@@ -26,6 +26,14 @@
 .masthead h1>.masthead-wordmark,.print-head h1>.masthead-wordmark{font:inherit;letter-spacing:inherit;display:inline-block;white-space:nowrap;margin:0;zoom:var(--wordmark-scale,1);transform:scaleY(var(--wordmark-height,1));transform-origin:center}
 @media(max-width:767px){.newspaper.elementary .masthead h1{font-size:clamp(36px,10.5vw,64px)}}
 
+/* Publisher identity uses the supplied artwork; newspaper mastheads retain their edition fonts. */
+.brand-logo{display:block;max-width:100%;height:auto;object-fit:contain}
+.utility .brand-home{display:flex;align-items:center;flex-shrink:0}.brand-home .brand-logo{width:156px}
+.newspaper .utility{align-items:center;gap:18px}.newspaper .publisher-footer{background:#0d1c2b;color:#f5f2e9;padding:22px 24px;align-items:center;border:0;gap:24px}.publisher-footer .brand-logo{width:200px}.publisher-footer>span{max-width:290px;line-height:1.7}
+.editor-brand{display:flex;align-items:center;gap:12px}.editor-brand .brand-logo{width:36px}
+.print-brandline{position:relative;min-height:7mm;display:flex;align-items:center;padding-right:30mm}.print-publisher-logo{position:absolute;right:0;top:0;width:25mm;height:auto}.mode-ink .print-publisher-logo{filter:grayscale(1)}
+@media(max-width:767px){.brand-home .brand-logo{width:112px}.newspaper .utility{gap:12px}.newspaper .utility nav{gap:12px;flex-wrap:wrap;justify-content:flex-end;font-size:11px}.newspaper .publisher-footer{padding:20px}.publisher-footer .brand-logo{width:170px}}
+
 /* Locally served raster assets share the article/PDF renderer with original icons. */
 .article .asset-visual img{width:100%;aspect-ratio:5/3;object-fit:cover;display:block}
 .media-figure [hidden]{display:none!important}
